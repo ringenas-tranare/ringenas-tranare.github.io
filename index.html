@@ -217,7 +217,7 @@ html{background:#0d1721}
 body{background:radial-gradient(ellipse at 40% -10%,rgba(207,202,187,.10),transparent 55%),linear-gradient(180deg,#1c2a3a 0%,#121e2b 45%,#0b141d 100%) fixed}
 .hero{background:var(--rim) border-box;background-clip:border-box}
 .scene.bd{position:absolute;top:18px;left:0;width:100%;height:520px;z-index:0;pointer-events:none;display:none;-webkit-mask-image:linear-gradient(180deg,#000 62%,transparent);mask-image:linear-gradient(180deg,#000 62%,transparent)}
-body[data-view="home"] .scene.bd{display:block}
+.scene.bd{display:block}
 body[data-view="home"] .hero{padding-bottom:112px}
 body[data-view="home"] .hero .wave path:not(.wc){fill:rgba(7,19,31,.35)}
 body[data-view="home"] .hero .wave .w2,body[data-view="home"] .hero .wave .w3{fill:rgba(255,255,255,.08)}
@@ -238,7 +238,7 @@ body[data-view="home"] .hero{background:linear-gradient(180deg,rgba(8,20,34,.18)
 /* Inspirerat av banan: gråblå himmel, silverhav, fairway, sand */
 :root{--fair:linear-gradient(180deg,#7fb36a,#3f7a3c);--sand:#d8c8a4;--mut:#a9b8c6}
 
-.card{background:var(--screw) 10px 10px/14px 14px no-repeat padding-box,var(--screw) calc(100% - 10px) 10px/14px 14px no-repeat padding-box,var(--sheen) padding-box,var(--brush) padding-box,linear-gradient(160deg,rgba(36,54,76,.92) 0%,rgba(17,30,46,.94) 50%,rgba(28,44,62,.92) 100%) padding-box,var(--rim) border-box;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+.card{background:var(--screw) 10px 10px/14px 14px no-repeat padding-box,var(--screw) calc(100% - 10px) 10px/14px 14px no-repeat padding-box,var(--sheen) padding-box,var(--brush) padding-box,linear-gradient(160deg,rgba(36,54,76,.78) 0%,rgba(17,30,46,.84) 50%,rgba(28,44,62,.78) 100%) padding-box,var(--rim) border-box;-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
 .sub,small,.msg{color:var(--mut)}
 .dots .d{background:var(--fair);border-color:#2f5e2d;color:#fff}
 .sc td.cur{background:rgba(127,179,106,.22)}
@@ -360,6 +360,21 @@ nav button.on span{translate:0 -3px;filter:drop-shadow(0 4px 4px rgba(0,0,0,.5))
 .rv.in{opacity:1;translate:0 0;scale:1}
 .scene.bd{will-change:transform}
 @media (prefers-reduced-motion:reduce){.card,.hero,.ex{transform:none!important;transition:none}.rv{opacity:1;translate:none;scale:none}}
+
+/* Spela-sidan: städad */
+.dots{display:flex;justify-content:space-between;align-items:center;position:relative;margin:4px 2px 16px;gap:0}
+.dots::before{content:"";position:absolute;left:16px;right:16px;top:50%;height:2px;transform:translateY(-50%);background:linear-gradient(90deg,rgba(224,187,74,.5),rgba(190,205,220,.15));border-radius:2px}
+.dots span{position:relative;z-index:1;flex:none!important;width:32px!important;height:32px!important;border-radius:50%!important;display:grid!important;place-items:center;font-size:.8rem;font-weight:800}
+#drivesseg{grid-template-columns:repeat(6,1fr)!important}
+#drivesseg button{min-height:48px;font-size:1rem}
+#formcard label{margin-top:1.25em}
+#formcard .rule{display:flex;align-items:center;gap:10px;margin:1.25em 0 .2em;padding:.9em 1em;font-size:.98rem;font-weight:700;color:#f6e7b8;background:linear-gradient(135deg,rgba(224,187,74,.18),rgba(224,187,74,.05));border:1px solid rgba(224,187,74,.35);border-left:4px solid var(--gold);border-radius:14px}
+#formcard .rule::before{content:"";flex:none;width:22px;height:22px;background:var(--gold);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Ccircle cx='12' cy='12' r='5'/%3E%3Ccircle cx='12' cy='12' r='1.5'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round'%3E%3Ccircle cx='12' cy='12' r='9'/%3E%3Ccircle cx='12' cy='12' r='5'/%3E%3Ccircle cx='12' cy='12' r='1.5'/%3E%3C/svg%3E") center/contain no-repeat}
+#formcard .rule+label{margin-top:.9em}
+#bet{font-size:1.15rem;font-weight:700;text-align:center}
+#okseg button{min-height:52px;font-size:.95rem}
+.pv{margin-top:1em;text-align:center;font-size:1.05rem}
+#send{margin-top:1.2em;min-height:56px;font-size:1rem}
 </style></head>
 <body><svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <linearGradient id="lg-grad" x1="0" y1="0" x2="0" y2="1"><stop offset=".6" style="stop-color:currentColor"/><stop offset=".88" style="stop-color:var(--gold)"/></linearGradient>
@@ -567,7 +582,7 @@ function renderPlay(){
   $("rtitle").textContent="Omgång "+r+" av 5";
   $("rule").textContent="Utmaning: "+RULES[r-1];
   $("distw").classList.toggle("hide",r<5);if(n>0)$("name").value=p.name||$("name").value;$("namebox").classList.toggle("hide",n>0);
-  $("bet").max=max;$("betl").textContent="Poäng du bettar (1–"+max+")";
+  $("bet").max=max;$("betl").textContent=max<1?"Inga poäng att betta – skicka in omgången":"Poäng du bettar (1–"+max+")";{const z=max<1;$("bet").classList.toggle("hide",z);const q=document.querySelector(".seg.q");if(q)q.classList.toggle("hide",z);const ol=document.querySelector('label[for="ok"]');if(ol)ol.classList.toggle("hide",z);const os=$("okseg");if(os)os.classList.toggle("hide",z)}
   const bet=+$("bet").value,ok=$("ok").value==="1";
   if(bet>=1&&bet<=max){const bonus=ok?bet*(mult-1):-bet;$("pv").textContent="Omgången ger "+(drives+bonus)+" poäng ("+drives+" "+(bonus>=0?"+ ":"− ")+Math.abs(bonus)+")"}
   else $("pv").textContent="";
