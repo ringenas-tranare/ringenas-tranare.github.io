@@ -1,0 +1,40 @@
+# Håller Supabase-databasen vaken så att gratisprojektet inte pausas
+# (pausas efter 7 dagars inaktivitet). Körs varannan dag.
+# Den 1:a varje månad görs även en liten commit så att GitHub inte
+# stänger av schemat (sker efter 60 dagar utan aktivitet i repot).
+name: Håll databasen vaken
+
+on:
+  schedule:
+    - cron: "17 6 */2 * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  vacka:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Kontakta Supabase
+        run: |
+          curl -fsS -o /dev/null -w "Supabase svarade: HTTP %{http_code}\n" \
+            "https://fpodgapzvcvzhutrrsuq.supabase.co/rest/v1/betting_players?select=pid&limit=1" \
+            -H "apikey: sb_publishable_HGdeNNMGIc8xby7Kf9Q7fQ_DbKf-6hB"
+
+      - name: Hämta repot (bara den 1:a i månaden)
+        if: ${{ github.event_name == 'workflow_dispatch' || format('{0}', github.event.schedule) != '' }}
+        uses: actions/checkout@v4
+
+      - name: Håll schemat aktivt (bara den 1:a i månaden)
+        run: |
+          if [ "$(date -u +%d)" = "01" ] || [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            date -u +"%Y-%m-%d" > .senast-vaken
+            git config user.name "ringenas-tranare"
+            git config user.email "oskar@ringenas.com"
+            git add .senast-vaken
+            git commit -m "Håll schemat aktivt" || echo "Inget att spara"
+            git push || echo "Kunde inte pusha"
+          else
+            echo "Ingen commit behövs idag"
+          fi
