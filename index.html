@@ -610,7 +610,7 @@ function init(){
   if(!$("name").value&&me.name)$("name").value=me.name;
   $("send").disabled=false;$("msg").textContent=API?"":"Dina resultat sparas på den här enheten.";
   $("admbox").classList.add("hide");$("localnote").textContent=API?"Alla med länken kan se topplistan.":"Resultaten sparas bara på den här enheten.";
-  render();loadAll();setInterval(()=>{if(!document.hidden&&!rtOk&&(view==="board"||view==="betting"))loadAll()},5000);
+  render();loadAll();let _tk=0;setInterval(()=>{_tk++;if(!document.hidden&&(!rtOk||_tk%4===0)&&(view==="board"||view==="betting"))loadAll()},5000);
 }
 $("send").onclick=async()=>{
   const name=played(state().p)>0?state().p.name:$("name").value.trim();const {p,r,drives,max,mult}=state();
