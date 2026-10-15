@@ -420,6 +420,31 @@ input,select{background:rgba(0,0,0,.22)!important;border:1px solid var(--line)!i
 
 body[data-view="home"] .hero{-webkit-backdrop-filter:none!important;backdrop-filter:none!important;background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,.015))!important}
 @media(max-width:600px){.scene.bd{top:74px!important}}
+
+/* === Symmetri & stillhet === */
+:root{--ws:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 102 8' preserveAspectRatio='none'%3E%3Cpath d='M1 4 Q11 .6 21 4 T41 4 T61 4 T81 4 T101 4' fill='none' stroke='black' stroke-width='1.8' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E");--wbs:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 450 22' preserveAspectRatio='none'%3E%3Cpath d='M0 22V12 Q25 4 50 12 T100 12 T150 12 T200 12 T250 12 T300 12 T350 12 T400 12 T450 12 V22Z'/%3E%3C/svg%3E");--wks:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 450 22' preserveAspectRatio='none'%3E%3Cpath d='M0 12 Q25 4 50 12 T100 12 T150 12 T200 12 T250 12 T300 12 T350 12 T400 12 T450 12' fill='none' stroke='black' stroke-width='1.4' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E")}
+h2{width:fit-content;max-width:100%}
+h2::after{width:calc(100% - .1em)!important;height:8px;margin-top:8px;-webkit-mask:var(--ws) 0 0/100% 100% no-repeat!important;mask:var(--ws) 0 0/100% 100% no-repeat!important;animation:none!important}
+.card::after{-webkit-mask:var(--wbs) 0 100%/100% 22px no-repeat!important;mask:var(--wbs) 0 100%/100% 22px no-repeat!important;animation:none!important}
+.card::before{-webkit-mask:var(--wks) 0 100%/100% 22px no-repeat!important;mask:var(--wks) 0 100%/100% 22px no-repeat!important;animation:none!important}
+.wave *,.scene .gl,.scene .beam{animation:none!important}
+.scene .gl{opacity:.55}
+.scene .beam{opacity:.8}
+.lg.big{animation:none!important}
+nav button{position:relative}
+nav button.on::after{display:none!important}
+nav .lbl{position:relative;font-style:normal;display:inline-block;padding-bottom:9px}
+nav button.on .lbl::after{content:"";position:absolute;left:0;right:0;bottom:0;height:6px;background:var(--gold);-webkit-mask:var(--ws) 0 0/100% 100% no-repeat;mask:var(--ws) 0 0/100% 100% no-repeat}
+nav button.on{background:rgba(255,255,255,.07)!important;border-radius:14px}
+nav button span{translate:none!important}
+.eyebrow{padding-left:.3em}
+.hero h1{padding-left:.1em}
+.hero p{padding-left:.16em}
+#formcard .rule{border-left-width:1px!important}
+.dots::before{background:rgba(255,255,255,.18)!important}
+#drivesseg{display:flex!important;flex-wrap:wrap;justify-content:center;gap:6px}
+#drivesseg button{flex:0 0 calc((100% - 30px)/6)}
+.card{padding:20px 20px 30px!important}
 </style></head>
 <body><svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <linearGradient id="lg-grad" x1="0" y1="0" x2="0" y2="1"><stop offset=".6" style="stop-color:currentColor"/><stop offset=".88" style="stop-color:var(--gold)"/></linearGradient>
@@ -539,9 +564,9 @@ body[data-view="home"] .hero{-webkit-backdrop-filter:none!important;backdrop-fil
 </main>
 
 <nav>
-<button data-go="home"><span><svg class="i"><use href="#i-home"/></svg></span>Hem</button>
-<button data-go="play"><span><svg class="i"><use href="#i-flag"/></svg></span>Spela</button>
-<button data-go="contact"><span><svg class="i"><use href="#i-mail"/></svg></span>Kontakt</button>
+<button data-go="home"><span><svg class="i"><use href="#i-home"/></svg></span><em class="lbl">Hem</em></button>
+<button data-go="play"><span><svg class="i"><use href="#i-flag"/></svg></span><em class="lbl">Spela</em></button>
+<button data-go="contact"><span><svg class="i"><use href="#i-mail"/></svg></span><em class="lbl">Kontakt</em></button>
 </nav>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js"></script>
