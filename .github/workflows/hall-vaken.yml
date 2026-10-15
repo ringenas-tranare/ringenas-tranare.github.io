@@ -24,7 +24,7 @@ jobs:
 
       - name: Hämta repot (bara den 1:a i månaden)
         if: ${{ github.event_name == 'workflow_dispatch' || format('{0}', github.event.schedule) != '' }}
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Håll schemat aktivt (bara den 1:a i månaden)
         run: |
