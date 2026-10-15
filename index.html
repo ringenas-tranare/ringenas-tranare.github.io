@@ -584,6 +584,11 @@ body.kb main{padding-bottom:24px!important}
 ::view-transition-old(nav){display:none}
 nav{padding-bottom:max(6px,env(safe-area-inset-bottom,0px))!important;will-change:transform}
 html,body{overscroll-behavior-y:none}
+
+/* Alla sidor minst lika höga som skärmen – menyn hamnar längst ner även på korta sidor (iOS Safari) */
+html{min-height:100%;background:#0b141d}
+main{min-height:calc(100lvh + 1px);box-sizing:border-box}
+@supports not (height:100lvh){main{min-height:calc(100vh + 1px)}}
 </style></head>
 <body><svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <linearGradient id="lg-grad" x1="0" y1="0" x2="0" y2="1"><stop offset=".6" style="stop-color:currentColor"/><stop offset=".88" style="stop-color:var(--gold)"/></linearGradient>
