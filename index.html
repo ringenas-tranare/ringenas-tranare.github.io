@@ -589,6 +589,29 @@ html,body{overscroll-behavior-y:none}
 html{min-height:100%;background:#0b141d}
 main{min-height:calc(100lvh + 1px);box-sizing:border-box}
 @supports not (height:100lvh){main{min-height:calc(100vh + 1px)}}
+
+/* === Kristallogga 3D + rörelse === */
+.xl{position:relative;width:min(236px,64vw);aspect-ratio:216/118;margin:0 auto;transform-style:preserve-3d;cursor:pointer;-webkit-tap-highlight-color:transparent;touch-action:pan-y}
+.xl>svg{position:absolute;inset:0;width:100%;height:100%;overflow:visible;pointer-events:none}
+.xl>svg.xd{width:0;height:0}
+.xl .sh{fill:#000;opacity:.5;filter:blur(7px);transform:translateZ(-40px) translateY(16px) scale(.96)}
+.xl .tf{transform:translateZ(0)}
+.xl .spk{transform:translateZ(4px);filter:drop-shadow(0 0 2px #fff) drop-shadow(0 0 5px rgba(170,215,255,.9))}
+.xl .b{fill:url(#xl-c)}
+.xl .tf polygon:not(.o):not(.b){stroke:rgba(255,255,255,.4);stroke-width:.14;stroke-linejoin:miter}
+.xl .t{fill:#fff;fill-opacity:var(--t,.25)}
+.xl .o{fill:none;stroke:#fff;stroke-opacity:.92;stroke-width:.38;stroke-linejoin:miter}
+.xl .g{fill:url(#xl-g);stroke:#fff6d8;stroke-opacity:.8;stroke-width:.3;stroke-linejoin:round}
+.xl .sp{fill:#fff;opacity:0;transform-box:fill-box;transform-origin:center;animation:xltw 4.2s ease-in-out infinite}
+@keyframes xltw{0%,74%,100%{opacity:0;transform:scale(.1) rotate(0)}84%{opacity:1;transform:scale(1) rotate(45deg)}92%{opacity:.2;transform:scale(.4) rotate(90deg)}}
+.hero .xl+.eyebrow{margin-top:18px!important}
+/* Glaset speglar ljuset när du lutar telefonen / rör musen */
+.card,#result{background:radial-gradient(120% 70% at var(--gx,50%) var(--gy,-10%),rgba(255,255,255,.11),transparent 60%),linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.035))!important}
+body.sun .card,body.sun #result{background:radial-gradient(120% 70% at var(--gx,50%) var(--gy,-10%),#fff,transparent 60%),rgba(255,255,255,.94)!important}
+/* Länkar glider in en i taget */
+.rv .ex{opacity:0;translate:0 14px;transition:opacity .5s ease,translate .6s cubic-bezier(.16,1,.3,1);transition-delay:calc(var(--i,0)*70ms + 80ms)}
+.rv.in .ex{opacity:1;translate:0 0}
+@media(prefers-reduced-motion:reduce){.xl .sp{animation:none}.rv .ex{opacity:1;translate:none;transition:none}}
 </style></head>
 <body><svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <linearGradient id="lg-grad" x1="0" y1="0" x2="0" y2="1"><stop offset=".6" style="stop-color:currentColor"/><stop offset=".88" style="stop-color:var(--gold)"/></linearGradient>
@@ -629,7 +652,7 @@ main{min-height:calc(100lvh + 1px);box-sizing:border-box}
 <rect width="400" height="260" fill="url(#shade)"/></svg><div class="top"><svg class="lg" aria-hidden="true"><use href="#i-logo"/></svg><b>Ringenäs Tränare</b></div><main>
 
 <section class="view" id="v-home">
-<div class="hero"><button class="sunb" id="sunBtn" type="button" aria-pressed="false" aria-label="Solläge: ljus design för utomhus"><svg viewBox="0 0 24 24" class="i"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span>Solläge</span></button><button class="inst hide" id="instBtn" type="button" aria-label="Spara appen på hemskärmen"><svg viewBox="0 0 24 24" class="i"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 19h14"/></svg><span>Spara app</span></button><svg class="lg big" aria-hidden="true"><use href="#i-logo"/></svg><div class="eyebrow" style="margin-top:14px">Välkommen till</div><h1>Ringenäs Tränare</h1><p>Tillsammans blir vi bättre!</p><svg class="wave" viewBox="0 0 400 34" preserveAspectRatio="none" aria-hidden="true"><path class="w3" d="M0 6 C60 22 120 -4 200 10 S340 24 400 4 V34 H0Z"/><path class="w2" d="M0 12 C50 28 90 0 150 14 S250 30 300 12 S380 4 400 12 V34 H0Z"/><path class="wc c1" d="M0 12 C50 28 90 0 150 14 S250 30 300 12 S380 4 400 12"/><path class="w1" d="M0 20 C40 4 70 4 110 18 S180 34 220 18 S300 2 340 16 S390 26 400 20 V34 H0Z"/><path class="wc c2" d="M0 20 C40 4 70 4 110 18 S180 34 220 18 S300 2 340 16 S390 26 400 20"/></svg></div>
+<div class="hero"><button class="sunb" id="sunBtn" type="button" aria-pressed="false" aria-label="Solläge: ljus design för utomhus"><svg viewBox="0 0 24 24" class="i"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span>Solläge</span></button><button class="inst hide" id="instBtn" type="button" aria-label="Spara appen på hemskärmen"><svg viewBox="0 0 24 24" class="i"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 19h14"/></svg><span>Spara app</span></button><div class="xl" id="xl" aria-hidden="true"></div><div class="eyebrow" style="margin-top:14px">Välkommen till</div><h1>Ringenäs Tränare</h1><p>Tillsammans blir vi bättre!</p><svg class="wave" viewBox="0 0 400 34" preserveAspectRatio="none" aria-hidden="true"><path class="w3" d="M0 6 C60 22 120 -4 200 10 S340 24 400 4 V34 H0Z"/><path class="w2" d="M0 12 C50 28 90 0 150 14 S250 30 300 12 S380 4 400 12 V34 H0Z"/><path class="wc c1" d="M0 12 C50 28 90 0 150 14 S250 30 300 12 S380 4 400 12"/><path class="w1" d="M0 20 C40 4 70 4 110 18 S180 34 220 18 S300 2 340 16 S390 26 400 20 V34 H0Z"/><path class="wc c2" d="M0 20 C40 4 70 4 110 18 S180 34 220 18 S300 2 340 16 S390 26 400 20"/></svg></div>
 <div class="card"><h2>Boka &amp; följ oss</h2>
 <a class="ex hl" href="https://appointment.balancegolf.com/?embed=true&amp;clubId=9" target="_blank" rel="noopener"><span class="ic"><svg class="i"><use href="#i-club"/></svg></span><div><b>Boka lektion eller custom fitting</b><small>Personlig hjälp av våra PGA-tränare</small></div><i><svg class="i"><use href="#i-ext"/></svg></i></a>
 <a class="ex" href="https://appointment.balancegolf.com/?embed=true&amp;clubId=9" target="_blank" rel="noopener"><span class="ic"><svg class="i"><use href="#i-cal"/></svg></span><div><b>Svingkurs Vinterträning</b><small>Boka din plats och bli bättre redan i vinter</small></div><i><svg class="i"><use href="#i-ext"/></svg></i></a>
@@ -1055,6 +1078,123 @@ async function renderAdmin(){
   document.addEventListener("focusin",e=>{if(isField(e.target))set(true)});
   document.addEventListener("focusout",()=>setTimeout(()=>{if(!isField(document.activeElement))set(false)},120));
   if(window.visualViewport){const vv=visualViewport;const chk=()=>{const open=vv.height<window.innerHeight*0.78;if(!open&&!isField(document.activeElement))set(false);else if(open)set(true)};vv.addEventListener("resize",chk)}
+})();
+
+/* === Kristallogga i 3D + rörelse (mus, scroll, lutning) === */
+(function(){
+  const host=document.getElementById("xl");if(!host)return;
+  const rm=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  const lp=document.querySelector("#i-logo path");if(!lp)return;
+  const subs=lp.getAttribute("d").split("M").filter(t=>t.trim()).map(t=>{const n=t.match(/-?[\d.]+/g).map(Number),p=[];for(let i=0;i+1<n.length;i+=2)p.push([n[i],n[i+1]]);return p});
+  const area=p=>{let a=0;for(let i=0;i<p.length;i++){const q=p[i],r=p[(i+1)%p.length];a+=q[0]*r[1]-r[0]*q[1]}return a/2};
+  const cen=p=>{let x=0,y=0;p.forEach(q=>{x+=q[0];y+=q[1]});return[x/p.length,y/p.length]};
+  const resample=(p,k)=>{const L=[0];for(let i=1;i<=p.length;i++){const a=p[i-1],b=p[i%p.length];L.push(L[i-1]+Math.hypot(b[0]-a[0],b[1]-a[1]))}
+    const T=L[p.length],out=[];let j=0;for(let s=0;s<k;s++){const t=T*s/k;while(j<p.length-1&&L[j+1]<t)j++;const a=p[j],b=p[(j+1)%p.length],f=(t-L[j])/((L[j+1]-L[j])||1);out.push([a[0]+(b[0]-a[0])*f,a[1]+(b[1]-a[1])*f])}return out};
+  let seed=11;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+  const P=a=>a.map(q=>q[0].toFixed(2)+","+q[1].toFixed(2)).join(" ");
+  let wi=0;subs.forEach((p,i)=>{if(Math.abs(area(p))>Math.abs(area(subs[wi])))wi=i});
+  const waveD="M"+P(subs[wi]).replace(/ /g," L")+"Z";
+  const NB=12,TAU=Math.PI*2;
+  let top="",sil="",cand=[];
+  subs.forEach((p,idx)=>{
+    if(idx===wi)return;const a=Math.abs(area(p));if(a<4)return;
+    const K=a>70?8:a>25?7:a>8?6:5,o=resample(p,K),c=cen(o),off=(rnd()-.5)*1.3;
+    const m=o.map((q,i)=>{const r=o[(i+1)%K];return[(q[0]+r[0])/2,(q[1]+r[1])/2]});
+    const inn=m.map(q=>[c[0]+(q[0]-c[0])*.5,c[1]+(q[1]-c[1])*.5]);
+    const bin=v=>{const b=Math.round((Math.atan2(v[1]-c[1],v[0]-c[0])+off)/(TAU/NB));return((b%NB)+NB)%NB};
+    top+='<polygon class="b" points="'+P(o)+'"/>';
+    for(let i=0;i<K;i++){
+      top+='<polygon class="e'+bin(m[i])+'" points="'+P([o[i],o[(i+1)%K],inn[i]])+'"/>';
+      top+='<polygon class="s'+bin(o[i])+'" points="'+P([o[i],inn[i],inn[(i-1+K)%K]])+'"/>';
+    }
+    top+='<polygon class="t" points="'+P(inn)+'"/><polygon class="o" points="'+P(o)+'"/>';
+    sil+='<polygon points="'+P(o)+'"/>';
+    if(a>20)o.forEach(q=>cand.push(q));
+  });
+  // Facettfärger: lätt regnbågsskimmer som i en kristallkrona
+  const hue=[195,215,255,300,340,25,45,70,140,165,180,200];
+  let css="";for(let b=0;b<NB;b++)css+=".xl .e"+b+"{fill:hsl("+hue[b]+" 100% 93%);fill-opacity:var(--e"+b+",.15)}.xl .s"+b+"{fill:#06111d;fill-opacity:var(--s"+b+",.3)}";
+  const st=document.createElement("style");st.textContent=css;document.head.appendChild(st);
+  // Gnistor på kristallens hörn
+  let spk="";const star="M0-3.2L.55-.55 3.2 0 .55.55 0 3.2-.55.55-3.2 0-.55-.55Z";
+  for(let i=0;i<10&&cand.length;i++){const q=cand.splice(Math.floor(rnd()*cand.length),1)[0];spk+='<g transform="translate('+q[0].toFixed(1)+' '+q[1].toFixed(1)+') scale('+(.55+rnd()*.6).toFixed(2)+')"><path class="sp" d="'+star+'" style="animation-delay:'+(rnd()*4).toFixed(2)+'s"/></g>'}
+  const VB='viewBox="-8 48 216 118"';
+  const N=12,STEP=1.2;let slices="";
+  const mix=(a,b,t)=>"rgb("+a.map((v,i)=>Math.round(v+(b[i]-v)*t)).join(",")+")";
+  for(let i=N;i>=1;i--){const t=i/N;slices+='<svg class="sl" '+VB+' style="transform:translateZ('+(-i*STEP).toFixed(1)+'px)"><use href="#xl-sc" fill="'+mix([70,104,146],[10,22,36],t)+'"/><use href="#xl-sg" fill="'+mix([150,108,30],[48,32,6],t)+'"/></svg>'}
+  host.innerHTML=
+   '<svg class="xd" width="0" height="0" aria-hidden="true"><defs>'+
+     '<linearGradient id="xl-c" gradientUnits="userSpaceOnUse" x1="0" y1="56" x2="0" y2="140"><stop offset="0" stop-color="#8fbbe6"/><stop offset=".42" stop-color="#4f78a8"/><stop offset=".7" stop-color="#3d5e88"/><stop offset=".84" stop-color="#a87f27"/><stop offset="1" stop-color="#d6a43a"/></linearGradient>'+
+     '<linearGradient id="xl-g" gradientUnits="userSpaceOnUse" x1="0" y1="118" x2="0" y2="158"><stop offset="0" stop-color="#fff4cc"/><stop offset=".3" stop-color="#ecc25a"/><stop offset=".65" stop-color="#b07c1c"/><stop offset="1" stop-color="#6e4a10"/></linearGradient>'+
+     '<linearGradient id="xl-gl" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="70" y2="40"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset=".44" stop-color="#fff" stop-opacity="0"/><stop offset=".5" stop-color="#fff" stop-opacity=".75"/><stop offset=".56" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="#fff" stop-opacity="0"/></linearGradient>'+
+     '<g id="xl-sc">'+sil+'</g><path id="xl-sg" d="'+waveD+'"/>'+
+     '<clipPath id="xl-clip">'+sil+'<path d="'+waveD+'"/></clipPath>'+
+   '</defs></svg>'+
+   '<svg class="sh" '+VB+'><use href="#xl-sc"/><use href="#xl-sg"/></svg>'+slices+
+   '<svg class="tf" '+VB+'>'+top+'<path class="g" d="'+waveD+'"/><g clip-path="url(#xl-clip)"><rect id="xl-band" x="-90" y="20" width="400" height="180" fill="url(#xl-gl)"/></g></svg>'+
+   '<svg class="spk" '+VB+'>'+spk+'</svg>';
+  const band=document.getElementById("xl-band");
+  const root=document.documentElement;
+  const clamp=v=>Math.max(-1,Math.min(1,v));
+  const T={x:0,y:0},C={x:0,y:0};let lastIn=0,spinT=-9,sp=0,raf=0;
+  const light=(tx,ty)=>{
+    let lx=-.55-tx*1.25,ly=-.8-ty*1.05;const l=Math.hypot(lx,ly)||1;lx/=l;ly/=l;
+    for(let b=0;b<NB;b++){const a=b*TAU/NB,d=Math.max(0,Math.cos(a)*lx+Math.sin(a)*ly);
+      host.style.setProperty("--e"+b,(.08+.92*Math.pow(d,3)).toFixed(3));
+      host.style.setProperty("--s"+b,(.04+.62*Math.pow(1-d,2)).toFixed(3));}
+    host.style.setProperty("--t",(.22+.3*(.5+.5*Math.sin(tx*2.2-ty*1.6))).toFixed(3));
+    band.setAttribute("transform","translate("+(40-tx*120).toFixed(1)+" "+(-ty*30).toFixed(1)+")");
+  };
+  const homeOn=()=>document.body.dataset.view==="home"&&!document.hidden;
+  const frame=now=>{
+    raf=0;
+    const idle=now-lastIn>2500;
+    const ix=idle?Math.sin(now/2300)*.35:0,iy=idle?Math.sin(now/3100)*.22:0;
+    C.x+=(T.x+ix-C.x)*.08;C.y+=(T.y+iy-C.y)*.08;
+    root.style.setProperty("--gx",(50+C.x*-40).toFixed(1)+"%");root.style.setProperty("--gy",(-10+C.y*-30).toFixed(1)+"%");
+    const vis=homeOn()&&host.getBoundingClientRect().bottom>-120;
+    if(vis){
+      const s=Math.min(1,Math.max(0,scrollY/380));sp+=(s-sp)*.18;
+      const k=Math.min(1,(now-spinT)/1100),spin=k<1?360*(1-Math.pow(1-k,3)):0;
+      host.style.transform="perspective(900px) translateY("+(sp*28).toFixed(1)+"px) rotateX("+(8-C.y*16+sp*42).toFixed(2)+"deg) rotateY("+(C.x*24+spin).toFixed(2)+"deg) scale("+(1-sp*.14).toFixed(3)+")";
+      host.style.opacity=(1-sp*.55).toFixed(3);
+      light(C.x,C.y);
+    }
+    if(vis||Math.abs(T.x-C.x)+Math.abs(T.y-C.y)>.002)raf=requestAnimationFrame(frame);
+  };
+  const kick=()=>{if(!raf&&!rm)raf=requestAnimationFrame(frame)};
+  light(0,0);host.style.transform="perspective(900px) rotateX(8deg)";
+  if(rm)return;
+  // Mus (dator)
+  addEventListener("pointermove",e=>{if(e.pointerType!=="mouse")return;T.x=clamp((e.clientX/innerWidth-.5)*2);T.y=clamp((e.clientY/innerHeight-.5)*2);lastIn=performance.now();kick()},{passive:true});
+  // Dra med fingret över loggan
+  host.addEventListener("pointermove",e=>{if(e.pointerType==="mouse")return;const r=host.getBoundingClientRect();T.x=clamp(((e.clientX-r.left)/r.width-.5)*2.4);T.y=clamp(((e.clientY-r.top)/r.height-.5)*2.4);lastIn=performance.now();kick()},{passive:true});
+  host.addEventListener("pointerleave",()=>{if(!ori){T.x=0;T.y=0}});
+  // Tryck på loggan = snurr
+  host.addEventListener("click",()=>{spinT=performance.now();kick()});
+  // Telefonens lutning
+  let ori=false,base=null;
+  const onOri=e=>{if(e.beta==null||e.gamma==null)return;
+    const ang=(screen.orientation&&screen.orientation.angle)||window.orientation||0;
+    let x=e.gamma,y=e.beta;if(ang===90){x=e.beta;y=-e.gamma}else if(ang===-90||ang===270){x=-e.beta;y=e.gamma}
+    if(base===null)base=y;base+=(y-base)*.008;
+    ori=true;T.x=clamp(x/24);T.y=clamp((y-base)/20);lastIn=performance.now();kick()};
+  const startOri=()=>addEventListener("deviceorientation",onOri,{passive:true});
+  const DOE=window.DeviceOrientationEvent;
+  if(DOE&&typeof DOE.requestPermission==="function"){
+    const ask=e=>{const a=e.target.closest&&e.target.closest('a[target="_blank"]');if(a)return;
+      removeEventListener("click",ask,true);
+      DOE.requestPermission().then(r=>{if(r==="granted"){startOri();try{localStorage.setItem("bt_tilt","1")}catch(_){}}}).catch(()=>{})};
+    addEventListener("click",ask,true);
+  }else if(DOE)startOri();
+  // Scroll + sidbyten
+  addEventListener("scroll",kick,{passive:true});
+  document.addEventListener("visibilitychange",kick);
+  new MutationObserver(kick).observe(document.body,{attributes:true,attributeFilter:["data-view"]});
+  // Länkar i kort glider in en i taget
+  const stag=()=>document.querySelectorAll(".view:not(.hide) .card").forEach(c=>c.querySelectorAll(":scope>.ex").forEach((x,i)=>x.style.setProperty("--i",i)));
+  stag();new MutationObserver(stag).observe(document.querySelector("main"),{childList:true,subtree:true});
+  kick();
 })();
 
 init();
