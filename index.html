@@ -574,6 +574,10 @@ body.sun .adma button{background:#eef2f6!important;color:#0b2238!important;borde
 .pgafoot img{width:64px;height:auto;filter:drop-shadow(0 4px 10px rgba(0,0,0,.35))}
 .pgafoot span{font-size:.72rem;font-weight:700;letter-spacing:.16em;padding-left:.16em;text-transform:uppercase;color:#c9d4de}
 body.sun .pgafoot span{color:#3a4f63}
+
+body.kb nav{transform:translateY(120%)!important;opacity:0;pointer-events:none}
+nav{transition:transform .2s ease,opacity .2s ease}
+body.kb main{padding-bottom:24px!important}
 </style></head>
 <body><svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <linearGradient id="lg-grad" x1="0" y1="0" x2="0" y2="1"><stop offset=".6" style="stop-color:currentColor"/><stop offset=".88" style="stop-color:var(--gold)"/></linearGradient>
@@ -1032,6 +1036,15 @@ async function renderAdmin(){
   box.append(pc,lo);
   async function op(pid,o2,v,ok){try{if(await aRpc("admin_update",{p_pin:apin,p_pid:pid,p_op:o2,p_value:v==null?null:String(v)})){admMsg(ok);await loadAll();rows=await aRpc("admin_list",{p_pin:apin});draw()}else admMsg("Det gick inte.",1)}catch(e){admMsg("Något gick fel: "+(e.message||e),1)}}
 }
+
+// Göm bottenmenyn medan tangentbordet är uppe (iPhone/Android)
+(function(){
+  const isField=e=>e&&e.matches&&e.matches('input:not([type=button]):not([type=checkbox]):not([type=radio]),textarea,select');
+  const set=v=>document.body.classList.toggle("kb",v);
+  document.addEventListener("focusin",e=>{if(isField(e.target))set(true)});
+  document.addEventListener("focusout",()=>setTimeout(()=>{if(!isField(document.activeElement))set(false)},120));
+  if(window.visualViewport){const vv=visualViewport;const chk=()=>{const open=vv.height<window.innerHeight*0.78;if(!open&&!isField(document.activeElement))set(false);else if(open)set(true)};vv.addEventListener("resize",chk)}
+})();
 
 init();
 </script></body></html>
