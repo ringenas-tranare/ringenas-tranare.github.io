@@ -578,6 +578,12 @@ body.sun .pgafoot span{color:#3a4f63}
 body.kb nav{transform:translateY(120%)!important;opacity:0;pointer-events:none}
 nav{transition:transform .2s ease,opacity .2s ease}
 body.kb main{padding-bottom:24px!important}
+
+/* Bottenmenyn ska stå helt still vid sidbyten */
+::view-transition-group(nav),::view-transition-old(nav),::view-transition-new(nav){animation:none!important}
+::view-transition-old(nav){display:none}
+nav{padding-bottom:max(6px,env(safe-area-inset-bottom,0px))!important;will-change:transform}
+html,body{overscroll-behavior-y:none}
 </style></head>
 <body><svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <linearGradient id="lg-grad" x1="0" y1="0" x2="0" y2="1"><stop offset=".6" style="stop-color:currentColor"/><stop offset=".88" style="stop-color:var(--gold)"/></linearGradient>
@@ -750,7 +756,7 @@ function go(v,np){
   view=v;if(v==="board")loadAll();
   if(!["betting","board","rules"].includes(v))sent=null;
   if(!np)try{history.pushState({v},"","#"+v)}catch(e){}
-  const swap=()=>{render();window.scrollTo(0,0)};
+  const swap=()=>{render();if(scrollY>0)window.scrollTo({top:0,behavior:"instant"})};
   if(document.startViewTransition&&!matchMedia("(prefers-reduced-motion:reduce)").matches){document.documentElement.dataset.dir=dir;document.startViewTransition(swap)}else swap();
 }
 document.addEventListener("click",e=>{const g=e.target.closest("[data-go]");if(g)go(g.dataset.go);const m=e.target.closest("[data-mode]");if(m){mode=m.dataset.mode;render()}});
