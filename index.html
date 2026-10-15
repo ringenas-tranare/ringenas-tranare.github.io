@@ -11,6 +11,13 @@
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="Ringenäs">
+<link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 667px) and (-webkit-device-pixel-ratio: 2)" href="splash-750x1334.png">
+<link rel="apple-touch-startup-image" media="(device-width: 414px) and (device-height: 896px) and (-webkit-device-pixel-ratio: 2)" href="splash-828x1792.png">
+<link rel="apple-touch-startup-image" media="(device-width: 390px) and (device-height: 844px) and (-webkit-device-pixel-ratio: 3)" href="splash-1170x2532.png">
+<link rel="apple-touch-startup-image" media="(device-width: 393px) and (device-height: 852px) and (-webkit-device-pixel-ratio: 3)" href="splash-1179x2556.png">
+<link rel="apple-touch-startup-image" media="(device-width: 430px) and (device-height: 932px) and (-webkit-device-pixel-ratio: 3)" href="splash-1290x2796.png">
+<link rel="apple-touch-startup-image" media="(device-width: 428px) and (device-height: 926px) and (-webkit-device-pixel-ratio: 3)" href="splash-1284x2778.png">
+<link rel="apple-touch-startup-image" media="(device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3)" href="splash-1125x2436.png">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;800&display=swap">
 <style>
 :root{--font:"Montserrat",system-ui,-apple-system,"Segoe UI",sans-serif;--bg:#d3e8f2;--card:#fff;--tx:#0b2c45;--mut:#486880;--ac:#0f6a9e;--lk:#0d5f8f;--hd:#0a3555;--gold:#f3b43f;--bd:#b7d3e1;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px)}
@@ -481,6 +488,65 @@ body:not([data-view="home"]) .scene.bd{opacity:.4}
 .card::after{-webkit-mask:var(--wb) repeat-x 0 100%/90px 22px!important;mask:var(--wb) repeat-x 0 100%/90px 22px!important;animation:drift 16s linear infinite!important}
 @media (prefers-reduced-motion:reduce){.wave *,.scene *,.card::after,.lg.big{animation:none!important}}
 @media(max-width:600px){#v-home .hero{padding-top:62px!important}}
+
+/* === Förslag: kontrast, solläge, prispall, enhetliga färger, tomt läge, tränare === */
+:root{--lk:#dbe4ec!important;--mut:#b8c6d3!important}
+label{color:#c7d3de!important}
+.sub,small,.msg{color:#b8c6d3}
+button.ghost{color:#dbe4ec!important}
+button.ghost:hover{color:var(--gold)!important}
+.ex i{color:#dbe4ec}
+.sunb{position:absolute;top:12px;left:12px;z-index:3;display:inline-flex;align-items:center;gap:6px;width:auto;min-height:36px;padding:.4em .8em;border-radius:99px;font-size:.75rem;font-weight:700;letter-spacing:.04em;color:#eef4fa;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.hero>.sunb{position:absolute!important;z-index:3!important}
+.sunb .i{width:16px;height:16px}
+.sunb.on{background:var(--gold);color:#1a1405;border-color:transparent}
+.podium{display:grid;grid-template-columns:1fr 1fr 1fr;align-items:end;gap:8px;margin:6px 0 14px}
+.pd{display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0}
+.pd .medal{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;margin-bottom:6px;color:#1a1405;box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 4px 10px rgba(0,0,0,.3)}
+.pd .pn{max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:.9rem}
+.pd .ps{font-size:.68rem;margin-bottom:6px}
+.pd .block{width:100%;border-radius:14px 14px 6px 6px;display:grid;place-items:center;border:1px solid rgba(255,255,255,.18)}
+.pd .pp{font-weight:800;font-size:1.25rem;font-variant-numeric:tabular-nums}
+.pd.p1 .medal,.pd.p1 .block{background:linear-gradient(180deg,#fbe9a6,#e0bb4a 55%,#b58b24)}
+.pd.p2 .medal,.pd.p2 .block{background:var(--ss)}
+.pd.p3 .medal,.pd.p3 .block{background:linear-gradient(180deg,#f3c9a2,#c98b5a 55%,#8f5a33)}
+.pd.p1 .block{height:96px}.pd.p2 .block{height:72px}.pd.p3 .block{height:56px}
+.pd .block .pp{color:#1a1405}
+.pd.p2 .block .pp{color:#0b2238}
+.pd.me .pn::after{content:" (du)";color:var(--gold);font-weight:600}
+.pd.bump .block{animation:bump 1.4s ease}
+.empty{display:flex;flex-direction:column;align-items:center;gap:4px;padding:22px 8px;text-align:center}
+.empty .i{width:40px;height:40px;color:var(--gold);margin-bottom:6px}
+.coaches{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0 4px}
+.coach{display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center}
+.coach .av{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:1.3rem;color:#0b2238;background:var(--ss);box-shadow:inset 0 1px 0 #fff,0 6px 14px rgba(0,0,0,.3);margin-bottom:6px}
+.coach small{font-size:.7rem}
+/* Solläge */
+body.sun{background:#e9eef3}
+body.sun .card,body.sun #result{background:rgba(255,255,255,.94)!important;border-color:#d3dce5!important;color:#0b2238;box-shadow:0 8px 24px rgba(11,34,56,.12)!important}
+body.sun h2{background:none!important;-webkit-text-fill-color:#0b2238!important;color:#0b2238!important}
+body.sun label,body.sun .sub,body.sun small,body.sun .msg,body.sun p{color:#3a4f63!important}
+body.sun .ex{background:#f3f6f9!important;border-color:#d3dce5!important;color:#0b2238!important}
+body.sun .ex i{background:#e3e9ef!important;color:#0b2238}
+body.sun input,body.sun select{background:#fff!important;color:#0b2238!important;border-color:#c5d0da!important}
+body.sun .chip,body.sun .seg button{background:#eef2f6!important;color:#0b2238!important;border-color:#d3dce5!important}
+body.sun .chip.on,body.sun .seg button.on{background:var(--gold)!important;color:#1a1405!important}
+body.sun .seg.q button{background:transparent!important}
+body.sun button.ghost{color:#0b2238!important}
+body.sun #formcard .rule{color:#5a4510!important;background:#fff6dc!important}
+body.sun .big{-webkit-text-fill-color:#0b2238!important;color:#0b2238!important;background:none!important}
+body.sun .rk{background:#eef2f6!important;color:#0b2238!important}
+body.sun .row{border-bottom-color:#e1e7ed!important}
+body.sun .dots span{background:#eef2f6!important;color:#0b2238!important}
+body.sun .dots .c{background:var(--gold)!important}
+body.sun .sc td{border-top-color:#e1e7ed}
+body.sun .top,body.sun nav{background:rgba(255,255,255,.85)!important;border-color:#d3dce5!important}
+body.sun .top b{color:#0b2238}
+body.sun nav button{color:#3a4f63!important}
+body.sun nav button.on{color:#0b2238!important;background:#eef2f6!important}
+body.sun .empty b{color:#0b2238}
+body.sun .scene.bd{opacity:.25}
+body.sun[data-view="home"] .scene.bd{opacity:1}
 </style></head>
 <body><svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <linearGradient id="lg-grad" x1="0" y1="0" x2="0" y2="1"><stop offset=".6" style="stop-color:currentColor"/><stop offset=".88" style="stop-color:var(--gold)"/></linearGradient>
@@ -521,7 +587,7 @@ body:not([data-view="home"]) .scene.bd{opacity:.4}
 <rect width="400" height="260" fill="url(#shade)"/></svg><div class="top"><svg class="lg" aria-hidden="true"><use href="#i-logo"/></svg><b>Ringenäs Tränare</b></div><main>
 
 <section class="view" id="v-home">
-<div class="hero"><button class="inst hide" id="instBtn" type="button" aria-label="Spara appen på hemskärmen"><svg viewBox="0 0 24 24" class="i"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 19h14"/></svg><span>Spara app</span></button><svg class="lg big" aria-hidden="true"><use href="#i-logo"/></svg><div class="eyebrow" style="margin-top:14px">Välkommen till</div><h1>Ringenäs Tränare</h1><p>Tillsammans blir vi bättre!</p><svg class="wave" viewBox="0 0 400 34" preserveAspectRatio="none" aria-hidden="true"><path class="w3" d="M0 6 C60 22 120 -4 200 10 S340 24 400 4 V34 H0Z"/><path class="w2" d="M0 12 C50 28 90 0 150 14 S250 30 300 12 S380 4 400 12 V34 H0Z"/><path class="wc c1" d="M0 12 C50 28 90 0 150 14 S250 30 300 12 S380 4 400 12"/><path class="w1" d="M0 20 C40 4 70 4 110 18 S180 34 220 18 S300 2 340 16 S390 26 400 20 V34 H0Z"/><path class="wc c2" d="M0 20 C40 4 70 4 110 18 S180 34 220 18 S300 2 340 16 S390 26 400 20"/></svg></div>
+<div class="hero"><button class="sunb" id="sunBtn" type="button" aria-pressed="false" aria-label="Solläge: ljus design för utomhus"><svg viewBox="0 0 24 24" class="i"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span>Solläge</span></button><button class="inst hide" id="instBtn" type="button" aria-label="Spara appen på hemskärmen"><svg viewBox="0 0 24 24" class="i"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 19h14"/></svg><span>Spara app</span></button><svg class="lg big" aria-hidden="true"><use href="#i-logo"/></svg><div class="eyebrow" style="margin-top:14px">Välkommen till</div><h1>Ringenäs Tränare</h1><p>Tillsammans blir vi bättre!</p><svg class="wave" viewBox="0 0 400 34" preserveAspectRatio="none" aria-hidden="true"><path class="w3" d="M0 6 C60 22 120 -4 200 10 S340 24 400 4 V34 H0Z"/><path class="w2" d="M0 12 C50 28 90 0 150 14 S250 30 300 12 S380 4 400 12 V34 H0Z"/><path class="wc c1" d="M0 12 C50 28 90 0 150 14 S250 30 300 12 S380 4 400 12"/><path class="w1" d="M0 20 C40 4 70 4 110 18 S180 34 220 18 S300 2 340 16 S390 26 400 20 V34 H0Z"/><path class="wc c2" d="M0 20 C40 4 70 4 110 18 S180 34 220 18 S300 2 340 16 S390 26 400 20"/></svg></div>
 <div class="card"><h2>Boka &amp; följ oss</h2>
 <a class="ex hl" href="https://appointment.balancegolf.com/?embed=true&amp;clubId=9" target="_blank" rel="noopener"><span class="ic"><svg class="i"><use href="#i-club"/></svg></span><div><b>Boka lektion eller custom fitting</b><small>Personlig hjälp av våra PGA-tränare</small></div><i><svg class="i"><use href="#i-ext"/></svg></i></a>
 <a class="ex" href="https://appointment.balancegolf.com/?embed=true&amp;clubId=9" target="_blank" rel="noopener"><span class="ic"><svg class="i"><use href="#i-cal"/></svg></span><div><b>Svingkurs Vinterträning</b><small>Boka din plats och bli bättre redan i vinter</small></div><i><svg class="i"><use href="#i-ext"/></svg></i></a>
@@ -539,6 +605,7 @@ body:not([data-view="home"]) .scene.bd{opacity:.4}
 <a class="ex" href="https://ringenas.com/kontakta-oss/" target="_blank" rel="noopener"><span class="ic"><svg class="i"><use href="#i-globe"/></svg></span><div><b>ringenas.com</b><small>Öppettider och mer information</small></div><i><svg class="i"><use href="#i-ext"/></svg></i></a>
 </div>
 <div class="card"><h2>Träna med våra PGA-tränare</h2><p>Thomas, Peter och Oskar – prisbelönta PGA-tränare. Personliga lektioner och kurser för alla nivåer, året runt.</p>
+<div class="coaches"><div class="coach"><span class="av">T</span><b>Thomas</b><small>PGA-tränare</small></div><div class="coach"><span class="av">P</span><b>Peter</b><small>PGA-tränare</small></div><div class="coach"><span class="av">O</span><b>Oskar</b><small>PGA-tränare</small></div></div>
 <a class="ex" href="https://appointment.balancegolf.com/?embed=true&amp;clubId=9" target="_blank" rel="noopener"><span class="ic"><svg class="i"><use href="#i-cal"/></svg></span><div><b>Boka din lektion</b><small>Välj en tid som passar dig</small></div><i><svg class="i"><use href="#i-ext"/></svg></i></a></div>
 </section>
 
@@ -841,6 +908,27 @@ function placeScene(){
 }
 addEventListener("resize",placeScene);addEventListener("load",placeScene);
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(placeScene);
+
+(function(){
+  const b=$("sunBtn");const on=v=>{document.body.classList.toggle("sun",v);b.setAttribute("aria-pressed",v);b.classList.toggle("on",v);const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=v?"#eef3f7":"#0a3555"};
+  on(store("bt_sun")==="1");
+  b.onclick=()=>{const v=!document.body.classList.contains("sun");on(v);store("bt_sun",v?"1":"0")};
+})();
+// 3 + 7: prispall och snyggare tomt läge
+const _rb=renderBoard;
+renderBoard=function(){
+  _rb();
+  const b=$("board");const rows=[...b.querySelectorAll(":scope > .row")];
+  if(!rows.length){b.textContent="";const e=document.createElement("div");e.className="empty";e.innerHTML='<svg class="i" viewBox="0 0 24 24"><path d="M6 21V3"/><path d="M6 4l12 4-12 4"/><path d="M3 21h8"/></svg><b>Inga resultat ännu</b><small>Bli först på topplistan – starta en omgång!</small>';b.appendChild(e);return}
+  const top=rows.slice(0,3);const pod=document.createElement("div");pod.className="podium";
+  const cls=["p1","p2","p3"];
+  [1,0,2].forEach(k=>{const r=top[k];if(!r)return;const c=document.createElement("div");c.className="pd "+cls[k]+(r.classList.contains("me")?" me":"");
+    const nm=r.querySelector(".nm");const name=nm?nm.childNodes[0].textContent:"";const sub=r.querySelector(".sub")?.textContent||"";const pts=r.querySelector(".pts")?.textContent||"";
+    c.innerHTML='<span class="medal">'+(k+1)+'</span><b class="pn"></b><small class="ps"></small><div class="block"><span class="pp"></span></div>';
+    c.querySelector(".pn").textContent=name;c.querySelector(".ps").textContent=sub;c.querySelector(".pp").textContent=pts;
+    if(r.classList.contains("bump"))c.classList.add("bump");pod.appendChild(c)});
+  top.forEach(r=>r.remove());b.prepend(pod);
+};
 
 init();
 </script></body></html>
