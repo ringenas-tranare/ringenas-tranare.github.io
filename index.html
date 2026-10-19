@@ -682,6 +682,30 @@ body.sun .card,body.sun #result{background:radial-gradient(120% 70% at var(--gx,
 body.sun .stp .sb{background:#eef3f7;border-color:#cfd9e3}
 body.sun .ctot{background:#eef3f7}
 @media(prefers-reduced-motion:reduce){.cdwn b.pop,.row.win,.row .mv{animation:none}}
+
+/* === Koder & adminmeny === */
+.codebox .cbrow{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+.codebox .codein{font-size:2rem;font-weight:800;letter-spacing:.5em;text-align:center;padding:10px 0 10px .5em;margin:0;font-variant-numeric:tabular-nums}
+.codebox .cbrow .go{margin:0;width:auto;padding-left:22px;padding-right:22px}
+.codebox.shake{animation:shake .4s}
+body.betlock #v-betting>:not(.ghost):not(.betgate),body.betlock #v-board>:not(.ghost):not(.betgate){display:none!important}
+.sesbar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:2px 4px}
+.sesbar:empty{display:none}
+.sesbar .sbt{display:flex;flex-direction:column;line-height:1.25}
+.sesbar .sbt small{color:var(--mut)}
+.sesbar .ghost{margin:0;width:auto;padding:8px 14px}
+.admtiles{display:flex;flex-direction:column;gap:10px;margin:6px 0 4px}
+.admback{margin:0 0 10px!important;justify-content:flex-start;width:auto!important;padding-left:0}
+.admh3{font-size:.75rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mut);margin:20px 0 6px}
+.sessrow .srtop{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.codepill{flex:none;font-size:1.35rem;font-weight:900;letter-spacing:.18em;padding:8px 12px 8px 16px;border-radius:12px;background:var(--gold)!important;color:#1a1405!important;border:0;font-variant-numeric:tabular-nums}
+.codeshow b{font-size:clamp(5rem,26vw,10rem)!important;letter-spacing:.12em;padding-left:.12em;font-variant-numeric:tabular-nums}
+.codeshow p{margin:0 24px;text-align:center;color:#dfe7ef}
+.codeshow .msg{margin-top:18px}
+.ctabs{margin:0}
+.ctabs .chip{flex:1}
+.codepill{width:auto!important;min-width:0!important;margin:0!important;flex:0 0 auto!important}
+.sessrow .srtop .admh{min-width:0;flex:1}
 </style></head>
 <body><svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <linearGradient id="lg-grad" x1="0" y1="0" x2="0" y2="1"><stop offset=".6" style="stop-color:currentColor"/><stop offset=".88" style="stop-color:var(--gold)"/></linearGradient>
@@ -748,8 +772,7 @@ body.sun .ctot{background:#eef3f7}
 
 <section class="view hide" id="v-admin">
 <button class="ghost" data-go="contact" style="margin:0;justify-content:flex-start"><svg class="i s"><use href="#i-back"/></svg>Tillbaka</button>
-<div class="card hide" id="admCompCard"><h2>Träningstävlingar</h2><div id="admComp"></div></div>
-<div class="card"><h2>Admin – Bettingträning</h2><div id="admBody">Laddar…</div></div>
+<div class="card"><h2 id="admTitle">Admin</h2><div id="admBody">Laddar…</div></div>
 </section>
 
 <section class="view hide" id="v-comp">
@@ -758,6 +781,7 @@ body.sun .ctot{background:#eef3f7}
 </section>
 
 <section class="view hide" id="v-play">
+<div id="playCode"></div>
 <div class="card"><h2>Utmana dig själv</h2>
 <button class="ex" data-go="betting"><span class="ic"><svg class="i"><use href="#i-target"/></svg></span><div><b>Bettingträning</b><small>5 omgångar · satsa smart och klättra i topplistan</small></div><i><svg class="i"><use href="#i-next"/></svg></i></button>
 <button class="ex" data-go="comp"><span class="ic"><svg class="i"><use href="#i-trophy"/></svg></span><div><b>Träningstävling</b><small>Live-topplista för dagens tävling · upp till 18 hål eller stationer</small></div><i><svg class="i"><use href="#i-next"/></svg></i></button>
@@ -767,7 +791,7 @@ body.sun .ctot{background:#eef3f7}
 
 <section class="view hide" id="v-betting">
 <button class="ghost" data-go="play" style="margin:0;justify-content:flex-start"><svg class="i s"><use href="#i-back"/></svg>Alla övningar</button>
-<div class="chips sub3"><button class="chip" data-go="betting">Spela</button><button class="chip" data-go="board">Topplista</button><button class="chip" data-go="rules">Regler</button></div>
+<div class="betgate"></div><div class="chips sub3"><button class="chip" data-go="betting">Spela</button><button class="chip" data-go="board">Topplista</button><button class="chip" data-go="rules">Regler</button></div><div class="sesbar"></div>
 <div class="card hide" id="scc"><h2>Scorekort</h2><div id="scorecard"></div></div>
 <div class="card" id="formcard">
 <h2 id="rtitle">Din omgång</h2>
@@ -791,7 +815,7 @@ body.sun .ctot{background:#eef3f7}
 
 <section class="view hide" id="v-board">
 <button class="ghost" data-go="play" style="margin:0;justify-content:flex-start"><svg class="i s"><use href="#i-back"/></svg>Alla övningar</button>
-<div class="chips sub3"><button class="chip" data-go="betting">Spela</button><button class="chip" data-go="board">Topplista</button><button class="chip" data-go="rules">Regler</button></div>
+<div class="betgate"></div><div class="chips sub3"><button class="chip" data-go="betting">Spela</button><button class="chip" data-go="board">Topplista</button><button class="chip" data-go="rules">Regler</button></div><div class="sesbar"></div>
 <div class="card"><span class="live hide" id="live">LIVE</span><h2>Topplista – Bettingträning</h2>
 <div class="chips"><button class="chip on" data-mode="now">Pågående spel</button><button class="chip" data-mode="best">Bästa resultat</button></div>
 <div class="msg" id="place" style="margin:0 0 .5em"></div>
@@ -840,13 +864,13 @@ let myId=store("bt_id");if(!myId){myId=(window.crypto&&crypto.randomUUID)?crypto
 let myPid=store("bt_pid");if(!myPid){myPid=Math.random().toString(36).slice(2,10)+Date.now().toString(36);store("bt_pid",myPid)}
 let _x="",admin=null,shared=[];
 async function api(body){return {ok:false,error:"Admin sköts i Supabase"}}
-async function loadAll(){if(!sb)return;try{const {data,error}=await sb.from("betting_players").select("pid,name,rounds,history,adj,updated_at");if(error)throw error;shared=(data||[]).map(r=>({...r,ts:Date.parse(r.updated_at)}));$("live").classList.remove("hide");renderBoard()}catch(e){$("live").classList.add("hide");$("place").textContent="Kunde inte hämta topplistan just nu."}}
+async function loadAll(){if(!sb)return;if(!betSid){shared=[];renderBoard();return}try{const {data,error}=await sb.rpc("betting_board",{p_sid:betSid});if(error)throw error;shared=(data||[]).map(r=>({...r,ts:Date.parse(r.updated_at)}));$("live").classList.remove("hide");renderBoard()}catch(e){$("live").classList.add("hide");$("place").textContent="Kunde inte hämta topplistan just nu."}}
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)loadAll()});
-async function push(){if(!sb)return;try{await sb.rpc("save_betting",{p_pid:myPid,p_secret:myId,p_name:me.name||"",p_rounds:me.rounds||{},p_history:me.history||[]})}catch(e){}}
+async function push(){if(!sb||!betSid)return;try{const r=await sb.rpc("betting_save",{p_sid:betSid,p_pid:myPid,p_secret:myId,p_name:me.name||"",p_rounds:me.rounds||{},p_history:me.history||[]});if(!r.error&&r.data===false){const m=$("msg");if(m){m.textContent="Kunde inte spara – passet kan vara avslutat.";m.classList.add("err")}betRefreshSess()}}catch(e){}}
 async function adminOp(pid,op,value){try{const r=await api({action:"admin",pin:admin,op,pid,value});if(!r.ok)$("place").textContent=r.error||"Misslyckades";await loadAll()}catch(e){$("place").textContent="Kunde inte nå servern"}}
-let me;try{me=JSON.parse(store("bt_me")||"null")}catch(e){me=null}
+let betSid=store("bt_bsid")||null,betSess=null;let me;try{me=JSON.parse(store("bt_me"+(betSid?"_"+betSid:""))||"null")}catch(e){me=null}
 me=me||{};me.rounds=me.rounds||{};me.history=me.history||[];
-function save(){store("bt_me",JSON.stringify(me))}
+function save(){store("bt_me"+(betSid?"_"+betSid:""),JSON.stringify(me))}
 const mine=()=>me;
 
 for(let i=0;i<=10;i++)$("drives").add(new Option(i,i));
@@ -947,12 +971,14 @@ function render(){document.body.dataset.view=view;if(view==="admin")renderAdmin(
 ["drives","dist","bet","ok"].forEach(i=>$(i).addEventListener("input",renderPlay));
 
 function init(){
-  {const m=location.hash.match(/^#comp-([A-Za-z0-9]{4})$/);if(m){compCode=m[1].toUpperCase();store("bt_comp",compCode);history.replaceState(null,"","#comp")}}
+  {const pc=$("playCode");if(pc)pc.append(codeBox("Har du en kod?","Skriv in koden från din tränare så kommer du direkt till rätt övning."))}
+  betBar();if(betSid)betRefreshSess();
+  {const m=location.hash.match(/^#kod-([0-9]{4})$/);if(m&&sb){history.replaceState(null,"","#play");sb.rpc("session_join",{p_code:m[1]}).then(r=>{if(r.data)joinSession(r.data)})}}
   const h=location.hash.slice(1);if(["home","play","comp","betting","board","rules","contact","admin"].includes(h))view=h;
   if(!$("name").value&&me.name)$("name").value=me.name;
   $("send").disabled=false;$("msg").textContent=API?"":"Dina resultat sparas på den här enheten.";
-  $("admbox").classList.add("hide");$("localnote").textContent=API?"Alla med länken kan se topplistan.":"Resultaten sparas bara på den här enheten.";
-  render();loadAll();let _tk=0;setInterval(()=>{_tk++;if(!document.hidden&&(!rtOk||_tk%4===0)&&(view==="board"||view==="betting"))loadAll()},5000);
+  $("admbox").classList.add("hide");$("localnote").textContent=API?"Bara de som har passets kod ser topplistan.":"Resultaten sparas bara på den här enheten.";
+  render();loadAll();let _tk=0;setInterval(()=>{_tk++;if(!document.hidden&&(view==="board"||view==="betting")){loadAll();if(_tk%6===0)betRefreshSess()}},5000);
 }
 $("send").onclick=async()=>{
   const name=played(state().p)>0?state().p.name:$("name").value.trim();const {p,r,drives,max,mult}=state();
@@ -1031,7 +1057,7 @@ $("admGo").onclick=async()=>{try{const r=await api({action:"admin",pin:$("pin").
     watch();new MutationObserver(watch).observe(document.querySelector("main"),{attributes:true,subtree:true,attributeFilter:["class"]});
   }
 })();
-if(sb){sb.channel("lb").on("postgres_changes",{event:"*",schema:"public",table:"betting_players"},()=>loadAll()).subscribe(st=>{rtOk=st==="SUBSCRIBED"})}
+if(false&&sb){sb.channel("lb").on("postgres_changes",{event:"*",schema:"public",table:"betting_players"},()=>loadAll()).subscribe(st=>{rtOk=st==="SUBSCRIBED"})}
 (function(){
   const btn=$("instBtn"),sh=$("instSheet"),tx=$("instTxt");let dp=null;
   const standalone=matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
@@ -1087,66 +1113,181 @@ async function aRpc(fn,args){const r=await sb.rpc(fn,args||{});if(r.error)throw 
 function el(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
 function twoTap(btn,label,fn){btn.onclick=async()=>{if(btn.dataset.sure){btn.disabled=true;try{await fn()}finally{btn.disabled=false}}else{btn.dataset.sure=1;const o=btn.textContent;btn.textContent=label;setTimeout(()=>{if(btn.isConnected){delete btn.dataset.sure;btn.textContent=o}},4000)}}}
 function admMsg(t,bad){const m=$("admMsg");if(m){m.textContent=t;m.classList.toggle("err",!!bad)}}
+/* === Pass med 4-siffrig kod (betting + tävling) === */
+function codeBox(title,lead){
+  const c=el("div","card codebox");c.append(el("h2",null,title));if(lead)c.append(el("p","msg",lead));
+  const w=el("div","cbrow");const i=el("input","codein");i.inputMode="numeric";i.maxLength=4;i.placeholder="••••";i.autocomplete="one-time-code";i.setAttribute("aria-label","Fyrsiffrig kod");i.pattern="[0-9]*";
+  const b=el("button","go","Gå med");const m=el("div","msg");
+  const sub=async()=>{const v=i.value.replace(/\D/g,"");if(v.length!==4){m.textContent="Koden har fyra siffror.";m.classList.add("err");return}
+    if(!sb){m.textContent="Ingen anslutning till databasen just nu.";m.classList.add("err");return}
+    b.disabled=true;m.textContent="Söker…";m.classList.remove("err");
+    try{const r=await sb.rpc("session_join",{p_code:v});if(r.error)throw r.error;
+      if(!r.data){m.textContent="Hittar inget pågående pass med den koden – fråga din tränare.";m.classList.add("err");c.classList.remove("shake");void c.offsetWidth;c.classList.add("shake");return}
+      i.value="";m.textContent="";joinSession(r.data)}
+    catch(e){m.textContent="Kunde inte nå databasen – kontrollera nätet.";m.classList.add("err")}finally{b.disabled=false}};
+  i.oninput=()=>{i.value=i.value.replace(/\D/g,"").slice(0,4);if(i.value.length===4)sub()};
+  i.onkeydown=e=>{if(e.key==="Enter")sub()};b.onclick=sub;
+  w.append(i,b);c.append(w,m);return c;
+}
+function joinSession(s){
+  if(s.kind==="betting"){betUse(s.id,s);if(view!=="betting")go("betting");else render()}
+  else{compTab="card";compJoin(s.id);if(view!=="comp")go("comp");else compShow()}
+}
+function betLoadMe(){let m=null;try{m=JSON.parse(store("bt_me"+(betSid?"_"+betSid:""))||"null")}catch(e){}m=m||{};m.rounds=m.rounds||{};m.history=m.history||[];return m}
+function betUse(sid,sess){
+  betSid=sid;betSess=sess||null;store("bt_bsid",sid||"");
+  me=betLoadMe();shared=[];sent=null;lockedMsg=null;
+  if($("name"))$("name").value=me.name||store("bt_name")||"";
+  if(sid)loadAll();betBar();
+}
+async function betRefreshSess(){if(!sb||!betSid)return;try{const r=await sb.rpc("session_get",{p_id:betSid});if(!r.error){if(!r.data){betUse(null);render();return}betSess=r.data;betBar()}}catch(e){}}
+function betBar(){
+  document.body.classList.toggle("betlock",!betSid);
+  document.querySelectorAll(".sesbar").forEach(b=>{b.textContent="";if(!betSid)return;
+    const t=el("div","sbt");t.append(el("b",null,betSess?betSess.name:"Bettingpass"),el("small",null,betSess?(betSess.status==="closed"?"Passet är avslutat":"Kod "+betSess.code):""));
+    const l=el("button","ghost","Lämna");l.onclick=()=>{betUse(null);render()};b.append(t,l)});
+  document.querySelectorAll(".betgate").forEach(g=>{g.textContent="";if(!betSid)g.append(codeBox("Gå med i passet","Skriv in den fyrsiffriga koden du fått av din tränare."))});
+}
+function showCode(code,name){
+  const o=el("div","cdwn codeshow");o.append(el("small",null,name||"Kod"),el("b",null,code),el("p",null,"Gå in på ringenas-tranare.github.io → Spela och skriv in koden"),el("span","msg","Tryck för att stänga"));
+  o.onclick=()=>o.remove();document.body.append(o);
+}
+
+/* === Admin: startmeny + undersidor === */
+let admPage="home",admBetSid=null;
 async function renderAdmin(){
-  const box=$("admBody");if(!box)return;{const cc=$("admCompCard");if(cc&&!apin)cc.classList.add("hide")}
+  const box=$("admBody");if(!box)return;const ttl=$("admTitle");
   if(!sb){box.textContent="Ingen anslutning till databasen just nu.";return}
   box.textContent="";
   if(!apin){
+    if(ttl)ttl.textContent="Tränarinloggning";
     let has=true;try{has=await aRpc("admin_status")}catch(e){box.textContent="";const p0=el("p",null,"Kunde inte nå databasen. Kontrollera att du har internet och att sidan är öppnad i Safari via ringenas-tranare.github.io.");const d0=el("small","msg","Fel: "+String((e&&(e.message||e.code))||e).slice(0,140));const r0=el("button","go","Försök igen");r0.onclick=()=>renderAdmin();box.append(p0,d0,r0);return}
     const p=el("p",null,has?"Logga in med din admin-kod.":"Skapa en admin-kod (minst 6 tecken). Den gäller sedan för all administration.");
     const i1=el("input");i1.type="password";i1.placeholder="Admin-kod";i1.autocomplete=has?"current-password":"new-password";
     box.append(p,i1);let i2=null;
     if(!has){i2=el("input");i2.type="password";i2.placeholder="Upprepa koden";i2.autocomplete="new-password";i2.style.marginTop="8px";box.append(i2)}
     const b=el("button","go",has?"Logga in":"Skapa admin-kod");const m=el("div","msg");m.id="admMsg";box.append(b,m);
+    i1.onkeydown=e=>{if(e.key==="Enter")b.click()};
     b.onclick=async()=>{const v=i1.value;b.disabled=true;try{
       if(!has){if(v.length<6)return admMsg("Koden måste vara minst 6 tecken.",1);if(v!==i2.value)return admMsg("Koderna matchar inte.",1);
         if(!await aRpc("admin_setup",{p_pin:v}))return admMsg("Kunde inte skapa koden.",1)}
-      if(await aRpc("admin_login",{p_pin:v})){apin=v;try{sessionStorage.setItem("bt_apin",v)}catch(e){}renderAdmin()}
+      if(await aRpc("admin_login",{p_pin:v})){apin=v;try{sessionStorage.setItem("bt_apin",v)}catch(e){}admPage="home";renderAdmin()}
       else admMsg("Fel kod, eller för många försök – vänta en stund.",1);
     }catch(e){admMsg("Något gick fel: "+(e.message||e),1)}finally{b.disabled=false}};
     return;
   }
-  let rows=[];try{rows=await aRpc("admin_list",{p_pin:apin})}catch(e){box.textContent="Kunde inte hämta spelare.";return}
-  if(!(await aRpc("admin_login",{p_pin:apin}))){apin=null;try{sessionStorage.removeItem("bt_apin")}catch(e){}return renderAdmin()}
-  // Globala åtgärder
-  const g=el("div","admg");
-  const bNew=el("button","go","Nytt pass – nollställ pågående spel");
-  twoTap(bNew,"Tryck igen för att nollställa alla",async()=>{await aRpc("admin_reset_all",{p_pin:apin,p_mode:"rounds"});await loadAll();renderAdmin()});
-  const bAll=el("button","ghost danger","Töm hela topplistan");
-  twoTap(bAll,"Säker? Allt raderas – tryck igen",async()=>{await aRpc("admin_reset_all",{p_pin:apin,p_mode:"all"});await loadAll();renderAdmin()});
-  g.append(bNew,bAll);
-  const m=el("div","msg");m.id="admMsg";
-  const q=el("input");q.placeholder="Sök spelare…";q.value=admQ;q.oninput=()=>{admQ=q.value;draw()};q.style.marginTop="14px";
-  const list=el("div","admlist");
-  box.append(g,m,q,list);
-  function draw(){
-    list.textContent="";
-    const f=rows.filter(r=>!admQ||String(r.name||"").toLowerCase().includes(admQ.toLowerCase()));
-    if(!f.length){list.append(el("p","msg","Inga spelare."));return}
-    f.forEach(r=>{
-      const c=el("div","admrow"+(r.blocked?" blk":""));
-      const n=Object.keys(r.rounds||{}).length;
-      const head=el("div","admh");head.append(el("b",null,r.name||"(utan namn)"),el("small",null,"Omgång "+n+"/5 · "+total(r)+" p · bästa "+best(r)+(r.blocked?" · DOLD":"")+(r.adj?" · justerat "+(r.adj>0?"+":"")+r.adj:"")));
-      const act=el("div","adma");
-      const adj=el("input");adj.type="number";adj.placeholder="± p";adj.value=r.adj||"";adj.className="admin-adj";
-      const bA=el("button",null,"Justera");bA.onclick=()=>op(r.pid,"adj",adj.value,"Poäng justerade.");
-      const nm=el("input");nm.value=r.name||"";nm.maxLength=30;nm.className="admin-name";
-      const bN=el("button",null,"Byt namn");bN.onclick=()=>op(r.pid,"name",nm.value.trim(),"Namnet ändrat.");
-      const bR=el("button",null,"Nollställ spel");twoTap(bR,"Säker?",()=>op(r.pid,"reset",null,"Spelet nollställt."));
-      const bB=el("button",null,r.blocked?"Visa":"Dölj");bB.onclick=()=>op(r.pid,r.blocked?"unblock":"block",null,r.blocked?"Spelaren visas igen.":"Spelaren är dold.");
-      const bD=el("button","danger","Ta bort");twoTap(bD,"Säker?",()=>op(r.pid,"delete",null,"Spelaren borttagen."));
-      const r3=el("div","adm3");r3.append(bR,bB,bD);act.append(nm,bN,adj,bA,r3);c.append(head,act);list.append(c);
-    });
+  let list=[];try{list=await aRpc("admin_session_list",{p_pin:apin})||[]}catch(e){box.textContent="Kunde inte nå databasen.";return}
+  if(!list.length&&!(await aRpc("admin_login",{p_pin:apin}))){apin=null;try{sessionStorage.removeItem("bt_apin")}catch(e){}return renderAdmin()}
+  const back=()=>{const b=el("button","ghost admback","← Adminmeny");b.onclick=()=>{admPage="home";admBetSid=null;renderAdmin();scrollTo({top:0,behavior:"smooth"})};return b};
+  const msg=()=>{const m=el("div","msg");m.id="admMsg";return m};
+  const comps=list.filter(x=>x.kind==="comp"),bets=list.filter(x=>x.kind==="betting");
+  if(admPage==="home"){
+    if(ttl)ttl.textContent="Adminmeny";
+    box.append(el("p","msg","Vad vill du göra?"));
+    const g=el("div","admtiles");
+    const tile=(ic,t,s,fn)=>{const b=el("button","ex");b.innerHTML='<span class="ic"><svg class="i"><use href="#'+ic+'"/></svg></span><div><b></b><small></small></div><i><svg class="i"><use href="#i-next"/></svg></i>';b.querySelector("b").textContent=t;b.querySelector("small").textContent=s;b.onclick=fn;g.append(b)};
+    const oc=comps.filter(x=>x.status==="open").length,ob=bets.filter(x=>x.status==="open").length;
+    tile("i-trophy","Träningstävlingar",oc?oc+" pågår just nu":"Starta en tävling med live-topplista",()=>{admPage="comp";renderAdmin()});
+    tile("i-target","Bettingträning",ob?ob+" pass pågår just nu":"Starta ett bettingpass med egen kod",()=>{admPage="bet";renderAdmin()});
+    tile("i-pin","Inställningar","Byt admin-kod · logga ut",()=>{admPage="settings";renderAdmin()});
+    box.append(g);
+    const open=list.filter(x=>x.status==="open");
+    if(open.length){box.append(el("h3","admh3","Pågår nu"));open.forEach(x=>box.append(sessRow(x,true)))}
+    return;
   }
-  draw();
-  // Byt kod + logga ut
-  const pc=el("details","admpin");pc.append(el("summary",null,"Byt admin-kod"));
-  const o=el("input");o.type="password";o.placeholder="Nuvarande kod";const nw=el("input");nw.type="password";nw.placeholder="Ny kod (minst 6 tecken)";nw.style.marginTop="8px";
-  const bc=el("button","go","Spara ny kod");bc.onclick=async()=>{try{if(await aRpc("admin_change_pin",{p_pin:o.value,p_new:nw.value})){apin=nw.value;try{sessionStorage.setItem("bt_apin",nw.value)}catch(e){}admMsg("Koden är bytt.")}else admMsg("Fel nuvarande kod eller för kort ny kod.",1)}catch(e){admMsg("Något gick fel.",1)}};
-  pc.append(o,nw,bc);
-  const lo=el("button","ghost","Logga ut");lo.onclick=()=>{apin=null;try{sessionStorage.removeItem("bt_apin")}catch(e){}renderAdmin()};
-  box.append(pc,lo);renderAdminComp();
-  async function op(pid,o2,v,ok){try{if(await aRpc("admin_update",{p_pin:apin,p_pid:pid,p_op:o2,p_value:v==null?null:String(v)})){admMsg(ok);await loadAll();rows=await aRpc("admin_list",{p_pin:apin});draw()}else admMsg("Det gick inte.",1)}catch(e){admMsg("Något gick fel: "+(e.message||e),1)}}
+  if(admPage==="settings"){
+    if(ttl)ttl.textContent="Inställningar";box.append(back());
+    const o=el("input");o.type="password";o.placeholder="Nuvarande kod";const nw=el("input");nw.type="password";nw.placeholder="Ny kod (minst 6 tecken)";nw.style.marginTop="8px";
+    const bc=el("button","go","Spara ny kod");const m=msg();
+    bc.onclick=async()=>{try{if(await aRpc("admin_change_pin",{p_pin:o.value,p_new:nw.value})){apin=nw.value;try{sessionStorage.setItem("bt_apin",nw.value)}catch(e){}o.value=nw.value="";admMsg("Koden är bytt.")}else admMsg("Fel nuvarande kod eller för kort ny kod.",1)}catch(e){admMsg("Något gick fel.",1)}};
+    const lo=el("button","ghost","Logga ut");lo.onclick=()=>{apin=null;admPage="home";try{sessionStorage.removeItem("bt_apin")}catch(e){}renderAdmin()};
+    box.append(el("label",null,"Byt admin-kod"),o,nw,bc,m,lo);return;
+  }
+  if(admPage==="comp"){
+    if(ttl)ttl.textContent="Träningstävlingar";box.append(back());
+    const f=el("div","cform");
+    const nm=el("input");nm.placeholder="t.ex. Närspelsfighten";nm.maxLength=40;
+    const row=el("div","cgrid");
+    const mk=(lab,opts,val)=>{const w=el("div");const l=el("label",null,lab);const s=el("select");opts.forEach(([v,t])=>{const o=el("option",null,t);o.value=v;s.append(o)});s.value=val;w.append(l,s);row.append(w);return s};
+    const sH=mk("Antal",Array.from({length:18},(_,i)=>[i+1,String(i+1)]),"9");
+    const sU=mk("Kalla dem",[["hal","Hål"],["station","Stationer"]],"hal");
+    const sM=mk("Räkna",[["points","Poäng (högst)"],["strokes","Slag (lägst)"]],"points");
+    const sD=mk("Spänning",[["0","Visa allt live"],["1","Dölj sista 1"],["2","Dölj sista 2"],["3","Dölj sista 3"]],"0");
+    const b=el("button","go","Starta tävlingen");const m=msg();
+    b.onclick=async()=>{b.disabled=true;try{const r=await aRpc("admin_session_create",{p_pin:apin,p_kind:"comp",p_name:nm.value.trim(),p_holes:+sH.value,p_mode:sM.value,p_unit:sU.value,p_hide:Math.min(+sD.value,+sH.value-1)});
+      if(!r||!r.code)throw 0;await renderAdmin();admMsg("Tävlingen är startad! Koden är "+r.code+".");showCode(r.code,nm.value.trim()||"Träningstävling")}
+      catch(e){admMsg("Det gick inte att starta tävlingen.",1)}finally{b.disabled=false}};
+    f.append(el("label",null,"Namn på tävlingen"),nm,row,b,m);box.append(f);
+    if(comps.length)box.append(el("h3","admh3","Dina tävlingar"));
+    comps.forEach(x=>box.append(sessRow(x)));return;
+  }
+  if(admPage==="bet"&&!admBetSid){
+    if(ttl)ttl.textContent="Bettingträning";box.append(back());
+    const nm=el("input");nm.placeholder="t.ex. Juniorer tisdag";nm.maxLength=40;
+    const b=el("button","go","Starta bettingpass");const m=msg();
+    b.onclick=async()=>{b.disabled=true;try{const r=await aRpc("admin_session_create",{p_pin:apin,p_kind:"betting",p_name:nm.value.trim(),p_holes:5,p_mode:"points",p_unit:"hal",p_hide:0});
+      if(!r||!r.code)throw 0;await renderAdmin();admMsg("Passet är startat! Koden är "+r.code+".");showCode(r.code,nm.value.trim()||"Bettingpass")}
+      catch(e){admMsg("Det gick inte att starta passet.",1)}finally{b.disabled=false}};
+    box.append(el("label",null,"Namn på passet"),nm,b,m);
+    if(bets.length)box.append(el("h3","admh3","Dina bettingpass"));
+    bets.forEach(x=>box.append(sessRow(x)));return;
+  }
+  if(admPage==="bet"&&admBetSid){
+    const s=list.find(x=>x.id===admBetSid);if(!s){admBetSid=null;return renderAdmin()}
+    if(ttl)ttl.textContent=s.name;
+    const bk=el("button","ghost admback","← Bettingpass");bk.onclick=()=>{admBetSid=null;renderAdmin()};box.append(bk);
+    box.append(sessRow(s,false,true));
+    let rows=[];try{rows=await aRpc("admin_bet_list",{p_pin:apin,p_sid:s.id})||[]}catch(e){}
+    const g=el("div","admg");
+    const bNew=el("button","go","Nytt spel – nollställ pågående");twoTap(bNew,"Tryck igen för att nollställa alla",async()=>{await aRpc("admin_bet_update",{p_pin:apin,p_sid:s.id,p_pid:"",p_op:"reset_all",p_value:null});renderAdmin()});
+    const bAll=el("button","ghost danger","Töm passets topplista");twoTap(bAll,"Säker? Allt raderas – tryck igen",async()=>{await aRpc("admin_bet_update",{p_pin:apin,p_sid:s.id,p_pid:"",p_op:"delete_all",p_value:null});renderAdmin()});
+    g.append(bNew,bAll);const m=msg();
+    const q=el("input");q.placeholder="Sök spelare…";q.value=admQ;q.oninput=()=>{admQ=q.value;draw()};q.style.marginTop="14px";
+    const lst=el("div","admlist");box.append(g,m,q,lst);
+    function draw(){
+      lst.textContent="";
+      const f=rows.filter(r=>!admQ||String(r.name||"").toLowerCase().includes(admQ.toLowerCase()));
+      if(!f.length){lst.append(el("p","msg","Inga spelare i passet än."));return}
+      f.forEach(r=>{
+        const c=el("div","admrow"+(r.blocked?" blk":""));
+        const n=Object.keys(r.rounds||{}).length;
+        const head=el("div","admh");head.append(el("b",null,r.name||"(utan namn)"),el("small",null,"Omgång "+n+"/5 · "+total(r)+" p · bästa "+best(r)+(r.blocked?" · DOLD":"")+(r.adj?" · justerat "+(r.adj>0?"+":"")+r.adj:"")));
+        const act=el("div","adma");
+        const adj=el("input");adj.type="number";adj.placeholder="± p";adj.value=r.adj||"";adj.className="admin-adj";
+        const bA=el("button",null,"Justera");bA.onclick=()=>op(r.pid,"adj",adj.value,"Poäng justerade.");
+        const nm=el("input");nm.value=r.name||"";nm.maxLength=30;nm.className="admin-name";
+        const bN=el("button",null,"Byt namn");bN.onclick=()=>op(r.pid,"name",nm.value.trim(),"Namnet ändrat.");
+        const bR=el("button",null,"Nollställ spel");twoTap(bR,"Säker?",()=>op(r.pid,"reset",null,"Spelet nollställt."));
+        const bB=el("button",null,r.blocked?"Visa":"Dölj");bB.onclick=()=>op(r.pid,r.blocked?"unblock":"block",null,r.blocked?"Spelaren visas igen.":"Spelaren är dold.");
+        const bD=el("button","danger","Ta bort");twoTap(bD,"Säker?",()=>op(r.pid,"delete",null,"Spelaren borttagen."));
+        const r3=el("div","adm3");r3.append(bR,bB,bD);act.append(nm,bN,adj,bA,r3);c.append(head,act);lst.append(c);
+      });
+    }
+    draw();
+    async function op(pid,o2,v,ok){try{if(await aRpc("admin_bet_update",{p_pin:apin,p_sid:s.id,p_pid:pid,p_op:o2,p_value:v==null?null:String(v)})){admMsg(ok);if(betSid===s.id)loadAll();rows=await aRpc("admin_bet_list",{p_pin:apin,p_sid:s.id})||[];draw()}else admMsg("Det gick inte.",1)}catch(e){admMsg("Något gick fel: "+(e.message||e),1)}}
+  }
+}
+function sessRow(c,compact,inside){
+  const w=el("div","admrow sessrow"+(c.status==="closed"?" blk":""));
+  const top=el("div","srtop");
+  const info=el("div","admh");info.append(el("b",null,c.name),el("small",null,(c.kind==="betting"?"Bettingpass":c.holes+" "+unitW(c,c.holes)+" · "+(c.mode==="strokes"?"slag":"poäng")+(c.hide_last?" · dolda: "+c.hide_last+(c.revealed?" (avslöjade)":""):""))+" · "+(c.players||0)+" spelare · "+(c.status==="open"?"pågår":"avslutad")+" · "+new Date(c.created_at).toLocaleDateString("sv-SE")));
+  const code=el("button","codepill",c.code);code.title="Visa koden stort";code.onclick=()=>showCode(c.code,c.name);
+  if(c.status==="open")top.append(info,code);else top.append(info);
+  w.append(top);
+  const a=el("div","adm3");
+  const op=async(o,v,m)=>{try{if(await aRpc("admin_comp_update",{p_pin:apin,p_code:c.id,p_op:o,p_value:v||null})){if(o==="delete"){if(compCode===c.id){compCode=null;store("bt_comp","")}if(betSid===c.id)betUse(null);if(admBetSid===c.id)admBetSid=null}await renderAdmin();admMsg(m)}else admMsg("Det gick inte.",1)}catch(e){admMsg("Något gick fel.",1)}};
+  if(c.kind==="betting"&&!inside){const bH=el("button",null,"Hantera");bH.onclick=()=>{admPage="bet";admBetSid=c.id;renderAdmin();scrollTo({top:0,behavior:"smooth"})};a.append(bH)}
+  if(c.kind==="betting"){const bO=el("button",null,"Topplistan");bO.onclick=()=>{betUse(c.id,c);go("board")};a.append(bO)}
+  if(c.kind==="comp"){const bO=el("button",null,"Topplistan");bO.onclick=()=>{compTab="board";compJoin(c.id);go("comp")};a.append(bO)}
+  if(compact){w.append(a);return w}
+  if(c.kind==="comp"&&c.hide_last>0){const bR=el("button",c.revealed?null:"gold",c.revealed?"Dölj igen":"Avslöja!");bR.onclick=()=>op(c.revealed?"unreveal":"reveal",null,c.revealed?"De sista är dolda igen.":"Slutställningen är avslöjad för alla!");a.append(bR)}
+  const bS=el("button",null,c.status==="open"?"Avsluta":"Öppna igen");bS.onclick=()=>op(c.status==="open"?"close":"open",null,c.status==="open"?"Avslutat – koden fungerar inte längre.":"Öppet igen.");a.append(bS);
+  if(c.kind==="comp"){const bP=el("button",null,"Spelare");const pl=el("div","cpl hide");
+    bP.onclick=async()=>{if(!pl.classList.toggle("hide")){pl.textContent="Laddar…";const es=await aRpc("admin_comp_entries",{p_pin:apin,p_code:c.id}).catch(()=>[]);pl.textContent="";if(!es||!es.length){pl.append(el("p","msg","Inga spelare än."));return}
+      es.forEach(e=>{const rr=el("div","cplr");const sc=(e.scores||[]).map(v=>v==null?"–":v).join(" ");rr.append(el("span",null,(e.name||"(utan namn)")+(e.blocked?" · dold":"")),el("small",null,sc));const d=el("button","danger","Ta bort");twoTap(d,"Säker?",()=>op("delete_entry",e.pid,"Spelaren är borttagen."));rr.append(d);pl.append(rr)})}};
+    a.append(bP);w.append(a,pl)}else w.append(a);
+  const bD=el("button","danger","Radera");twoTap(bD,"Säker?",()=>op("delete",null,"Raderat."));a.append(bD);
+  return w;
 }
 
 // Göm bottenmenyn medan tangentbordet är uppe (iPhone/Android)
@@ -1291,7 +1432,7 @@ function compRank(rows,c){
 async function compFetch(){
   if(!sb||!compCode)return;
   try{
-    const [m,b]=await Promise.all([sb.from("competitions").select("*").eq("id",compCode).maybeSingle(),sb.rpc("comp_board",{p_code:compCode})]);
+    const [m,b]=await Promise.all([sb.rpc("session_get",{p_id:compCode}),sb.rpc("comp_board",{p_code:compCode})]);
     if(m.error||b.error)throw m.error||b.error;
     if(!m.data){compCode=null;store("bt_comp","");comp=null;compShow();return}
     const was=comp&&comp.id===m.data.id?comp.revealed:null,ost=comp&&comp.id===m.data.id?comp.status+comp.revealed:null;
@@ -1304,7 +1445,7 @@ async function compFetch(){
   }catch(e){const x=$("cbMsg");if(x)x.textContent="Kunde inte hämta topplistan – försöker igen…"}
 }
 function compSub(){
-  if(!sb)return;
+  return;
   if(compRt){try{sb.removeChannel(compRt)}catch(e){}compRt=null}
   if(!compCode)return;
   compRt=sb.channel("comp-"+compCode).on("postgres_changes",{event:"*",schema:"public",table:"competitions",filter:"id=eq."+compCode},()=>compFetch()).subscribe(st=>{const l=$("cLive");if(l)l.classList.toggle("hide",st!=="SUBSCRIBED")});
@@ -1318,22 +1459,14 @@ function compJoin(code){compCode=code;store("bt_comp",code);comp=null;compRows=[
 function compShow(){
   const box=$("compBody");if(!box)return;box.textContent="";
   if(!sb){const c0=el("div","card");c0.append(el("p","msg","Ingen anslutning till databasen just nu."));box.append(c0);return}
-  if(!compCode){
-    const c=el("div","card");c.append(el("h2",null,"Träningstävling"));
-    c.append(el("p","msg","Välj dagens tävling. Fyll i ditt resultat efter varje "+"hål eller station – topplistan uppdateras live för alla."));
-    if(compList===null){c.append(el("p","msg","Laddar…"));compLoadList()}
-    else if(!compList.length)c.append(el("p","msg","Ingen tävling pågår just nu. Tränaren startar tävlingen på passet."));
-    else compList.forEach(x=>{const b=el("button","ex");b.innerHTML='<span class="ic"><svg class="i"><use href="#i-trophy"/></svg></span><div><b></b><small></small></div><i><svg class="i"><use href="#i-next"/></svg></i>';
-      b.querySelector("b").textContent=x.name;b.querySelector("small").textContent=x.holes+" "+unitW(x,x.holes)+" · "+modeTxt(x);b.onclick=()=>compJoin(x.id);c.append(b)});
-    box.append(c);return;
-  }
+  if(!compCode){box.append(codeBox("Träningstävling","Skriv in den fyrsiffriga koden du fått av din tränare."));return}
   const h=el("div","card chead");h.id="cHead";box.append(h);
-  const tabs=el("div","chips sub3 ctabs");
+  const tabs=el("div","chips ctabs");
   [["card","Mitt scorekort"],["board","Topplista"]].forEach(([k,t])=>{const b=el("button","chip"+(compTab===k?" on":""),t);b.onclick=()=>{compTab=k;compShow()};tabs.append(b)});
   box.append(tabs);
   if(compTab==="card"){const c=el("div","card");c.id="cCard";box.append(c)}
   else{const c=el("div","card cboard");c.innerHTML='<span class="live hide" id="cLive">LIVE</span><h2>Topplista</h2><div id="cHide"></div><div id="cBoard"></div><div class="msg" id="cbMsg" style="margin:.6em 0 0"></div><div id="cAdm"></div>';box.append(c)}
-  const sw=el("button","ghost","Byt tävling");sw.style.marginTop="4px";sw.onclick=()=>{compCode=null;store("bt_comp","");comp=null;compList=null;compSub();compShow()};box.append(sw);
+  const sw=el("button","ghost","Lämna tävlingen");sw.style.marginTop="4px";sw.onclick=()=>{compCode=null;store("bt_comp","");comp=null;compShow()};box.append(sw);
   compDrawHead();if(compTab==="card")compDrawCard();else compDrawBoard();
   if(!comp)compFetch();
 }
@@ -1424,44 +1557,8 @@ function compReveal(){
   const o=el("div","cdwn");const n=el("b");o.append(el("small",null,"Slutställningen avslöjas om"),n);document.body.append(o);
   let k=3;const tick=()=>{if(k>0){n.textContent=k;n.classList.remove("pop");void n.offsetWidth;n.classList.add("pop");k--;setTimeout(tick,900)}else{n.textContent="Nu!";o.classList.add("out");setTimeout(()=>{o.remove();done()},600)}};tick();
 }
-setInterval(()=>{if(!document.hidden&&view==="comp"&&compCode)compFetch();else if(!document.hidden&&view==="comp"&&!compCode)compLoadList()},6000);
+setInterval(()=>{if(!document.hidden&&view==="comp"&&compCode)compFetch()},4000);
 
-/* Admin: skapa och styra tävlingar */
-async function renderAdminComp(){
-  const card=$("admCompCard"),box=$("admComp");if(!card||!box)return;
-  if(!apin){card.classList.add("hide");return}
-  card.classList.remove("hide");box.textContent="";
-  const f=el("div","cform");
-  const nmL=el("label",null,"Namn på tävlingen");const nm=el("input");nm.placeholder="t.ex. Närspelsfighten";nm.maxLength=40;
-  const row=el("div","cgrid");
-  const mk=(lab,opts,val)=>{const w=el("div");const l=el("label",null,lab);const s=el("select");opts.forEach(([v,t])=>{const o=el("option",null,t);o.value=v;s.append(o)});s.value=val;w.append(l,s);row.append(w);return s};
-  const sH=mk("Antal",Array.from({length:18},(_,i)=>[i+1,String(i+1)]),"9");
-  const sU=mk("Kalla dem",[["hal","Hål"],["station","Stationer"]],"hal");
-  const sM=mk("Räkna",[["points","Poäng (högst)"],["strokes","Slag (lägst)"]],"points");
-  const sD=mk("Spänning",[["0","Visa allt live"],["1","Dölj sista 1"],["2","Dölj sista 2"],["3","Dölj sista 3"]],"0");
-  const b=el("button","go","Starta tävlingen");const m=el("div","msg");m.id="admCMsg";
-  b.onclick=async()=>{b.disabled=true;try{const code=await aRpc("admin_comp_create",{p_pin:apin,p_name:nm.value.trim(),p_holes:+sH.value,p_mode:sM.value,p_unit:sU.value,p_hide:Math.min(+sD.value,+sH.value-1)});
-    if(!code)throw new Error("Fel kod");m.textContent="Tävlingen är startad! Spelarna hittar den under Spela → Träningstävling.";m.classList.remove("err");nm.value="";compList=null;renderAdminComp()}
-    catch(e){m.textContent="Det gick inte att starta tävlingen.";m.classList.add("err")}finally{b.disabled=false}};
-  f.append(nmL,nm,row,b,m);box.append(f);
-  const r=await sb.from("competitions").select("*").order("created_at",{ascending:false}).limit(20);
-  const list=el("div","admlist");box.append(list);
-  (r.data||[]).forEach(c=>{
-    const w=el("div","admrow"+(c.status==="closed"?" blk":""));
-    const hd=el("div","admh");hd.append(el("b",null,c.name),el("small",null,c.holes+" "+unitW(c,c.holes)+" · "+(c.mode==="strokes"?"slag":"poäng")+(c.hide_last?" · dolda: "+c.hide_last+(c.revealed?" (avslöjade)":""):"")+" · "+(c.status==="open"?"pågår":"avslutad")+" · "+new Date(c.created_at).toLocaleDateString("sv-SE")));
-    const a=el("div","adm3");
-    const op=async(o,v,msg)=>{try{if(await aRpc("admin_comp_update",{p_pin:apin,p_code:c.id,p_op:o,p_value:v||null})){const mm=$("admCMsg");if(mm){mm.textContent=msg;mm.classList.remove("err")}compList=null;if(compCode===c.id&&o==="delete"){compCode=null;store("bt_comp","")}renderAdminComp()}}catch(e){}};
-    const bO=el("button",null,"Topplistan");bO.onclick=()=>{compTab="board";compJoin(c.id);go("comp")};a.append(bO);
-    if(c.hide_last>0){const bR=el("button",c.revealed?null:"gold",c.revealed?"Dölj igen":"Avslöja!");bR.onclick=()=>op(c.revealed?"unreveal":"reveal",null,c.revealed?"De sista är dolda igen.":"Slutställningen är avslöjad för alla!");a.append(bR)}
-    const bS=el("button",null,c.status==="open"?"Avsluta":"Öppna igen");bS.onclick=()=>op(c.status==="open"?"close":"open",null,c.status==="open"?"Tävlingen är avslutad.":"Tävlingen är öppen igen.");a.append(bS);
-    const bP=el("button",null,"Spelare");const pl=el("div","cpl hide");
-    bP.onclick=async()=>{if(!pl.classList.toggle("hide")){pl.textContent="Laddar…";const es=await aRpc("admin_comp_entries",{p_pin:apin,p_code:c.id}).catch(()=>[]);pl.textContent="";if(!es||!es.length){pl.append(el("p","msg","Inga spelare än."));return}
-      es.forEach(e=>{const rr=el("div","cplr");const sc=(e.scores||[]).map(v=>v==null?"–":v).join(" ");rr.append(el("span",null,(e.name||"(utan namn)")+(e.blocked?" · dold":"")),el("small",null,sc));const d=el("button","danger","Ta bort");twoTap(d,"Säker?",()=>op("delete_entry",e.pid,"Spelaren är borttagen."));rr.append(d);pl.append(rr)})}};
-    a.append(bP);
-    const bD=el("button","danger","Radera");twoTap(bD,"Säker?",()=>op("delete",null,"Tävlingen är raderad."));a.append(bD);
-    w.append(hd,a,pl);list.append(w);
-  });
-}
 
 if(compCode)compSub();
 init();
