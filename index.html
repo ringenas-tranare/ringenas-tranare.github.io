@@ -706,6 +706,31 @@ body.betlock #v-betting>:not(.ghost):not(.betgate),body.betlock #v-board>:not(.g
 .ctabs .chip{flex:1}
 .codepill{width:auto!important;min-width:0!important;margin:0!important;flex:0 0 auto!important}
 .sessrow .srtop .admh{min-width:0;flex:1}
+
+/* === Spela & Tränarzon: varumärke + funktion === */
+.phero{display:flex;align-items:center;gap:16px;padding:18px 20px;border-radius:22px;border:1px solid var(--line,rgba(255,255,255,.14));background:linear-gradient(135deg,rgba(255,255,255,.08),rgba(255,255,255,.02));position:relative;overflow:hidden}
+.phero::after{content:"";position:absolute;left:0;right:0;bottom:0;height:14px;background:var(--gold);opacity:.35;-webkit-mask:var(--wks) 0 100%/100% 14px no-repeat;mask:var(--wks) 0 100%/100% 14px no-repeat}
+.phero .lg{width:78px!important;height:40px!important;flex:none}
+.phero h1{margin:0;font-size:1.7rem;letter-spacing:.06em;line-height:1.1}
+.phero p{margin:.2em 0 0;color:var(--mut);font-size:.9rem}
+.phero .eyebrow{font-size:.66rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+.resume .ex{margin-top:8px}
+.quick{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:2px 0 12px}
+.quick .go{margin:0;padding-left:8px;padding-right:8px;font-size:.85rem}
+.quick .go.alt{background:var(--gold)!important;color:#1a1405!important;border-color:transparent!important}
+.presets{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.presets .chip{flex:0 0 auto!important;width:auto!important;min-height:0!important;font-size:.78rem;padding:7px 12px!important;margin:0!important}
+.sdot{display:inline-block;width:9px;height:9px;border-radius:50%;margin-right:8px;vertical-align:1px}
+.sdot.on{background:#48d17e;box-shadow:0 0 0 3px rgba(72,209,126,.2);animation:sdp 2s ease-in-out infinite}
+.sdot.off{background:#6b7c8c}
+@keyframes sdp{50%{box-shadow:0 0 0 6px rgba(72,209,126,0)}}
+label.keep{display:flex;align-items:center;gap:8px;margin:12px 0 0;text-transform:none;letter-spacing:0;font-weight:500;font-size:.9rem}
+label.keep input{width:20px;height:20px;margin:0;accent-color:var(--gold)}
+.ctot .crank{margin-left:10px;font-style:normal;font-weight:800;color:var(--gold);font-size:.85rem}
+.ctot .crank:empty{display:none}
+.stp.done .sl b{color:var(--gold)}
+#v-play .ex:not([disabled]) .ic,#v-comp .ex .ic{box-shadow:0 0 0 1px color-mix(in srgb,var(--gold) 45%,transparent)}
+@media(prefers-reduced-motion:reduce){.sdot.on{animation:none}}
 </style></head>
 <body><svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <linearGradient id="lg-grad" x1="0" y1="0" x2="0" y2="1"><stop offset=".6" style="stop-color:currentColor"/><stop offset=".88" style="stop-color:var(--gold)"/></linearGradient>
@@ -781,6 +806,8 @@ body.betlock #v-betting>:not(.ghost):not(.betgate),body.betlock #v-board>:not(.g
 </section>
 
 <section class="view hide" id="v-play">
+<div class="phero"><svg class="lg" aria-hidden="true"><use href="#i-logo"/></svg><div><div class="eyebrow">Ringenäs Tränare</div><h1>Spela</h1><p>Utmana dig själv – och varandra</p></div></div>
+<div id="playResume"></div>
 <div id="playCode"></div>
 <div class="card"><h2>Utmana dig själv</h2>
 <button class="ex" data-go="betting"><span class="ic"><svg class="i"><use href="#i-target"/></svg></span><div><b>Bettingträning</b><small>5 omgångar · satsa smart och klättra i topplistan</small></div><i><svg class="i"><use href="#i-next"/></svg></i></button>
@@ -818,8 +845,8 @@ body.betlock #v-betting>:not(.ghost):not(.betgate),body.betlock #v-board>:not(.g
 <div class="betgate"></div><div class="chips sub3"><button class="chip" data-go="betting">Spela</button><button class="chip" data-go="board">Topplista</button><button class="chip" data-go="rules">Regler</button></div><div class="sesbar"></div>
 <div class="card"><span class="live hide" id="live">LIVE</span><h2>Topplista – Bettingträning</h2>
 <div class="chips"><button class="chip on" data-mode="now">Pågående spel</button><button class="chip" data-mode="best">Bästa resultat</button></div>
-<div class="msg" id="place" style="margin:0 0 .5em"></div>
-<div id="board"></div>
+<div id="betHide"></div><div class="msg" id="place" style="margin:0 0 .5em"></div>
+<div id="board"></div><div id="betAdm"></div>
 <div class="msg" id="localnote" style="margin:.6em 0 0"></div>
 <div id="admbox" class="hide"><button class="ghost" id="admBtn">Admin</button><div id="admform" class="hide"><input id="pin" type="password" placeholder="Admin-kod"><button class="go" id="admGo">Logga in som admin</button></div></div>
 <button class="go" data-go="betting" id="bPlay">Spela</button></div>
@@ -920,14 +947,14 @@ function renderPlay(){
   if(showRes){
     $("restitle").textContent=lockedMsg?"Resultatet är inlåst":done?"Grymt jobbat!":"Bra jobbat! Omgång "+(sent?sent.r:n)+" klar";
     countUp($("resbig"),lockedMsg?lockedMsg.total+" poäng":done?total(p)+" poäng":"+"+(sent?sent.pts:0)+" p");if(done&&!lockedMsg&&!conf){conf=1;confetti()}
-    $("restext").textContent=lockedMsg?"Bra jobbat, "+lockedMsg.name+"! Vill du spela igen skriver du in ditt namn på nytt.":done?"Lås in ditt resultat för att det ska räknas bland de bästa resultaten.":"Du har "+total(p)+" poäng – kan du slå det i nästa omgång?";
-    $("bNext").classList.toggle("hide",done||!!lockedMsg);$("bLock").classList.toggle("hide",!done||!!lockedMsg);$("bAgain").classList.toggle("hide",!lockedMsg);
+    $("restext").textContent=(done&&!lockedMsg&&betHidden())?"Klart! Dina sista omgångar är hemliga – slutresultatet avslöjas av tränaren vid prisutdelningen.":lockedMsg?"Bra jobbat, "+lockedMsg.name+"! Vill du spela igen skriver du in ditt namn på nytt.":done?"Lås in ditt resultat för att det ska räknas bland de bästa resultaten.":"Du har "+total(p)+" poäng – kan du slå det i nästa omgång?";
+    $("bNext").classList.toggle("hide",done||!!lockedMsg);$("bLock").classList.toggle("hide",!done||!!lockedMsg||betHidden());$("bAgain").classList.toggle("hide",!lockedMsg);
     return;
   }
   const {r,max,mult,drives}=state();
   $("dots").textContent="";
   for(let i=1;i<=5;i++){const s=document.createElement("span");s.className=i<r?"d":i===r?"c":"";s.textContent=i;$("dots").appendChild(s)}
-  $("rtitle").textContent="Omgång "+r+" av 5";
+  $("rtitle").textContent="Omgång "+r+" av 5"+(betHidden()&&r>5-betSess.hide_last?" 🤫":"");
   $("rule").textContent="Utmaning: "+RULES[r-1];
   $("distw").classList.toggle("hide",r<5);if(n>0)$("name").value=p.name||$("name").value;$("namebox").classList.toggle("hide",n>0);
   $("bet").max=max;$("betl").textContent=max<1?"Inga poäng att betta – skicka in omgången":"Poäng du bettar (1–"+max+")";{const z=max<1;$("bet").classList.toggle("hide",z);const q=document.querySelector(".seg.q");if(q)q.classList.toggle("hide",z);const ol=document.querySelector('label[for="ok"]');if(ol)ol.classList.toggle("hide",z);const os=$("okseg");if(os)os.classList.toggle("hide",z)}
@@ -944,6 +971,8 @@ function ranked(){
     .map(p=>({...p,v:key(p)})).sort((a,b)=>b.v-a.v||played(b)-played(a));
 }
 function renderBoard(){
+  {const h=$("betHide");if(h){h.textContent="";if(betHidden()){const d=el("div","chide");d.append(el("b",null,"Sista "+(betSess.hide_last>1?betSess.hide_last+" omgångarna":"omgången")+" är hemlig"+(betSess.hide_last>1?"a":"")),el("small",null,"Topplistan visar bara de första "+(5-betSess.hide_last)+" omgångarna. Slutställningen avslöjas av tränaren."));h.append(d)}}
+   const a=$("betAdm");if(a){a.textContent="";if(apin&&betSess&&betSess.hide_last>0){const bt=el("button","go",betSess.revealed?"Dölj de sista igen":"Avslöja slutställningen!");bt.onclick=async()=>{bt.disabled=true;try{if(await aRpc("admin_comp_update",{p_pin:apin,p_code:betSess.id,p_op:betSess.revealed?"unreveal":"reveal",p_value:null}))await betRefreshSess()}catch(e){}bt.disabled=false};a.append(bt)}}}
   document.querySelectorAll("[data-mode]").forEach(c=>c.classList.toggle("on",c.dataset.mode===mode));
   const b=$("board");b.textContent="";const l=ranked();
   const i=l.findIndex(isMe);
@@ -963,7 +992,7 @@ function renderBoard(){
   });
   const n=played(mine());$("bPlay").textContent=n>=5?"Lås in resultatet":n>0?"Fortsätt spela":"Börja spela";
 }
-function render(){document.body.dataset.view=view;if(view==="admin")renderAdmin();if(view==="comp")compShow();requestAnimationFrame(placeScene);
+function render(){document.body.dataset.view=view;if(view==="admin")renderAdmin();if(view==="play")playResume();if(view==="comp")compShow();requestAnimationFrame(placeScene);
   ["home","play","comp","betting","board","rules","contact","admin"].forEach(v=>$("v-"+v).classList.toggle("hide",v!==view));
   const grp=["betting","board","rules","comp"].includes(view);document.querySelectorAll("nav button").forEach(b=>{const on=b.dataset.go===(grp?"play":view);b.classList.toggle("on",on);on?b.setAttribute("aria-current","page"):b.removeAttribute("aria-current")});document.querySelectorAll(".sub3 .chip").forEach(c=>c.classList.toggle("on",c.dataset.go===view));
   renderPlay();renderBoard();
@@ -978,7 +1007,7 @@ function init(){
   if(!$("name").value&&me.name)$("name").value=me.name;
   $("send").disabled=false;$("msg").textContent=API?"":"Dina resultat sparas på den här enheten.";
   $("admbox").classList.add("hide");$("localnote").textContent=API?"Bara de som har passets kod ser topplistan.":"Resultaten sparas bara på den här enheten.";
-  render();loadAll();let _tk=0;setInterval(()=>{_tk++;if(!document.hidden&&(view==="board"||view==="betting")){loadAll();if(_tk%6===0)betRefreshSess()}},5000);
+  render();loadAll();let _tk=0;setInterval(()=>{_tk++;if(!document.hidden&&(view==="board"||view==="betting")){loadAll();if(_tk%6===0||(betSess&&betSess.hide_last>0&&!betSess.revealed))betRefreshSess()}},5000);
 }
 $("send").onclick=async()=>{
   const name=played(state().p)>0?state().p.name:$("name").value.trim();const {p,r,drives,max,mult}=state();
@@ -1107,7 +1136,7 @@ renderBoard=function(){
 };
 
 // ===== Admin =====
-let apin=null;try{apin=sessionStorage.getItem("bt_apin")}catch(e){}
+let apin=null;try{apin=sessionStorage.getItem("bt_apin")||localStorage.getItem("bt_apin_keep")}catch(e){}
 let admQ="";
 async function aRpc(fn,args){const r=await sb.rpc(fn,args||{});if(r.error)throw r.error;return r.data}
 function el(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
@@ -1140,11 +1169,15 @@ function betUse(sid,sess){
   if($("name"))$("name").value=me.name||store("bt_name")||"";
   if(sid)loadAll();betBar();
 }
-async function betRefreshSess(){if(!sb||!betSid)return;try{const r=await sb.rpc("session_get",{p_id:betSid});if(!r.error){if(!r.data){betUse(null);render();return}betSess=r.data;betBar()}}catch(e){}}
+async function betRefreshSess(){if(!sb||!betSid)return;try{const r=await sb.rpc("session_get",{p_id:betSid});if(!r.error){if(!r.data){betUse(null);render();return}
+  const was=betSess&&betSess.id===r.data.id?betSess.revealed:null;betSess=r.data;betBar();
+  if(was===false&&betSess.revealed&&betSess.hide_last>0){await loadAll();if(view==="board"&&!matchMedia("(prefers-reduced-motion:reduce)").matches)revealFx(()=>{renderBoard();setTimeout(()=>{const f=document.querySelector("#board .row.first");if(f)f.classList.add("win");confetti()},500)});else{renderBoard();renderPlay()}}
+  else if(was!==betSess.revealed){renderBoard();renderPlay()}}}catch(e){}}
+const betHidden=()=>!!(betSess&&betSess.hide_last>0&&!betSess.revealed);
 function betBar(){
   document.body.classList.toggle("betlock",!betSid);
   document.querySelectorAll(".sesbar").forEach(b=>{b.textContent="";if(!betSid)return;
-    const t=el("div","sbt");t.append(el("b",null,betSess?betSess.name:"Bettingpass"),el("small",null,betSess?(betSess.status==="closed"?"Passet är avslutat":"Kod "+betSess.code):""));
+    const t=el("div","sbt");t.append(el("b",null,betSess?betSess.name:"Bettingpass"),el("small",null,betSess?(betSess.status==="closed"?"Passet är avslutat":"Kod "+betSess.code+(betHidden()?" · sista "+betSess.hide_last+" hemliga":"")):""));
     const l=el("button","ghost","Lämna");l.onclick=()=>{betUse(null);render()};b.append(t,l)});
   document.querySelectorAll(".betgate").forEach(g=>{g.textContent="";if(!betSid)g.append(codeBox("Gå med i passet","Skriv in den fyrsiffriga koden du fått av din tränare."))});
 }
@@ -1154,7 +1187,7 @@ function showCode(code,name){
 }
 
 /* === Admin: startmeny + undersidor === */
-let admPage="home",admBetSid=null;
+let admPage="home",admBetSid=null,admFocus=0;
 async function renderAdmin(){
   const box=$("admBody");if(!box)return;const ttl=$("admTitle");
   if(!sb){box.textContent="Ingen anslutning till databasen just nu.";return}
@@ -1166,24 +1199,26 @@ async function renderAdmin(){
     const i1=el("input");i1.type="password";i1.placeholder="Admin-kod";i1.autocomplete=has?"current-password":"new-password";
     box.append(p,i1);let i2=null;
     if(!has){i2=el("input");i2.type="password";i2.placeholder="Upprepa koden";i2.autocomplete="new-password";i2.style.marginTop="8px";box.append(i2)}
+    const kl=el("label","keep");const kc=el("input");kc.type="checkbox";kc.checked=true;kl.append(kc,document.createTextNode(" Kom ihåg mig på den här enheten"));box.append(kl);
     const b=el("button","go",has?"Logga in":"Skapa admin-kod");const m=el("div","msg");m.id="admMsg";box.append(b,m);
     i1.onkeydown=e=>{if(e.key==="Enter")b.click()};
     b.onclick=async()=>{const v=i1.value;b.disabled=true;try{
       if(!has){if(v.length<6)return admMsg("Koden måste vara minst 6 tecken.",1);if(v!==i2.value)return admMsg("Koderna matchar inte.",1);
         if(!await aRpc("admin_setup",{p_pin:v}))return admMsg("Kunde inte skapa koden.",1)}
-      if(await aRpc("admin_login",{p_pin:v})){apin=v;try{sessionStorage.setItem("bt_apin",v)}catch(e){}admPage="home";renderAdmin()}
+      if(await aRpc("admin_login",{p_pin:v})){apin=v;try{sessionStorage.setItem("bt_apin",v);if(kc.checked)localStorage.setItem("bt_apin_keep",v);else localStorage.removeItem("bt_apin_keep")}catch(e){}admPage="home";renderAdmin()}
       else admMsg("Fel kod, eller för många försök – vänta en stund.",1);
     }catch(e){admMsg("Något gick fel: "+(e.message||e),1)}finally{b.disabled=false}};
     return;
   }
   let list=[];try{list=await aRpc("admin_session_list",{p_pin:apin})||[]}catch(e){box.textContent="Kunde inte nå databasen.";return}
-  if(!list.length&&!(await aRpc("admin_login",{p_pin:apin}))){apin=null;try{sessionStorage.removeItem("bt_apin")}catch(e){}return renderAdmin()}
+  if(!list.length&&!(await aRpc("admin_login",{p_pin:apin}))){apin=null;try{sessionStorage.removeItem("bt_apin");localStorage.removeItem("bt_apin_keep")}catch(e){}return renderAdmin()}
   const back=()=>{const b=el("button","ghost admback","← Adminmeny");b.onclick=()=>{admPage="home";admBetSid=null;renderAdmin();scrollTo({top:0,behavior:"smooth"})};return b};
   const msg=()=>{const m=el("div","msg");m.id="admMsg";return m};
   const comps=list.filter(x=>x.kind==="comp"),bets=list.filter(x=>x.kind==="betting");
   if(admPage==="home"){
-    if(ttl)ttl.textContent="Adminmeny";
-    box.append(el("p","msg","Vad vill du göra?"));
+    if(ttl)ttl.textContent="Tränarzon";
+    const qa=el("div","quick");const q1=el("button","go","＋ Ny tävling");q1.onclick=()=>{admPage="comp";admFocus=1;renderAdmin()};const q2=el("button","go alt","＋ Nytt bettingpass");q2.onclick=()=>{admPage="bet";admBetSid=null;admFocus=1;renderAdmin()};qa.append(q1,q2);box.append(qa);
+    box.append(el("p","msg","Eller välj vad du vill hantera:"));
     const g=el("div","admtiles");
     const tile=(ic,t,s,fn)=>{const b=el("button","ex");b.innerHTML='<span class="ic"><svg class="i"><use href="#'+ic+'"/></svg></span><div><b></b><small></small></div><i><svg class="i"><use href="#i-next"/></svg></i>';b.querySelector("b").textContent=t;b.querySelector("small").textContent=s;b.onclick=fn;g.append(b)};
     const oc=comps.filter(x=>x.status==="open").length,ob=bets.filter(x=>x.status==="open").length;
@@ -1199,8 +1234,8 @@ async function renderAdmin(){
     if(ttl)ttl.textContent="Inställningar";box.append(back());
     const o=el("input");o.type="password";o.placeholder="Nuvarande kod";const nw=el("input");nw.type="password";nw.placeholder="Ny kod (minst 6 tecken)";nw.style.marginTop="8px";
     const bc=el("button","go","Spara ny kod");const m=msg();
-    bc.onclick=async()=>{try{if(await aRpc("admin_change_pin",{p_pin:o.value,p_new:nw.value})){apin=nw.value;try{sessionStorage.setItem("bt_apin",nw.value)}catch(e){}o.value=nw.value="";admMsg("Koden är bytt.")}else admMsg("Fel nuvarande kod eller för kort ny kod.",1)}catch(e){admMsg("Något gick fel.",1)}};
-    const lo=el("button","ghost","Logga ut");lo.onclick=()=>{apin=null;admPage="home";try{sessionStorage.removeItem("bt_apin")}catch(e){}renderAdmin()};
+    bc.onclick=async()=>{try{if(await aRpc("admin_change_pin",{p_pin:o.value,p_new:nw.value})){apin=nw.value;try{sessionStorage.setItem("bt_apin",nw.value);if(localStorage.getItem("bt_apin_keep"))localStorage.setItem("bt_apin_keep",nw.value)}catch(e){}o.value=nw.value="";admMsg("Koden är bytt.")}else admMsg("Fel nuvarande kod eller för kort ny kod.",1)}catch(e){admMsg("Något gick fel.",1)}};
+    const lo=el("button","ghost","Logga ut");lo.onclick=()=>{apin=null;admPage="home";try{sessionStorage.removeItem("bt_apin");localStorage.removeItem("bt_apin_keep")}catch(e){}renderAdmin()};
     box.append(el("label",null,"Byt admin-kod"),o,nw,bc,m,lo);return;
   }
   if(admPage==="comp"){
@@ -1217,18 +1252,20 @@ async function renderAdmin(){
     b.onclick=async()=>{b.disabled=true;try{const r=await aRpc("admin_session_create",{p_pin:apin,p_kind:"comp",p_name:nm.value.trim(),p_holes:+sH.value,p_mode:sM.value,p_unit:sU.value,p_hide:Math.min(+sD.value,+sH.value-1)});
       if(!r||!r.code)throw 0;await renderAdmin();admMsg("Tävlingen är startad! Koden är "+r.code+".");showCode(r.code,nm.value.trim()||"Träningstävling")}
       catch(e){admMsg("Det gick inte att starta tävlingen.",1)}finally{b.disabled=false}};
-    f.append(el("label",null,"Namn på tävlingen"),nm,row,b,m);box.append(f);
+    const pre=el("div","presets");[["9 hål · poäng",9,"hal","points",0],["9 hål · slag",9,"hal","strokes",0],["18 hål · slag",18,"hal","strokes",3],["6 stationer · poäng",6,"station","points",0],["Närspel 10 st · dold final",10,"station","points",2]].forEach(([t,h,u,mo,d])=>{const x=el("button","chip",t);x.type="button";x.onclick=()=>{sH.value=String(h);sU.value=u;sM.value=mo;sD.value=String(d);pre.querySelectorAll(".chip").forEach(y=>y.classList.toggle("on",y===x))};pre.append(x)});
+    f.append(el("label",null,"Snabbval"),pre,el("label",null,"Namn på tävlingen"),nm,row,b,m);box.append(f);setTimeout(()=>{if(admFocus){admFocus=0;nm.focus()}},50);
     if(comps.length)box.append(el("h3","admh3","Dina tävlingar"));
     comps.forEach(x=>box.append(sessRow(x)));return;
   }
   if(admPage==="bet"&&!admBetSid){
     if(ttl)ttl.textContent="Bettingträning";box.append(back());
     const nm=el("input");nm.placeholder="t.ex. Juniorer tisdag";nm.maxLength=40;
+    const hl=el("label",null,"Spänning");const sh=el("select");[["0","Visa allt live"],["1","Dölj sista omgången"],["2","Dölj sista 2 omgångarna"]].forEach(([v,t])=>{const o=el("option",null,t);o.value=v;sh.append(o)});
     const b=el("button","go","Starta bettingpass");const m=msg();
-    b.onclick=async()=>{b.disabled=true;try{const r=await aRpc("admin_session_create",{p_pin:apin,p_kind:"betting",p_name:nm.value.trim(),p_holes:5,p_mode:"points",p_unit:"hal",p_hide:0});
+    b.onclick=async()=>{b.disabled=true;try{const r=await aRpc("admin_session_create",{p_pin:apin,p_kind:"betting",p_name:nm.value.trim(),p_holes:5,p_mode:"points",p_unit:"hal",p_hide:+sh.value});
       if(!r||!r.code)throw 0;await renderAdmin();admMsg("Passet är startat! Koden är "+r.code+".");showCode(r.code,nm.value.trim()||"Bettingpass")}
       catch(e){admMsg("Det gick inte att starta passet.",1)}finally{b.disabled=false}};
-    box.append(el("label",null,"Namn på passet"),nm,b,m);
+    box.append(el("label",null,"Namn på passet"),nm,hl,sh,b,m);setTimeout(()=>{if(admFocus){admFocus=0;nm.focus()}},50);
     if(bets.length)box.append(el("h3","admh3","Dina bettingpass"));
     bets.forEach(x=>box.append(sessRow(x)));return;
   }
@@ -1270,7 +1307,7 @@ async function renderAdmin(){
 function sessRow(c,compact,inside){
   const w=el("div","admrow sessrow"+(c.status==="closed"?" blk":""));
   const top=el("div","srtop");
-  const info=el("div","admh");info.append(el("b",null,c.name),el("small",null,(c.kind==="betting"?"Bettingpass":c.holes+" "+unitW(c,c.holes)+" · "+(c.mode==="strokes"?"slag":"poäng")+(c.hide_last?" · dolda: "+c.hide_last+(c.revealed?" (avslöjade)":""):""))+" · "+(c.players||0)+" spelare · "+(c.status==="open"?"pågår":"avslutad")+" · "+new Date(c.created_at).toLocaleDateString("sv-SE")));
+  const info=el("div","admh");const nmEl=el("b",null,c.name);nmEl.prepend(el("i","sdot "+(c.status==="open"?"on":"off")));info.append(nmEl,el("small",null,(c.kind==="betting"?"Bettingpass"+(c.hide_last?" · dolda: "+c.hide_last+(c.revealed?" (avslöjade)":""):""):c.holes+" "+unitW(c,c.holes)+" · "+(c.mode==="strokes"?"slag":"poäng")+(c.hide_last?" · dolda: "+c.hide_last+(c.revealed?" (avslöjade)":""):""))+" · "+(c.players||0)+" spelare · "+(c.status==="open"?"pågår":"avslutad")+" · "+new Date(c.created_at).toLocaleDateString("sv-SE")));
   const code=el("button","codepill",c.code);code.title="Visa koden stort";code.onclick=()=>showCode(c.code,c.name);
   if(c.status==="open")top.append(info,code);else top.append(info);
   w.append(top);
@@ -1280,12 +1317,13 @@ function sessRow(c,compact,inside){
   if(c.kind==="betting"){const bO=el("button",null,"Topplistan");bO.onclick=()=>{betUse(c.id,c);go("board")};a.append(bO)}
   if(c.kind==="comp"){const bO=el("button",null,"Topplistan");bO.onclick=()=>{compTab="board";compJoin(c.id);go("comp")};a.append(bO)}
   if(compact){w.append(a);return w}
-  if(c.kind==="comp"&&c.hide_last>0){const bR=el("button",c.revealed?null:"gold",c.revealed?"Dölj igen":"Avslöja!");bR.onclick=()=>op(c.revealed?"unreveal":"reveal",null,c.revealed?"De sista är dolda igen.":"Slutställningen är avslöjad för alla!");a.append(bR)}
+  if(c.hide_last>0){const bR=el("button",c.revealed?null:"gold",c.revealed?"Dölj igen":"Avslöja!");bR.onclick=()=>op(c.revealed?"unreveal":"reveal",null,c.revealed?"De sista är dolda igen.":"Slutställningen är avslöjad för alla!");a.append(bR)}
   const bS=el("button",null,c.status==="open"?"Avsluta":"Öppna igen");bS.onclick=()=>op(c.status==="open"?"close":"open",null,c.status==="open"?"Avslutat – koden fungerar inte längre.":"Öppet igen.");a.append(bS);
   if(c.kind==="comp"){const bP=el("button",null,"Spelare");const pl=el("div","cpl hide");
     bP.onclick=async()=>{if(!pl.classList.toggle("hide")){pl.textContent="Laddar…";const es=await aRpc("admin_comp_entries",{p_pin:apin,p_code:c.id}).catch(()=>[]);pl.textContent="";if(!es||!es.length){pl.append(el("p","msg","Inga spelare än."));return}
       es.forEach(e=>{const rr=el("div","cplr");const sc=(e.scores||[]).map(v=>v==null?"–":v).join(" ");rr.append(el("span",null,(e.name||"(utan namn)")+(e.blocked?" · dold":"")),el("small",null,sc));const d=el("button","danger","Ta bort");twoTap(d,"Säker?",()=>op("delete_entry",e.pid,"Spelaren är borttagen."));rr.append(d);pl.append(rr)})}};
     a.append(bP);w.append(a,pl)}else w.append(a);
+  const bK=el("button",null,"Kör igen");bK.title="Starta ett nytt pass med samma inställningar och ny kod";bK.onclick=async()=>{bK.disabled=true;try{const r=await aRpc("admin_session_create",{p_pin:apin,p_kind:c.kind,p_name:c.name,p_holes:c.holes,p_mode:c.mode,p_unit:c.unit,p_hide:c.hide_last});if(!r||!r.code)throw 0;await renderAdmin();admMsg("Nytt pass startat med kod "+r.code+".");showCode(r.code,c.name)}catch(e){admMsg("Det gick inte.",1)}finally{bK.disabled=false}};a.append(bK);
   const bD=el("button","danger","Radera");twoTap(bD,"Säker?",()=>op("delete",null,"Raderat."));a.append(bD);
   return w;
 }
@@ -1440,7 +1478,7 @@ async function compFetch(){
     if(view==="comp"){
       if(compTab==="card"&&(ost===null||ost!==comp.status+comp.revealed)&&!(document.activeElement&&document.activeElement.closest&&document.activeElement.closest("#cCard")))compDrawCard();
       if(was===false&&comp.revealed&&comp.hide_last>0)compReveal();else compDrawBoard();
-      compDrawHead();
+      compDrawHead();compRankTxt();
     }
   }catch(e){const x=$("cbMsg");if(x)x.textContent="Kunde inte hämta topplistan – försöker igen…"}
 }
@@ -1482,20 +1520,20 @@ function compDrawCard(){
   const L=cLoc(comp.id);while(L.scores.length<comp.holes)L.scores.push(null);L.scores.length=comp.holes;
   const closed=comp.status==="closed";
   c.append(el("h2",null,"Mitt scorekort"));
-  const lb=el("label",null,"Ditt namn");lb.htmlFor="cName";const nm=el("input");nm.id="cName";nm.maxLength=24;nm.placeholder="Förnamn Efternamn";nm.value=L.name||"";nm.disabled=closed;
+  const lb=el("label",null,"Ditt namn");lb.htmlFor="cName";const nm=el("input");nm.id="cName";nm.maxLength=24;nm.placeholder="Förnamn Efternamn";nm.value=L.name||store("bt_cname")||store("bt_name")||"";if(!L.name&&nm.value){L.name=nm.value}nm.disabled=closed;
   nm.oninput=()=>{L.name=nm.value;cSaveLoc(comp.id,L);store("bt_cname",nm.value.trim());compQueue(L)};
   c.append(lb,nm);
   const list=el("div","stps");
   const vis=comp.revealed?comp.holes:comp.holes-comp.hide_last;
   const tot=el("div","ctot");
-  const upd=()=>{const pl=L.scores.filter(v=>v!=null).length,t=L.scores.reduce((a,v)=>a+(v||0),0);tot.innerHTML="";tot.append(el("span",null,"Totalt"),el("b",null,pl?String(t):"–"),el("small",null,pl+"/"+comp.holes+" "+unitW(comp,comp.holes)))};
+  const upd=()=>{const pl=L.scores.filter(v=>v!=null).length,t=L.scores.reduce((a,v)=>a+(v||0),0);tot.innerHTML="";tot.append(el("span",null,"Totalt"),el("b",null,pl?String(t):"–"),el("small",null,pl+"/"+comp.holes+" "+unitW(comp,comp.holes)));const rk=el("em","crank");rk.id="cRank";tot.append(rk);compRankTxt()};
   for(let i=0;i<comp.holes;i++){
     const r=el("div","stp"+(i>=vis?" hid":""));
     const lab=el("div","sl");lab.append(el("b",null,unit1(comp,true)+" "+(i+1)));if(i>=vis)lab.append(el("small",null,"Dold i topplistan"));
     const mi=el("button","sb","−"),pl=el("button","sb","+"),v=el("input","sv");
     mi.type=pl.type="button";mi.setAttribute("aria-label","Minska "+unit1(comp)+" "+(i+1));pl.setAttribute("aria-label","Öka "+unit1(comp)+" "+(i+1));
     v.type="text";v.inputMode="numeric";v.placeholder="–";v.value=L.scores[i]==null?"":L.scores[i];v.setAttribute("aria-label","Resultat "+unit1(comp)+" "+(i+1));
-    const set=x=>{if(x!=null){x=Math.max(-99,Math.min(99,Math.round(x)))}L.scores[i]=x;v.value=x==null?"":x;cSaveLoc(comp.id,L);upd();compQueue(L);r.classList.toggle("done",x!=null)};
+    const set=x=>{if(navigator.vibrate)navigator.vibrate(8);if(x!=null){x=Math.max(-99,Math.min(99,Math.round(x)))}L.scores[i]=x;v.value=x==null?"":x;cSaveLoc(comp.id,L);upd();compQueue(L);r.classList.toggle("done",x!=null)};
     const start=comp.mode==="strokes"?3:1;
     mi.onclick=()=>set(L.scores[i]==null?(comp.mode==="strokes"?start:0):L.scores[i]-1);
     pl.onclick=()=>set(L.scores[i]==null?start:L.scores[i]+1);
@@ -1544,7 +1582,7 @@ function compDrawBoard(anim){
     if(before[p.pid]!=null){requestAnimationFrame(()=>{const dy=before[p.pid]-r.getBoundingClientRect().top;if(Math.abs(dy)>2&&r.animate)r.animate([{transform:"translateY("+dy+"px)"},{transform:"none"}],{duration:anim?1400:700,easing:"cubic-bezier(.2,.8,.2,1)"})})}
     else if(anim&&r.animate)r.animate([{opacity:0,transform:"translateY(14px)"},{opacity:1,transform:"none"}],{duration:500,delay:i*90,fill:"backwards"});
   });
-  const m=$("cbMsg");if(m)m.textContent=comp.status==="closed"?"Tävlingen är avslutad.":"Uppdateras live medan ni spelar.";
+  const m=$("cbMsg");if(m){const mi=ranked.findIndex(x=>x.pid===myPid);m.textContent=(mi>=0?"Du ligger på plats "+(mi+1)+" av "+ranked.length+". ":"")+(comp.status==="closed"?"Tävlingen är avslutad.":"Uppdateras live medan ni spelar.")}compRankTxt();
   // Tränaren kan avslöja direkt från topplistan
   const ad=$("cAdm");if(ad){ad.textContent="";if(apin&&comp.hide_last>0){const bt=el("button","go",comp.revealed?"Dölj de sista igen":"Avslöja slutställningen!");
     bt.onclick=async()=>{bt.disabled=true;try{const ok=await aRpc("admin_comp_update",{p_pin:apin,p_code:comp.id,p_op:comp.revealed?"unreveal":"reveal",p_value:null});if(!ok)throw 0;await compFetch()}catch(e){const m2=$("cbMsg");if(m2)m2.textContent="Det gick inte – logga in som tränare igen."}finally{bt.disabled=false}};ad.append(bt)}}
@@ -1554,11 +1592,30 @@ function compReveal(){
   const rm=matchMedia("(prefers-reduced-motion:reduce)").matches;
   const done=()=>{compBusy=false;compDrawBoard(true);setTimeout(()=>{const f=document.querySelector("#cBoard .row.first");if(f)f.classList.add("win");confetti()},700)};
   if(rm||compTab!=="board"){done();return}
+  revealFx(done);
+}
+function revealFx(done){
   const o=el("div","cdwn");const n=el("b");o.append(el("small",null,"Slutställningen avslöjas om"),n);document.body.append(o);
-  let k=3;const tick=()=>{if(k>0){n.textContent=k;n.classList.remove("pop");void n.offsetWidth;n.classList.add("pop");k--;setTimeout(tick,900)}else{n.textContent="Nu!";o.classList.add("out");setTimeout(()=>{o.remove();done()},600)}};tick();
+  let k=3;const tick=()=>{if(k>0){n.textContent=k;n.classList.remove("pop");void n.offsetWidth;n.classList.add("pop");if(navigator.vibrate)navigator.vibrate(30);k--;setTimeout(tick,900)}else{n.textContent="Nu!";o.classList.add("out");setTimeout(()=>{o.remove();done()},600)}};tick();
 }
 setInterval(()=>{if(!document.hidden&&view==="comp"&&compCode)compFetch()},4000);
 
+
+
+/* === Spela: fortsätt där du var + placering === */
+function compRankTxt(){const e=$("cRank");if(!e||!comp)return;const r=compRank(compRows,comp);const i=r.findIndex(x=>x.pid===myPid);e.textContent=i>=0?"Plats "+(i+1)+" av "+r.length:""}
+async function playResume(){
+  const box=$("playResume");if(!box)return;box.textContent="";
+  const items=[];
+  if(betSid)items.push({k:"betting",t:betSess?betSess.name:"Ditt bettingpass",s:"Bettingträning"+(betSess&&betSess.status==="closed"?" · avslutat":""),go:()=>go("betting")});
+  if(compCode)items.push({k:"comp",t:comp&&comp.id===compCode?comp.name:"Din tävling",s:"Träningstävling"+(comp&&comp.status==="closed"?" · avslutad":""),go:()=>{compTab="card";go("comp")}});
+  if(!items.length)return;
+  const c=el("div","card resume");c.append(el("h2",null,"Fortsätt där du var"));
+  items.forEach(x=>{const b=el("button","ex hl");b.innerHTML='<span class="ic"><svg class="i"><use href="#'+(x.k==="betting"?"i-target":"i-trophy")+'"/></svg></span><div><b></b><small></small></div><i><svg class="i"><use href="#i-next"/></svg></i>';b.querySelector("b").textContent=x.t;b.querySelector("small").textContent=x.s;b.onclick=x.go;c.append(b)});
+  box.append(c);
+  if(betSid&&!betSess)betRefreshSess().then(()=>{if(view==="play"&&betSess)playResume()});
+  if(compCode&&(!comp||comp.id!==compCode)&&sb){try{const r=await sb.rpc("session_get",{p_id:compCode});if(r.data){comp=r.data;if(view==="play")playResume()}else{compCode=null;store("bt_comp","")}}catch(e){}}
+}
 
 if(compCode)compSub();
 init();
