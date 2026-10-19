@@ -1092,7 +1092,7 @@ async function renderAdmin(){
   if(!sb){box.textContent="Ingen anslutning till databasen just nu.";return}
   box.textContent="";
   if(!apin){
-    let has=true;try{has=await aRpc("admin_status")}catch(e){box.textContent="Kunde inte nå databasen.";return}
+    let has=true;try{has=await aRpc("admin_status")}catch(e){box.textContent="";const p0=el("p",null,"Kunde inte nå databasen. Kontrollera att du har internet och att sidan är öppnad i Safari via ringenas-tranare.github.io.");const d0=el("small","msg","Fel: "+String((e&&(e.message||e.code))||e).slice(0,140));const r0=el("button","go","Försök igen");r0.onclick=()=>renderAdmin();box.append(p0,d0,r0);return}
     const p=el("p",null,has?"Logga in med din admin-kod.":"Skapa en admin-kod (minst 6 tecken). Den gäller sedan för all administration.");
     const i1=el("input");i1.type="password";i1.placeholder="Admin-kod";i1.autocomplete=has?"current-password":"new-password";
     box.append(p,i1);let i2=null;
