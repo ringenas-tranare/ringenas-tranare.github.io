@@ -641,6 +641,47 @@ body.sun .card,body.sun #result{background:radial-gradient(120% 70% at var(--gx,
 @keyframes lhspark{0%,15%,35%,100%{opacity:0;transform:scale(.3) rotate(0)}25%{opacity:1;transform:scale(1.6) rotate(45deg)}}
 @keyframes lhcore{0%,100%{opacity:.85}50%{opacity:1;transform:scale(1.25)}}
 @media(prefers-reduced-motion:reduce){.scene .ray,.scene .halo,.scene .lrf,.scene .lsp,.scene .beam{animation:none!important}}
+
+/* === Träningstävling === */
+.chead h2{margin-bottom:.2em}
+.ctabs{margin:0}
+.stps{margin-top:12px}
+.stp{display:grid;grid-template-columns:1fr 46px 64px 46px;align-items:center;gap:8px;padding:9px 0;border-bottom:1px solid var(--line,rgba(255,255,255,.12))}
+.stp .sl{display:flex;flex-direction:column;line-height:1.2}
+.stp .sl small{font-size:.72rem;color:var(--gold);letter-spacing:.04em}
+.stp .sb{height:46px;width:46px;border-radius:50%;padding:0;font-size:1.4rem;font-weight:700;display:grid;place-items:center;background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);color:inherit;touch-action:manipulation}
+.stp .sb:active{transform:scale(.92)}
+.stp .sv{height:46px;text-align:center;font-size:1.25rem;font-weight:800;padding:0;margin:0;font-variant-numeric:tabular-nums}
+.stp.done .sv{border-color:var(--gold)}
+.stp.hid .sl b::after{content:" 🤫"}
+.ctot{display:flex;align-items:baseline;gap:10px;margin:14px 0 4px;padding:12px 14px;border-radius:14px;background:rgba(255,255,255,.06)}
+.ctot b{font-size:1.6rem;font-variant-numeric:tabular-nums}
+.ctot small{margin-left:auto;color:var(--mut)}
+.chide{display:flex;flex-direction:column;gap:2px;margin:0 0 12px;padding:12px 14px;border-radius:14px;border:1px dashed color-mix(in srgb,var(--gold) 70%,transparent);background:color-mix(in srgb,var(--gold) 10%,transparent)}
+.chide b{color:var(--gold)}
+.chide small{color:var(--mut)}
+#cBoard .row{will-change:transform}
+.row .mv{display:inline-block;margin-right:6px;font-size:.72rem;font-weight:800;padding:1px 6px;border-radius:99px;vertical-align:2px;animation:mvin .4s ease}
+.row .mv.up{background:rgba(70,200,120,.18);color:#7ee2a5}
+.row .mv.down{background:rgba(255,110,90,.16);color:#ff9b8a}
+@keyframes mvin{from{opacity:0;transform:scale(.6)}}
+.row.win{animation:winp 1.6s ease 2}
+@keyframes winp{50%{box-shadow:0 0 0 2px var(--gold),0 0 28px color-mix(in srgb,var(--gold) 60%,transparent)}}
+.cdwn{position:fixed;inset:0;z-index:200;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;background:rgba(5,12,20,.72);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);color:#fff;transition:opacity .5s}
+.cdwn small{letter-spacing:.18em;text-transform:uppercase;font-size:.8rem;color:var(--gold)}
+.cdwn b{font-size:7rem;line-height:1;font-weight:900}
+.cdwn b.pop{animation:cdp .9s cubic-bezier(.2,.8,.2,1)}
+@keyframes cdp{from{transform:scale(2.2);opacity:0}30%{opacity:1}to{transform:scale(1)}}
+.cdwn.out{opacity:0}
+.cform .cgrid{display:grid;grid-template-columns:1fr 1fr;gap:0 10px}
+.adm3 button.gold{background:var(--gold);color:#1a1405;border-color:transparent}
+.cpl{margin-top:8px}
+.cplr{display:grid;grid-template-columns:1fr auto;gap:2px 8px;align-items:center;padding:6px 0;border-top:1px solid var(--line,rgba(255,255,255,.1))}
+.cplr small{grid-column:1;color:var(--mut);font-variant-numeric:tabular-nums}
+.cplr button{grid-row:1/3;grid-column:2}
+body.sun .stp .sb{background:#eef3f7;border-color:#cfd9e3}
+body.sun .ctot{background:#eef3f7}
+@media(prefers-reduced-motion:reduce){.cdwn b.pop,.row.win,.row .mv{animation:none}}
 </style></head>
 <body><svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <linearGradient id="lg-grad" x1="0" y1="0" x2="0" y2="1"><stop offset=".6" style="stop-color:currentColor"/><stop offset=".88" style="stop-color:var(--gold)"/></linearGradient>
@@ -653,7 +694,7 @@ body.sun .card,body.sun #result{background:radial-gradient(120% 70% at var(--gx,
 <symbol id="i-cal" viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2.5"/><path d="M3 10h18M8 3v4M16 3v4"/></symbol>
 <symbol id="i-screen" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8M12 16v4"/></symbol>
 <symbol id="i-club" viewBox="0 0 24 24"><path d="M6 3l9 15"/><path d="M15 18c1.2 1.4 3.6 1.3 4.8-.2"/><circle cx="19" cy="21" r="1.2"/></symbol>
-<symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></symbol>
+<symbol id="i-trophy" viewBox="0 0 24 24"><path d="M8 4h8v5a4 4 0 0 1-8 0V4z"/><path d="M8 6H5a3 3 0 0 0 3 4M16 6h3a3 3 0 0 1-3 4"/><path d="M12 13v4M8.5 20h7M10 17h4"/></symbol><symbol id="i-target" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5"/></symbol>
 <symbol id="i-insta" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.5" cy="6.5" r=".9" fill="currentColor" stroke="none"/></symbol>
 <symbol id="i-tiktok" viewBox="0 0 24 24"><path fill="currentColor" stroke="none" d="M16.6 5.8A4.3 4.3 0 0 1 15.5 3h-3.1v12.4a2.6 2.6 0 1 1-2.6-2.6c.3 0 .5 0 .8.1V9.7a5.8 5.8 0 1 0 5 5.7V9.1a7.3 7.3 0 0 0 4.3 1.4V7.4a4.3 4.3 0 0 1-3.3-1.6z"/></symbol>
 <symbol id="i-ext" viewBox="0 0 24 24"><path d="M7 17L17 7M8 7h9v9"/></symbol>
@@ -707,12 +748,19 @@ body.sun .card,body.sun #result{background:radial-gradient(120% 70% at var(--gx,
 
 <section class="view hide" id="v-admin">
 <button class="ghost" data-go="contact" style="margin:0;justify-content:flex-start"><svg class="i s"><use href="#i-back"/></svg>Tillbaka</button>
+<div class="card hide" id="admCompCard"><h2>Träningstävlingar</h2><div id="admComp"></div></div>
 <div class="card"><h2>Admin – Bettingträning</h2><div id="admBody">Laddar…</div></div>
+</section>
+
+<section class="view hide" id="v-comp">
+<button class="ghost" data-go="play" style="margin:0;justify-content:flex-start"><svg class="i s"><use href="#i-back"/></svg>Alla övningar</button>
+<div id="compBody"></div>
 </section>
 
 <section class="view hide" id="v-play">
 <div class="card"><h2>Utmana dig själv</h2>
 <button class="ex" data-go="betting"><span class="ic"><svg class="i"><use href="#i-target"/></svg></span><div><b>Bettingträning</b><small>5 omgångar · satsa smart och klättra i topplistan</small></div><i><svg class="i"><use href="#i-next"/></svg></i></button>
+<button class="ex" data-go="comp"><span class="ic"><svg class="i"><use href="#i-trophy"/></svg></span><div><b>Träningstävling</b><small>Live-topplista för dagens tävling · upp till 18 hål eller stationer</small></div><i><svg class="i"><use href="#i-next"/></svg></i></button>
 <button class="ex" disabled><span class="ic"><svg class="i"><use href="#i-flag"/></svg></span><div><b>Putt-utmaning</b><small>Kommer snart – håll utkik!</small></div></button>
 <button class="ex" disabled><span class="ic"><svg class="i"><use href="#i-club"/></svg></span><div><b>Chip-utmaning</b><small>Kommer snart – håll utkik!</small></div></button>
 </div></section>
@@ -806,7 +854,7 @@ seg("drives");seg("ok");seg("dist");
 $("name").value=store("bt_name")||"";
 RULES.forEach((t,i)=>{const d=document.createElement("div");d.className="rl";const b=document.createElement("b");b.textContent="Omgång "+(i+1)+": ";d.append(b,t);$("rlist").appendChild(d)});
 
-const ORD={home:0,play:1,betting:2,board:3,rules:4,contact:5,admin:6};
+const ORD={home:0,play:1,comp:1.5,betting:2,board:3,rules:4,contact:5,admin:6};
 function go(v,np){
   if(v===view)return;
   const dir=ORD[v]>=ORD[view]?"fwd":"back";
@@ -891,15 +939,16 @@ function renderBoard(){
   });
   const n=played(mine());$("bPlay").textContent=n>=5?"Lås in resultatet":n>0?"Fortsätt spela":"Börja spela";
 }
-function render(){document.body.dataset.view=view;if(view==="admin")renderAdmin();requestAnimationFrame(placeScene);
-  ["home","play","betting","board","rules","contact","admin"].forEach(v=>$("v-"+v).classList.toggle("hide",v!==view));
-  const grp=["betting","board","rules"].includes(view);document.querySelectorAll("nav button").forEach(b=>{const on=b.dataset.go===(grp?"play":view);b.classList.toggle("on",on);on?b.setAttribute("aria-current","page"):b.removeAttribute("aria-current")});document.querySelectorAll(".sub3 .chip").forEach(c=>c.classList.toggle("on",c.dataset.go===view));
+function render(){document.body.dataset.view=view;if(view==="admin")renderAdmin();if(view==="comp")compShow();requestAnimationFrame(placeScene);
+  ["home","play","comp","betting","board","rules","contact","admin"].forEach(v=>$("v-"+v).classList.toggle("hide",v!==view));
+  const grp=["betting","board","rules","comp"].includes(view);document.querySelectorAll("nav button").forEach(b=>{const on=b.dataset.go===(grp?"play":view);b.classList.toggle("on",on);on?b.setAttribute("aria-current","page"):b.removeAttribute("aria-current")});document.querySelectorAll(".sub3 .chip").forEach(c=>c.classList.toggle("on",c.dataset.go===view));
   renderPlay();renderBoard();
 }
 ["drives","dist","bet","ok"].forEach(i=>$(i).addEventListener("input",renderPlay));
 
 function init(){
-  const h=location.hash.slice(1);if(["home","play","betting","board","rules","contact","admin"].includes(h))view=h;
+  {const m=location.hash.match(/^#comp-([A-Za-z0-9]{4})$/);if(m){compCode=m[1].toUpperCase();store("bt_comp",compCode);history.replaceState(null,"","#comp")}}
+  const h=location.hash.slice(1);if(["home","play","comp","betting","board","rules","contact","admin"].includes(h))view=h;
   if(!$("name").value&&me.name)$("name").value=me.name;
   $("send").disabled=false;$("msg").textContent=API?"":"Dina resultat sparas på den här enheten.";
   $("admbox").classList.add("hide");$("localnote").textContent=API?"Alla med länken kan se topplistan.":"Resultaten sparas bara på den här enheten.";
@@ -1039,7 +1088,7 @@ function el(tag,cls,txt){const e=document.createElement(tag);if(cls)e.className=
 function twoTap(btn,label,fn){btn.onclick=async()=>{if(btn.dataset.sure){btn.disabled=true;try{await fn()}finally{btn.disabled=false}}else{btn.dataset.sure=1;const o=btn.textContent;btn.textContent=label;setTimeout(()=>{if(btn.isConnected){delete btn.dataset.sure;btn.textContent=o}},4000)}}}
 function admMsg(t,bad){const m=$("admMsg");if(m){m.textContent=t;m.classList.toggle("err",!!bad)}}
 async function renderAdmin(){
-  const box=$("admBody");if(!box)return;
+  const box=$("admBody");if(!box)return;{const cc=$("admCompCard");if(cc&&!apin)cc.classList.add("hide")}
   if(!sb){box.textContent="Ingen anslutning till databasen just nu.";return}
   box.textContent="";
   if(!apin){
@@ -1096,7 +1145,7 @@ async function renderAdmin(){
   const bc=el("button","go","Spara ny kod");bc.onclick=async()=>{try{if(await aRpc("admin_change_pin",{p_pin:o.value,p_new:nw.value})){apin=nw.value;try{sessionStorage.setItem("bt_apin",nw.value)}catch(e){}admMsg("Koden är bytt.")}else admMsg("Fel nuvarande kod eller för kort ny kod.",1)}catch(e){admMsg("Något gick fel.",1)}};
   pc.append(o,nw,bc);
   const lo=el("button","ghost","Logga ut");lo.onclick=()=>{apin=null;try{sessionStorage.removeItem("bt_apin")}catch(e){}renderAdmin()};
-  box.append(pc,lo);
+  box.append(pc,lo);renderAdminComp();
   async function op(pid,o2,v,ok){try{if(await aRpc("admin_update",{p_pin:apin,p_pid:pid,p_op:o2,p_value:v==null?null:String(v)})){admMsg(ok);await loadAll();rows=await aRpc("admin_list",{p_pin:apin});draw()}else admMsg("Det gick inte.",1)}catch(e){admMsg("Något gick fel: "+(e.message||e),1)}}
 }
 
@@ -1226,5 +1275,194 @@ async function renderAdmin(){
   kick();
 })();
 
+/* === Träningstävling: live-topplista för hål/stationer === */
+let compCode=store("bt_comp")||null,compTab="card",comp=null,compRows=[],compList=null,compRt=null,compPrev={},compMove={},compSaveT=0,compBusy=false,compRevealSeen=null;
+const cLoc=c=>{try{return JSON.parse(store("bt_cs_"+c)||"null")||{name:store("bt_cname")||"",scores:[]}}catch(e){return{name:"",scores:[]}}};
+const cSaveLoc=(c,o)=>store("bt_cs_"+c,JSON.stringify(o));
+const unitW=(c,n,cap)=>{const w=c&&c.unit==="station"?(n===1?"station":"stationer"):"hål";return cap?w[0].toUpperCase()+w.slice(1):w};
+const unit1=(c,cap)=>{const w=c&&c.unit==="station"?"station":"hål";return cap?w[0].toUpperCase()+w.slice(1):w};
+const modeTxt=c=>c.mode==="strokes"?"Slag – lägst vinner":"Poäng – högst vinner";
+function compRank(rows,c){
+  const r=rows.filter(x=>x.played>0||x.total);
+  if(c.mode==="strokes")r.sort((a,b)=>(a.played?a.total/a.played:1e9)-(b.played?b.total/b.played:1e9)||b.played-a.played||a.total-b.total);
+  else r.sort((a,b)=>b.total-a.total||b.played-a.played);
+  return r;
+}
+async function compFetch(){
+  if(!sb||!compCode)return;
+  try{
+    const [m,b]=await Promise.all([sb.from("competitions").select("*").eq("id",compCode).maybeSingle(),sb.rpc("comp_board",{p_code:compCode})]);
+    if(m.error||b.error)throw m.error||b.error;
+    if(!m.data){compCode=null;store("bt_comp","");comp=null;compShow();return}
+    const was=comp&&comp.id===m.data.id?comp.revealed:null,ost=comp&&comp.id===m.data.id?comp.status+comp.revealed:null;
+    comp=m.data;compRows=b.data||[];
+    if(view==="comp"){
+      if(compTab==="card"&&(ost===null||ost!==comp.status+comp.revealed)&&!(document.activeElement&&document.activeElement.closest&&document.activeElement.closest("#cCard")))compDrawCard();
+      if(was===false&&comp.revealed&&comp.hide_last>0)compReveal();else compDrawBoard();
+      compDrawHead();
+    }
+  }catch(e){const x=$("cbMsg");if(x)x.textContent="Kunde inte hämta topplistan – försöker igen…"}
+}
+function compSub(){
+  if(!sb)return;
+  if(compRt){try{sb.removeChannel(compRt)}catch(e){}compRt=null}
+  if(!compCode)return;
+  compRt=sb.channel("comp-"+compCode).on("postgres_changes",{event:"*",schema:"public",table:"competitions",filter:"id=eq."+compCode},()=>compFetch()).subscribe(st=>{const l=$("cLive");if(l)l.classList.toggle("hide",st!=="SUBSCRIBED")});
+}
+async function compLoadList(){
+  if(!sb)return;
+  const r=await sb.from("competitions").select("*").eq("status","open").order("created_at",{ascending:false}).limit(12);
+  compList=r.data||[];if(view==="comp"&&!compCode)compShow();
+}
+function compJoin(code){compCode=code;store("bt_comp",code);comp=null;compRows=[];compPrev={};compMove={};compTab="card";compShow();compSub();compFetch()}
+function compShow(){
+  const box=$("compBody");if(!box)return;box.textContent="";
+  if(!sb){const c0=el("div","card");c0.append(el("p","msg","Ingen anslutning till databasen just nu."));box.append(c0);return}
+  if(!compCode){
+    const c=el("div","card");c.append(el("h2",null,"Träningstävling"));
+    c.append(el("p","msg","Välj dagens tävling. Fyll i ditt resultat efter varje "+"hål eller station – topplistan uppdateras live för alla."));
+    if(compList===null){c.append(el("p","msg","Laddar…"));compLoadList()}
+    else if(!compList.length)c.append(el("p","msg","Ingen tävling pågår just nu. Tränaren startar tävlingen på passet."));
+    else compList.forEach(x=>{const b=el("button","ex");b.innerHTML='<span class="ic"><svg class="i"><use href="#i-trophy"/></svg></span><div><b></b><small></small></div><i><svg class="i"><use href="#i-next"/></svg></i>';
+      b.querySelector("b").textContent=x.name;b.querySelector("small").textContent=x.holes+" "+unitW(x,x.holes)+" · "+modeTxt(x);b.onclick=()=>compJoin(x.id);c.append(b)});
+    box.append(c);return;
+  }
+  const h=el("div","card chead");h.id="cHead";box.append(h);
+  const tabs=el("div","chips sub3 ctabs");
+  [["card","Mitt scorekort"],["board","Topplista"]].forEach(([k,t])=>{const b=el("button","chip"+(compTab===k?" on":""),t);b.onclick=()=>{compTab=k;compShow()};tabs.append(b)});
+  box.append(tabs);
+  if(compTab==="card"){const c=el("div","card");c.id="cCard";box.append(c)}
+  else{const c=el("div","card cboard");c.innerHTML='<span class="live hide" id="cLive">LIVE</span><h2>Topplista</h2><div id="cHide"></div><div id="cBoard"></div><div class="msg" id="cbMsg" style="margin:.6em 0 0"></div><div id="cAdm"></div>';box.append(c)}
+  const sw=el("button","ghost","Byt tävling");sw.style.marginTop="4px";sw.onclick=()=>{compCode=null;store("bt_comp","");comp=null;compList=null;compSub();compShow()};box.append(sw);
+  compDrawHead();if(compTab==="card")compDrawCard();else compDrawBoard();
+  if(!comp)compFetch();
+}
+function compDrawHead(){
+  const h=$("cHead");if(!h)return;h.textContent="";
+  if(!comp){h.append(el("h2",null,"Laddar tävling…"));return}
+  h.append(el("h2",null,comp.name));
+  const p=el("p","msg",comp.holes+" "+unitW(comp,comp.holes)+" · "+modeTxt(comp)+(comp.hide_last>0&&!comp.revealed?" · sista "+comp.hide_last+" "+unitW(comp,comp.hide_last)+" dolda":"")+(comp.status==="closed"?" · Avslutad":""));p.style.margin="0";h.append(p);
+}
+function compDrawCard(){
+  const c=$("cCard");if(!c)return;c.textContent="";
+  if(!comp){c.append(el("p","msg","Laddar…"));return}
+  const L=cLoc(comp.id);while(L.scores.length<comp.holes)L.scores.push(null);L.scores.length=comp.holes;
+  const closed=comp.status==="closed";
+  c.append(el("h2",null,"Mitt scorekort"));
+  const lb=el("label",null,"Ditt namn");lb.htmlFor="cName";const nm=el("input");nm.id="cName";nm.maxLength=24;nm.placeholder="Förnamn Efternamn";nm.value=L.name||"";nm.disabled=closed;
+  nm.oninput=()=>{L.name=nm.value;cSaveLoc(comp.id,L);store("bt_cname",nm.value.trim());compQueue(L)};
+  c.append(lb,nm);
+  const list=el("div","stps");
+  const vis=comp.revealed?comp.holes:comp.holes-comp.hide_last;
+  const tot=el("div","ctot");
+  const upd=()=>{const pl=L.scores.filter(v=>v!=null).length,t=L.scores.reduce((a,v)=>a+(v||0),0);tot.innerHTML="";tot.append(el("span",null,"Totalt"),el("b",null,pl?String(t):"–"),el("small",null,pl+"/"+comp.holes+" "+unitW(comp,comp.holes)))};
+  for(let i=0;i<comp.holes;i++){
+    const r=el("div","stp"+(i>=vis?" hid":""));
+    const lab=el("div","sl");lab.append(el("b",null,unit1(comp,true)+" "+(i+1)));if(i>=vis)lab.append(el("small",null,"Dold i topplistan"));
+    const mi=el("button","sb","−"),pl=el("button","sb","+"),v=el("input","sv");
+    mi.type=pl.type="button";mi.setAttribute("aria-label","Minska "+unit1(comp)+" "+(i+1));pl.setAttribute("aria-label","Öka "+unit1(comp)+" "+(i+1));
+    v.type="text";v.inputMode="numeric";v.placeholder="–";v.value=L.scores[i]==null?"":L.scores[i];v.setAttribute("aria-label","Resultat "+unit1(comp)+" "+(i+1));
+    const set=x=>{if(x!=null){x=Math.max(-99,Math.min(99,Math.round(x)))}L.scores[i]=x;v.value=x==null?"":x;cSaveLoc(comp.id,L);upd();compQueue(L);r.classList.toggle("done",x!=null)};
+    const start=comp.mode==="strokes"?3:1;
+    mi.onclick=()=>set(L.scores[i]==null?(comp.mode==="strokes"?start:0):L.scores[i]-1);
+    pl.onclick=()=>set(L.scores[i]==null?start:L.scores[i]+1);
+    v.onchange=()=>{const t=v.value.trim().replace(",",".");set(t===""||isNaN(+t)?null:+t)};
+    [mi,pl,v].forEach(x=>x.disabled=closed);
+    r.classList.toggle("done",L.scores[i]!=null);
+    r.append(lab,mi,v,pl);list.append(r);
+  }
+  upd();c.append(list,tot);
+  const m=el("div","msg");m.id="cMsg";m.textContent=closed?"Tävlingen är avslutad.":"Ditt resultat sparas automatiskt och syns direkt i topplistan.";c.append(m);
+  const go2=el("button","go","Se topplistan");go2.onclick=()=>{compTab="board";compShow();scrollTo({top:0,behavior:"smooth"})};c.append(go2);
+}
+function compQueue(L){
+  clearTimeout(compSaveT);
+  compSaveT=setTimeout(async()=>{
+    const m=$("cMsg");const name=(L.name||"").trim();
+    if(!name){if(m){m.textContent="Skriv ditt namn så hamnar du i topplistan.";m.classList.add("err")}return}
+    const arr=L.scores.slice();while(arr.length&&arr[arr.length-1]==null)arr.pop();
+    try{const r=await sb.rpc("comp_save",{p_code:comp.id,p_pid:myPid,p_secret:myId,p_name:name,p_scores:arr});
+      if(r.error||!r.data)throw r.error||new Error("x");if(m){m.textContent="Sparat ✓";m.classList.remove("err")}}
+    catch(e){if(m){m.textContent="Kunde inte spara – kontrollera nätet. Vi försöker igen när du ändrar något.";m.classList.add("err")}}
+  },500);
+}
+function compDrawBoard(anim){
+  const b=$("cBoard");if(!b||!comp)return;
+  const hd=$("cHide");if(hd){hd.textContent="";if(comp.hide_last>0&&!comp.revealed){const d=el("div","chide");d.append(el("b",null,"Sista "+comp.hide_last+" "+unitW(comp,comp.hide_last)+" är hemliga"),el("small",null,"Topplistan visar bara de första "+(comp.holes-comp.hide_last)+". Slutställningen avslöjas vid prisutdelningen."));hd.append(d)}}
+  const vis=comp.revealed?comp.holes:comp.holes-comp.hide_last;
+  const ranked=compRank(compRows,comp);
+  const before={};b.querySelectorAll(".row[data-pid]").forEach(r=>before[r.dataset.pid]=r.getBoundingClientRect().top);
+  const now=Date.now();
+  ranked.forEach((p,i)=>{const o=compPrev[p.pid];if(o!=null&&o!==i)compMove[p.pid]={d:o-i,until:now+9000};compPrev[p.pid]=i});
+  b.textContent="";
+  if(!ranked.length){b.append(el("p","msg","Inga resultat än – första resultatet tar ledningen!"));return}
+  let place=0,last=null;
+  ranked.forEach((p,i)=>{
+    const key=comp.mode==="strokes"?(p.played?p.total/p.played:0)+"|"+p.played:p.total+"|"+p.played;
+    if(key!==last){place=i+1;last=key}
+    const r=el("div","row"+(place===1?" first":"")+(p.pid===myPid?" me":""));r.dataset.pid=p.pid;
+    const rk=el("div","rk",String(place));
+    const n=el("div","nm",p.name);
+    const sub=p.played>=vis?(comp.revealed||comp.hide_last===0?"Klar":"Klar med "+vis+" av "+comp.holes):"Efter "+p.played+"/"+vis;
+    const s=el("span","sub",sub+(comp.mode==="strokes"&&p.played&&p.played<vis?" · snitt "+(p.total/p.played).toFixed(1).replace(".",","):""));n.append(s);
+    const mv=compMove[p.pid];if(mv&&mv.until>now&&mv.d){const a=el("span","mv "+(mv.d>0?"up":"down"),(mv.d>0?"▲":"▼")+Math.abs(mv.d));n.prepend(a)}
+    const t=el("div","pts",String(p.total));
+    r.append(rk,n,t);b.append(r);
+    if(before[p.pid]!=null){requestAnimationFrame(()=>{const dy=before[p.pid]-r.getBoundingClientRect().top;if(Math.abs(dy)>2&&r.animate)r.animate([{transform:"translateY("+dy+"px)"},{transform:"none"}],{duration:anim?1400:700,easing:"cubic-bezier(.2,.8,.2,1)"})})}
+    else if(anim&&r.animate)r.animate([{opacity:0,transform:"translateY(14px)"},{opacity:1,transform:"none"}],{duration:500,delay:i*90,fill:"backwards"});
+  });
+  const m=$("cbMsg");if(m)m.textContent=comp.status==="closed"?"Tävlingen är avslutad.":"Uppdateras live medan ni spelar.";
+  // Tränaren kan avslöja direkt från topplistan
+  const ad=$("cAdm");if(ad){ad.textContent="";if(apin&&comp.hide_last>0){const bt=el("button","go",comp.revealed?"Dölj de sista igen":"Avslöja slutställningen!");
+    bt.onclick=async()=>{bt.disabled=true;try{const ok=await aRpc("admin_comp_update",{p_pin:apin,p_code:comp.id,p_op:comp.revealed?"unreveal":"reveal",p_value:null});if(!ok)throw 0;await compFetch()}catch(e){const m2=$("cbMsg");if(m2)m2.textContent="Det gick inte – logga in som tränare igen."}finally{bt.disabled=false}};ad.append(bt)}}
+}
+function compReveal(){
+  if(compBusy)return;compBusy=true;
+  const rm=matchMedia("(prefers-reduced-motion:reduce)").matches;
+  const done=()=>{compBusy=false;compDrawBoard(true);setTimeout(()=>{const f=document.querySelector("#cBoard .row.first");if(f)f.classList.add("win");confetti()},700)};
+  if(rm||compTab!=="board"){done();return}
+  const o=el("div","cdwn");const n=el("b");o.append(el("small",null,"Slutställningen avslöjas om"),n);document.body.append(o);
+  let k=3;const tick=()=>{if(k>0){n.textContent=k;n.classList.remove("pop");void n.offsetWidth;n.classList.add("pop");k--;setTimeout(tick,900)}else{n.textContent="Nu!";o.classList.add("out");setTimeout(()=>{o.remove();done()},600)}};tick();
+}
+setInterval(()=>{if(!document.hidden&&view==="comp"&&compCode)compFetch();else if(!document.hidden&&view==="comp"&&!compCode)compLoadList()},6000);
+
+/* Admin: skapa och styra tävlingar */
+async function renderAdminComp(){
+  const card=$("admCompCard"),box=$("admComp");if(!card||!box)return;
+  if(!apin){card.classList.add("hide");return}
+  card.classList.remove("hide");box.textContent="";
+  const f=el("div","cform");
+  const nmL=el("label",null,"Namn på tävlingen");const nm=el("input");nm.placeholder="t.ex. Närspelsfighten";nm.maxLength=40;
+  const row=el("div","cgrid");
+  const mk=(lab,opts,val)=>{const w=el("div");const l=el("label",null,lab);const s=el("select");opts.forEach(([v,t])=>{const o=el("option",null,t);o.value=v;s.append(o)});s.value=val;w.append(l,s);row.append(w);return s};
+  const sH=mk("Antal",Array.from({length:18},(_,i)=>[i+1,String(i+1)]),"9");
+  const sU=mk("Kalla dem",[["hal","Hål"],["station","Stationer"]],"hal");
+  const sM=mk("Räkna",[["points","Poäng (högst)"],["strokes","Slag (lägst)"]],"points");
+  const sD=mk("Spänning",[["0","Visa allt live"],["1","Dölj sista 1"],["2","Dölj sista 2"],["3","Dölj sista 3"]],"0");
+  const b=el("button","go","Starta tävlingen");const m=el("div","msg");m.id="admCMsg";
+  b.onclick=async()=>{b.disabled=true;try{const code=await aRpc("admin_comp_create",{p_pin:apin,p_name:nm.value.trim(),p_holes:+sH.value,p_mode:sM.value,p_unit:sU.value,p_hide:Math.min(+sD.value,+sH.value-1)});
+    if(!code)throw new Error("Fel kod");m.textContent="Tävlingen är startad! Spelarna hittar den under Spela → Träningstävling.";m.classList.remove("err");nm.value="";compList=null;renderAdminComp()}
+    catch(e){m.textContent="Det gick inte att starta tävlingen.";m.classList.add("err")}finally{b.disabled=false}};
+  f.append(nmL,nm,row,b,m);box.append(f);
+  const r=await sb.from("competitions").select("*").order("created_at",{ascending:false}).limit(20);
+  const list=el("div","admlist");box.append(list);
+  (r.data||[]).forEach(c=>{
+    const w=el("div","admrow"+(c.status==="closed"?" blk":""));
+    const hd=el("div","admh");hd.append(el("b",null,c.name),el("small",null,c.holes+" "+unitW(c,c.holes)+" · "+(c.mode==="strokes"?"slag":"poäng")+(c.hide_last?" · dolda: "+c.hide_last+(c.revealed?" (avslöjade)":""):"")+" · "+(c.status==="open"?"pågår":"avslutad")+" · "+new Date(c.created_at).toLocaleDateString("sv-SE")));
+    const a=el("div","adm3");
+    const op=async(o,v,msg)=>{try{if(await aRpc("admin_comp_update",{p_pin:apin,p_code:c.id,p_op:o,p_value:v||null})){const mm=$("admCMsg");if(mm){mm.textContent=msg;mm.classList.remove("err")}compList=null;if(compCode===c.id&&o==="delete"){compCode=null;store("bt_comp","")}renderAdminComp()}}catch(e){}};
+    const bO=el("button",null,"Topplistan");bO.onclick=()=>{compTab="board";compJoin(c.id);go("comp")};a.append(bO);
+    if(c.hide_last>0){const bR=el("button",c.revealed?null:"gold",c.revealed?"Dölj igen":"Avslöja!");bR.onclick=()=>op(c.revealed?"unreveal":"reveal",null,c.revealed?"De sista är dolda igen.":"Slutställningen är avslöjad för alla!");a.append(bR)}
+    const bS=el("button",null,c.status==="open"?"Avsluta":"Öppna igen");bS.onclick=()=>op(c.status==="open"?"close":"open",null,c.status==="open"?"Tävlingen är avslutad.":"Tävlingen är öppen igen.");a.append(bS);
+    const bP=el("button",null,"Spelare");const pl=el("div","cpl hide");
+    bP.onclick=async()=>{if(!pl.classList.toggle("hide")){pl.textContent="Laddar…";const es=await aRpc("admin_comp_entries",{p_pin:apin,p_code:c.id}).catch(()=>[]);pl.textContent="";if(!es||!es.length){pl.append(el("p","msg","Inga spelare än."));return}
+      es.forEach(e=>{const rr=el("div","cplr");const sc=(e.scores||[]).map(v=>v==null?"–":v).join(" ");rr.append(el("span",null,(e.name||"(utan namn)")+(e.blocked?" · dold":"")),el("small",null,sc));const d=el("button","danger","Ta bort");twoTap(d,"Säker?",()=>op("delete_entry",e.pid,"Spelaren är borttagen."));rr.append(d);pl.append(rr)})}};
+    a.append(bP);
+    const bD=el("button","danger","Radera");twoTap(bD,"Säker?",()=>op("delete",null,"Tävlingen är raderad."));a.append(bD);
+    w.append(hd,a,pl);list.append(w);
+  });
+}
+
+if(compCode)compSub();
 init();
 </script></body></html>
