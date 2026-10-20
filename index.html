@@ -1874,7 +1874,7 @@ function tvDraw(anim){
   $("tvName").textContent=s.name;
   $("tvInfo").textContent=(s.kind==="betting"?"Bettingträning · 5 omgångar":s.holes+" "+unitW(s,s.holes)+" · "+(s.mode==="strokes"?"slag – lägst vinner":"poäng – högst vinner"))+(s.status==="closed"?" · avslutat":"");
   const code=$("tvCode");if(code&&code.textContent!==s.code){code.textContent=s.status==="open"?s.code:"Stängt";const q=$("tvQr");if(q){if(s.status==="open")tvQr(q,SITE+"#kod-"+s.code);else q.textContent=""}}
-  const hd=$("tvHide");if(hd){hd.textContent="";if(s.hide_last>0&&!s.revealed){const n=s.hide_last,u=s.kind==="betting"?(n>1?"omgångarna":"omgången"):unitW(s,n);hd.append(el("div","tvsec","🤫 Sista "+(n>1?n+" ":"")+u+" är hemliga"))}}
+  const hd=$("tvHide");if(hd){hd.textContent="";if(s.hide_last>0&&!s.revealed){const n=s.hide_last;const t=n>1?"Sista "+n+" "+(s.kind==="betting"?"omgångarna":unitW(s,n))+" är hemliga":(s.kind==="betting"?"Sista omgången är hemlig":s.unit==="station"?"Sista stationen är hemlig":"Sista hålet är hemligt");hd.append(el("div","tvsec","🤫 "+t))}}
   const ad=$("tvAdm");if(ad){ad.textContent="";if(apin&&s.hide_last>0){const b=el("button","go",s.revealed?"Dölj de sista igen":"Avslöja slutställningen!");b.onclick=async()=>{b.disabled=true;try{await aRpc("admin_comp_update",{p_pin:apin,p_code:s.id,p_op:s.revealed?"unreveal":"reveal",p_value:null});await tvFetch()}catch(e){}b.disabled=false};ad.append(b)}}
   const r=tvRank(),now=Date.now();
   const before={};list.querySelectorAll(".tvr[data-pid]").forEach(x=>before[x.dataset.pid]=x.getBoundingClientRect().top);
