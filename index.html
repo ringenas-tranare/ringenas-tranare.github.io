@@ -888,6 +888,18 @@ body[data-view="tv"]{background:radial-gradient(120% 90% at 20% 0%,#1d3550 0%,#0
 #v-tv.hide{display:none!important}
 #tvBody{width:100%}
 @media (max-width:640px){.tvh{flex-wrap:wrap}.tvctl{order:-1;width:100%}.tvctl .ghost{padding:6px 10px;font-size:.75rem}.tvt h1{white-space:normal}}
+
+/* Datorlayout: en tydlig kolumn utanför startsidan */
+@media (min-width:700px){
+  .view:not(#v-home):not(#v-tv){grid-template-columns:minmax(0,600px)!important;justify-content:center}
+  .view:not(#v-home):not(#v-tv)>*{grid-column:1/-1!important}
+}
+.phero{padding-right:64px}
+.qbtn{position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;padding:0;margin:0;display:grid;place-items:center;font-weight:900;font-size:1.1rem;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.28);color:inherit;cursor:pointer;z-index:2}
+.qbtn:hover{border-color:var(--gold);color:var(--gold)}
+body.sun .qbtn{background:#eef3f7;border-color:#cfd9e3}
+#playCode .codebox{padding-top:22px;padding-bottom:26px}
+#playCode .codebox .codein{font-size:2.4rem;padding-top:14px;padding-bottom:14px}
 </style></head>
 <body><svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <linearGradient id="lg-grad" x1="0" y1="0" x2="0" y2="1"><stop offset=".6" style="stop-color:currentColor"/><stop offset=".88" style="stop-color:var(--gold)"/></linearGradient>
@@ -965,11 +977,11 @@ body[data-view="tv"]{background:radial-gradient(120% 90% at 20% 0%,#1d3550 0%,#0
 </section>
 
 <section class="view hide" id="v-play">
-<div class="phero"><svg class="lg" aria-hidden="true"><use href="#i-logo"/></svg><div><div class="eyebrow">Ringenäs Tränare</div><h1>Spela</h1><p>Utmana dig själv – och varandra</p></div></div>
+<div class="phero"><svg class="lg" aria-hidden="true"><use href="#i-logo"/></svg><div><div class="eyebrow">Ringenäs Tränare</div><h1>Spela</h1><p>Utmana dig själv – och varandra</p></div><button class="qbtn" id="helpBtn" type="button" aria-label="Så funkar det">?</button></div>
 <div id="playGuide"></div>
 <div id="playResume"></div>
 <div id="playCode"></div>
-<div class="card"><h2>Utmana dig själv</h2>
+<div class="card hide" id="playList"><h2>Utmana dig själv</h2>
 <button class="ex" data-go="betting"><span class="ic"><svg class="i"><use href="#i-target"/></svg></span><div><b>Bettingträning</b><small>5 omgångar · satsa smart och klättra i topplistan</small></div><i><svg class="i"><use href="#i-next"/></svg></i></button>
 <button class="ex" data-go="comp"><span class="ic"><svg class="i"><use href="#i-trophy"/></svg></span><div><b>Träningstävling</b><small>Live-topplista för dagens tävling · upp till 18 hål eller stationer</small></div><i><svg class="i"><use href="#i-next"/></svg></i></button>
 <button class="ex" disabled><span class="ic"><svg class="i"><use href="#i-flag"/></svg></span><div><b>Putt-utmaning</b><small>Kommer snart – håll utkik!</small></div></button>
@@ -1160,7 +1172,8 @@ function render(){document.body.dataset.view=view;if(view==="admin")renderAdmin(
 ["drives","dist","bet","ok"].forEach(i=>$(i).addEventListener("input",renderPlay));
 
 function init(){
-  {const pc=$("playCode");if(pc)pc.append(codeBox("Har du en kod?","Skriv in koden från din tränare så kommer du direkt till rätt övning."))}
+  {const pc=$("playCode");if(pc)pc.append(codeBox("Ange din kod","Koden får du av din tränare på passet."))}
+  {const hb=$("helpBtn");if(hb)hb.onclick=showHelp}
   betBar();if(betSid)betRefreshSess();
   {const m=location.hash.match(/^#tv-([a-z0-9]{4,20})$/i);if(m){tvId=m[1];view="tv"}}
   {const m=location.hash.match(/^#kod-([0-9]{4})$/);if(m&&sb){history.replaceState(null,"","#play");sb.rpc("session_join",{p_code:m[1]}).then(r=>{if(r.data)joinSession(r.data)})}}
@@ -1803,10 +1816,14 @@ setInterval(()=>{if(!document.hidden&&view==="comp"&&compCode)compFetch()},4000)
 
 /* === Spela: fortsätt där du var + placering === */
 function compRankTxt(){const e=$("cRank");if(!e||!comp)return;const r=compRank(compRows,comp);const i=r.findIndex(x=>x.pid===myPid);e.textContent=i>=0?"Plats "+(i+1)+" av "+r.length:""}
-function playGuide(){const g=$("playGuide");if(!g)return;g.textContent="";if(store("bt_guide")==="1")return;
-  const c=el("div","card guide");c.append(el("h2",null,"Så funkar det"));
-  [["1","Få koden","Tränaren visar en fyrsiffrig kod på passet."],["2","Skriv in koden","Du kommer direkt till rätt övning."],["3","Rapportera ditt resultat","Topplistan uppdateras live – följ hur du klättrar."]].forEach(([n,t,d])=>{const r=el("div","step");const tx=el("div");tx.append(el("b",null,t),el("small",null,d));r.append(el("span","num",n),tx);c.append(r)});
-  const x=el("button","ghost","Jag fattar – dölj");x.onclick=()=>{store("bt_guide","1");playGuide()};c.append(x);g.append(c)}
+function playGuide(){const g=$("playGuide");if(g)g.textContent=""}
+function showHelp(){
+  const o=el("div","tvmod");const c=el("div","card tvmc guide");const x=el("button","ghost tvx","✕");x.onclick=()=>o.remove();
+  c.append(x,el("h2",null,"Så funkar det"));
+  [["1","Få koden","Tränaren visar en fyrsiffrig kod på passet – eller en QR-kod att scanna."],["2","Skriv in koden","Du kommer direkt till rätt övning eller tävling."],["3","Rapportera ditt resultat","Fyll i efter varje omgång eller hål. Topplistan uppdateras live – följ hur du klättrar!"]].forEach(([n,t,d])=>{const r=el("div","step");const tx=el("div");tx.append(el("b",null,t),el("small",null,d));r.append(el("span","num",n),tx);c.append(r)});
+  const ok=el("button","go","Då kör vi!");ok.onclick=()=>o.remove();c.append(ok);
+  o.append(c);o.onclick=e=>{if(e.target===o)o.remove()};document.body.append(o);
+}
 async function playResume(){playGuide();
   const box=$("playResume");if(!box)return;box.textContent="";
   const items=[];
