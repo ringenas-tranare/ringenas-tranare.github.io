@@ -916,6 +916,18 @@ body.sun .qbtn{background:#eef3f7;border-color:#cfd9e3}
 .trail b{color:var(--gold);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60vw}
 body.sun .nback{background:#fff;border-color:#d8b45a;color:#8a6a10}
 body.sun .trail button{color:#5d6b78}
+
+.tvctl .tvadd{opacity:1!important;border:1px solid color-mix(in srgb,var(--gold) 60%,transparent)!important;color:var(--gold)}
+.bred{display:flex;flex-direction:column;gap:6px;margin:4px 0 8px}
+.brow{display:grid;grid-template-columns:34px 1fr 1fr 1.3fr 48px;gap:6px;align-items:center}
+.brow.h span{font-size:.66rem;letter-spacing:.08em;text-transform:uppercase;color:var(--mut)}
+.brow b{text-align:center}
+.brow select,.brow input{margin:0;padding:8px 6px;text-align:center;font-weight:700}
+.okw{display:flex;gap:4px}
+.okb{margin:0;width:42px;height:38px;padding:0;border-radius:10px;font-weight:900;background:rgba(255,110,90,.16);color:#ff9b8a;border:1px solid rgba(255,110,90,.4)}
+.okb.on{background:rgba(70,200,120,.2);color:#7ee2a5;border-color:rgba(70,200,120,.5)}
+.okw .mul{flex:1;min-width:0;font-size:.75rem;padding:6px 2px}
+.bpt{text-align:center;font-weight:900;color:var(--gold)}
 </style></head>
 <body><svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <linearGradient id="lg-grad" x1="0" y1="0" x2="0" y2="1"><stop offset=".6" style="stop-color:currentColor"/><stop offset=".88" style="stop-color:var(--gold)"/></linearGradient>
@@ -1080,9 +1092,14 @@ let myId=store("bt_id");if(!myId){myId=(window.crypto&&crypto.randomUUID)?crypto
 let myPid=store("bt_pid");if(!myPid){myPid=Math.random().toString(36).slice(2,10)+Date.now().toString(36);store("bt_pid",myPid)}
 let _x="",admin=null,shared=[];
 async function api(body){return {ok:false,error:"Admin sköts i Supabase"}}
-async function loadAll(){if(!sb)return;if(!betSid){shared=[];renderBoard();return}try{const {data,error}=await sb.rpc("betting_board",{p_sid:betSid});if(error)throw error;shared=(data||[]).map(r=>({...r,ts:Date.parse(r.updated_at)}));{const mine2=shared.find(x=>x.pid===myPid);if(mine2&&mine2.name&&me.name&&mine2.name!==me.name&&played(me)>0){me.name=mine2.name;save()}}$("live").classList.remove("hide");renderBoard()}catch(e){$("live").classList.add("hide");$("place").textContent="Kunde inte hämta topplistan just nu."}}
+async function loadAll(){if(!sb)return;if(!betSid){shared=[];renderBoard();return}try{const {data,error}=await sb.rpc("betting_board",{p_sid:betSid});if(error)throw error;shared=(data||[]).map(r=>({...r,ts:Date.parse(r.updated_at)}));{const mine2=shared.find(x=>x.pid===myPid);if(mine2&&Date.now()-betPushAt>6000&&!lockedMsg){let ch=false;
+  if(mine2.name&&me.name&&mine2.name!==me.name&&played(me)>0){me.name=mine2.name;ch=true}
+  const v=betSess?(betSess.revealed?5:5-betSess.hide_last):5,sr=mine2.rounds||{};
+  for(let k=1;k<=v;k++){const a=JSON.stringify(sr[k]||null),b=JSON.stringify((me.rounds||{})[k]||null);if(a!==b){if(sr[k])me.rounds[k]=sr[k];else delete me.rounds[k];ch=true}}
+  if(ch){save();if(view==="betting")renderPlay()}}}$("live").classList.remove("hide");renderBoard()}catch(e){$("live").classList.add("hide");$("place").textContent="Kunde inte hämta topplistan just nu."}}
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)loadAll()});
-async function push(){if(!sb||!betSid)return;try{const r=await sb.rpc("betting_save",{p_sid:betSid,p_pid:myPid,p_secret:myId,p_name:me.name||"",p_rounds:me.rounds||{},p_history:me.history||[]});if(!r.error&&r.data===false){const m=$("msg");if(m){m.textContent="Kunde inte spara – passet kan vara avslutat.";m.classList.add("err")}betRefreshSess()}}catch(e){}}
+let betPushAt=0;
+async function push(){if(!sb||!betSid)return;betPushAt=Date.now();try{const r=await sb.rpc("betting_save",{p_sid:betSid,p_pid:myPid,p_secret:myId,p_name:me.name||"",p_rounds:me.rounds||{},p_history:me.history||[]});if(!r.error&&r.data===false){const m=$("msg");if(m){m.textContent="Kunde inte spara – passet kan vara avslutat.";m.classList.add("err")}betRefreshSess()}}catch(e){}}
 async function adminOp(pid,op,value){try{const r=await api({action:"admin",pin:admin,op,pid,value});if(!r.ok)$("place").textContent=r.error||"Misslyckades";await loadAll()}catch(e){$("place").textContent="Kunde inte nå servern"}}
 let betSid=store("bt_bsid")||null,betSess=null;let me;try{me=JSON.parse(store("bt_me"+(betSid?"_"+betSid:""))||"null")}catch(e){me=null}
 me=me||{};me.rounds=me.rounds||{};me.history=me.history||[];
@@ -1907,9 +1924,10 @@ function tvShow(){
   h.innerHTML='<svg class="lg" aria-hidden="true"><use href="#i-logo"/></svg><div class="tvt"><small><span class="tvlive" id="tvLive">LIVE</span> Ringenäs Tränare</small><h1 id="tvName">Laddar…</h1><p id="tvInfo"></p></div>';
   const ctl=el("div","tvctl");
   const fs=el("button","ghost","⛶ Helskärm");fs.onclick=()=>{const d=document.documentElement;if(document.fullscreenElement)document.exitFullscreen();else if(d.requestFullscreen)d.requestFullscreen().catch(()=>{});else if(d.webkitRequestFullscreen)d.webkitRequestFullscreen()};
-  const ed=el("button","ghost",apin?"✎ Redigera på":"🔒 Redigera");ed.id="tvEd";ed.onclick=()=>{if(!apin)tvLogin();else tvToast("Tryck på en spelare för att rätta poäng")};
+  const ed=el("button","ghost",apin?"✎ Tryck på en spelare för att rätta":"🔒 Redigera");ed.id="tvEd";ed.onclick=()=>{if(!apin)tvLogin();else tvToast("Tryck på en spelare för att rätta poäng")};
+  const ad=el("button","ghost tvadd","＋ Lägg till spelare");ad.onclick=()=>{if(!apin)tvLogin("add");else tvAdd()};
   const cl=el("button","ghost","✕");cl.title="Stäng storbild";cl.onclick=()=>{if(document.fullscreenElement)document.exitFullscreen();go(apin?"admin":"home")};
-  ctl.append(fs,ed,cl);h.append(ctl);
+  ctl.append(ad,fs,ed,cl);h.append(ctl);
   const body=el("div","tvb");
   const list=el("div","tvlist");list.id="tvList";
   const side=el("aside","tvjoin");side.innerHTML='<div class="tvqr" id="tvQr"></div><p class="tvsc">Scanna och var med!</p><div class="tvcl">eller skriv koden</div><div class="tvcode" id="tvCode">––––</div><small>ringenas-tranare.github.io → Spela</small><div id="tvHide"></div><div id="tvAdm"></div>';
@@ -1950,12 +1968,12 @@ function tvModal(title){const o=el("div","tvmod");const c=el("div","card tvmc");
 function tvLogin(after){
   const {o,c}=tvModal("Tränarinloggning");c.append(el("p","msg","Logga in för att kunna rätta spelares poäng direkt från storbilden."));
   const i=el("input");i.type="password";i.placeholder="Admin-kod";const b=el("button","go","Logga in");const m=el("div","msg");
-  const go2=async()=>{b.disabled=true;try{if(await aRpc("admin_login",{p_pin:i.value})){apin=i.value;try{sessionStorage.setItem("bt_apin",apin)}catch(e){}o.remove();const e=$("tvEd");if(e)e.textContent="✎ Redigera på";tvDraw();if(after)tvEdit(after)}else{m.textContent="Fel kod.";m.classList.add("err")}}catch(e){m.textContent="Kunde inte nå databasen.";m.classList.add("err")}b.disabled=false};
+  const go2=async()=>{b.disabled=true;try{if(await aRpc("admin_login",{p_pin:i.value})){apin=i.value;try{sessionStorage.setItem("bt_apin",apin)}catch(e){}o.remove();const e=$("tvEd");if(e)e.textContent="✎ Tryck på en spelare för att rätta";tvDraw();if(after==="add")tvAdd();else if(after)tvEdit(after)}else{m.textContent="Fel kod.";m.classList.add("err")}}catch(e){m.textContent="Kunde inte nå databasen.";m.classList.add("err")}b.disabled=false};
   b.onclick=go2;i.onkeydown=e=>{if(e.key==="Enter")go2()};c.append(i,b,m);setTimeout(()=>i.focus(),50);
 }
 async function tvEdit(p){
   const s=tvSess;if(!s||!apin)return;
-  const {o,c}=tvModal("Rätta resultat");
+  const {o,c}=tvModal(p.name?"Resultat – "+p.name:"Resultat");
   const m=el("div","msg");
   const nl=el("label",null,"Namn");const ni=el("input");ni.value=p.name||"";ni.maxLength=24;c.append(nl,ni);
   const done=async ok=>{if(ok){o.remove();tvToast("Sparat ✓");await tvFetch();if(betSid===s.id)loadAll()}else{m.textContent="Det gick inte att spara.";m.classList.add("err")}};
@@ -1973,19 +1991,44 @@ async function tvEdit(p){
     c.append(sv,m,del);
   }else{
     let raw=p.raw||{};try{const fl=await aRpc("admin_bet_list",{p_pin:apin,p_sid:s.id});const f=(fl||[]).find(x=>x.pid===p.pid);if(f)raw=f}catch(e){}
-    const base=total({...raw,adj:0});let adj=+raw.adj||0;
-    c.append(el("label",null,"Justera poäng"));
-    const box=el("div","tvadj");const val=el("div","tvav");const show=()=>{val.innerHTML="";val.append(el("b",null,String(Math.max(0,base+adj))),el("small",null,"poäng ("+(adj>=0?"+":"")+adj+" justerat)"))};
-    [-5,-1,1,5].forEach(d=>{const b=el("button","chip",(d>0?"+":"")+d);b.onclick=()=>{adj+=d;show()};box.append(b)});
-    show();c.append(val,box);
-    if(tvSess.hide_last>0&&!tvSess.revealed)c.append(el("p","msg","Obs: totalen här inkluderar de hemliga omgångarna."));
+    let adj=+raw.adj||0;const R0=raw.rounds||{};
+    c.append(el("label",null,"Omgångar – fyll i eller rätta"));
+    const tb=el("div","bred");const hdr=el("div","brow h");["Omg","Träffar","Insats","Lyckad","Poäng"].forEach(t=>hdr.append(el("span",null,t)));tb.append(hdr);
+    const rows=[];
+    for(let r=1;r<=5;r++){const x=R0[r]||null;const row=el("div","brow");row.append(el("b",null,String(r)));
+      const dv=el("select");dv.append(new Option("–",""));for(let k=0;k<=10;k++)dv.append(new Option(String(k),String(k)));dv.value=x?String(x.drives):"";
+      const bt=el("input");bt.inputMode="numeric";bt.value=x?String(x.bet):"";bt.placeholder="0";
+      const ok=el("button","okb"+(x&&x.ok?" on":""),x&&x.ok?"✓":"✗");ok.type="button";let okv=x?!!x.ok:false;ok.onclick=()=>{okv=!okv;ok.classList.toggle("on",okv);ok.textContent=okv?"✓":"✗";calc()};
+      let mu=null;if(r===5){mu=el("select","mul");[["2","3 m ×2"],["3","5 m ×3"],["5","8 m ×5"]].forEach(([v,t])=>mu.append(new Option(t,v)));mu.value=x?String(x.mult||2):"2";mu.onchange=()=>calc()}
+      const pt=el("span","bpt","–");
+      const okw=el("div","okw");okw.append(ok);if(mu)okw.append(mu);
+      row.append(dv,bt,okw,pt);tb.append(row);rows.push({dv,bt,get ok(){return okv},mu,pt});dv.onchange=()=>calc();bt.oninput=()=>calc()}
+    const val=el("div","tvav");
+    const build=()=>{const out={};let tot=0;for(let r=1;r<=5;r++){const R=rows[r-1];if(R.dv.value===""){for(let q=r;q<=5;q++)rows[q-1].pt.textContent="–";break}
+      const d=+R.dv.value,mult=r===5?+R.mu.value:2,max=r<5?d:tot+d;let b=Math.round(+(R.bt.value||0))||0;b=Math.max(0,Math.min(max,b));
+      const bonus=b<1?0:(R.ok?b*(mult-1):-b);out[r]={drives:d,bet:b,ok:R.ok,mult,bonus};tot+=d+bonus;R.pt.textContent=String(d+bonus)}
+      return{out,tot}};
+    const calc=()=>{const {tot}=build();val.innerHTML="";val.append(el("b",null,String(Math.max(0,tot+adj))),el("small",null,"poäng totalt"+(adj?" ("+(adj>0?"+":"")+adj+" justerat)":"")))};
+    c.append(tb,val);
+    c.append(el("label",null,"Justera poäng (± extra)"));
+    const box=el("div","tvadj");[-5,-1,1,5].forEach(d=>{const b=el("button","chip",(d>0?"+":"")+d);b.onclick=()=>{adj+=d;calc()};box.append(b)});c.append(box);
+    calc();
+    if(tvSess.hide_last>0&&!tvSess.revealed)c.append(el("p","msg","Obs: här syns även de hemliga omgångarna."));
     const sv=el("button","go","Spara ändringar");sv.onclick=async()=>{sv.disabled=true;try{let ok=true;
       if(ni.value.trim()&&ni.value.trim()!==p.name)ok=await aRpc("admin_bet_update",{p_pin:apin,p_sid:s.id,p_pid:p.pid,p_op:"name",p_value:ni.value.trim()});
+      const {out}=build();if(ok&&JSON.stringify(out)!==JSON.stringify(R0))ok=await aRpc("admin_bet_set_rounds",{p_pin:apin,p_sid:s.id,p_pid:p.pid,p_rounds:out});
       if(ok&&adj!==(+raw.adj||0))ok=await aRpc("admin_bet_update",{p_pin:apin,p_sid:s.id,p_pid:p.pid,p_op:"adj",p_value:String(adj)});
       done(ok)}catch(e){done(false)}sv.disabled=false};
     const del=el("button","ghost danger","Ta bort spelaren");twoTap(del,"Säker? Tryck igen",async()=>{try{done(await aRpc("admin_bet_update",{p_pin:apin,p_sid:s.id,p_pid:p.pid,p_op:"delete",p_value:null}))}catch(e){done(false)}});
     c.append(sv,m,del);
   }
+}
+function tvAdd(){
+  const s=tvSess;if(!s||!apin)return;
+  const {o,c}=tvModal("Lägg till spelare");c.append(el("p","msg","För spelare utan telefon – du rapporterar deras resultat här från storbilden."));
+  const i=el("input");i.placeholder="Spelarens namn";i.maxLength=24;const b=el("button","go","Lägg till och fyll i resultat");const m=el("div","msg");
+  const add=async()=>{const n=i.value.trim();if(!n){i.focus();return}b.disabled=true;try{const pid=await aRpc("admin_entry_add",{p_pin:apin,p_sid:s.id,p_name:n});if(!pid)throw 0;o.remove();await tvFetch();tvEdit({pid,name:n,raw:s.kind==="comp"?{scores:[]}:{rounds:{},adj:0}})}catch(e){m.textContent="Det gick inte att lägga till.";m.classList.add("err")}b.disabled=false};
+  b.onclick=add;i.onkeydown=e=>{if(e.key==="Enter")add()};c.append(i,b,m);setTimeout(()=>i.focus(),50);
 }
 async function tvWake(){try{if(view==="tv"&&navigator.wakeLock&&!tvLock){tvLock=await navigator.wakeLock.request("screen");tvLock.addEventListener("release",()=>{tvLock=null})}}catch(e){}}
 document.addEventListener("visibilitychange",()=>{if(!document.hidden&&view==="tv"){tvWake();tvFetch()}});
