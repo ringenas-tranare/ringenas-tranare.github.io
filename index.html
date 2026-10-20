@@ -824,6 +824,70 @@ body[data-view="home"] .scene .birds{display:inline}
 @keyframes rbfly1{0%{transform:translate(70px,46px) scale(.62);opacity:0}5%{opacity:.85}40%{transform:translate(140px,94px) scale(.42)}58%{transform:translate(176px,122px) scale(.24);opacity:.75}64%{transform:translate(186px,131px) scale(.17);opacity:0}100%{transform:translate(186px,131px) scale(.17);opacity:0}}
 @keyframes rbfly2{0%{transform:translate(338px,36px) scale(.55);opacity:0}5%{opacity:.8}42%{transform:translate(268px,88px) scale(.36)}56%{transform:translate(232px,118px) scale(.2);opacity:.7}62%{transform:translate(224px,128px) scale(.14);opacity:0}100%{transform:translate(224px,128px) scale(.14);opacity:0}}
 @media (prefers-reduced-motion:reduce){.scene .birds{display:none!important}}
+
+/* === Storbild === */
+body[data-view="tv"] .top,body[data-view="tv"] nav,body[data-view="tv"] .scene{display:none!important}
+body[data-view="tv"] main{max-width:none!important;padding:0!important;min-height:0!important}
+body[data-view="tv"]{background:radial-gradient(120% 90% at 20% 0%,#1d3550 0%,#0b1726 55%,#060d16 100%) fixed!important}
+.tv{height:100vh;height:100dvh;display:flex;flex-direction:column;padding:clamp(14px,2.2vw,32px);gap:clamp(12px,1.8vw,26px);box-sizing:border-box;color:#fff}
+.tvh{display:flex;align-items:center;gap:clamp(12px,1.6vw,24px)}
+.tvh .lg{width:clamp(70px,8vw,130px)!important;height:auto!important;aspect-ratio:1.94;flex:none}
+.tvt{flex:1;min-width:0}
+.tvt small{font-size:clamp(.7rem,1vw,1rem);letter-spacing:.24em;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:10px}
+.tvt h1{margin:.1em 0 0;font-size:clamp(1.6rem,3.6vw,3.6rem);line-height:1.05;letter-spacing:.02em;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tvt p{margin:.2em 0 0;color:#b9c7d4;font-size:clamp(.85rem,1.3vw,1.3rem)}
+.tvlive{display:inline-flex;align-items:center;gap:6px;color:#ff8f7a;letter-spacing:.14em;font-weight:800}
+.tvlive::before{content:"";width:.6em;height:.6em;border-radius:50%;background:#ff5a4a;animation:sdp 1.6s ease-in-out infinite;box-shadow:0 0 0 0 rgba(255,90,74,.6)}
+.tvlive.off{color:#8a98a6}.tvlive.off::before{background:#8a98a6;animation:none}
+.tvctl{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+.tvctl .ghost{margin:0;width:auto;padding:8px 14px;font-size:.85rem;opacity:.75}
+.tvctl .ghost:hover{opacity:1}
+.tvb{flex:1;min-height:0;display:grid;grid-template-columns:1fr clamp(220px,26vw,380px);gap:clamp(12px,2vw,30px)}
+.tvlist{overflow:auto;display:flex;flex-direction:column;gap:clamp(6px,.8vw,12px);padding:4px;scrollbar-width:none}
+.tvlist::-webkit-scrollbar{display:none}
+.tvr{all:unset;box-sizing:border-box;display:grid;grid-template-columns:clamp(46px,5vw,84px) 1fr auto;align-items:center;gap:clamp(10px,1.4vw,22px);padding:clamp(10px,1.2vw,18px) clamp(14px,1.6vw,26px);border-radius:clamp(14px,1.4vw,22px);background:linear-gradient(90deg,rgba(255,255,255,.09),rgba(255,255,255,.035));border:1px solid rgba(255,255,255,.12);will-change:transform}
+.tvr.ed{cursor:pointer}.tvr.ed:hover{border-color:var(--gold)}
+.tvrk{width:clamp(38px,4vw,64px);height:clamp(38px,4vw,64px);border-radius:50%;display:grid;place-items:center;font-weight:900;font-size:clamp(1.1rem,2vw,2rem);background:rgba(255,255,255,.1)}
+.tvr.p1{background:linear-gradient(90deg,rgba(224,187,74,.32),rgba(224,187,74,.08));border-color:rgba(224,187,74,.7)}
+.tvr.p1 .tvrk{background:linear-gradient(180deg,#f6dc84,#c99a2e);color:#1a1405}
+.tvr.p2 .tvrk{background:linear-gradient(180deg,#f1f4f7,#aeb8c2);color:#10233a}
+.tvr.p3 .tvrk{background:linear-gradient(180deg,#e7b48a,#a8673a);color:#1a0d05}
+.tvr.win{animation:winp 1.6s ease 3}
+.tvnm{min-width:0;display:flex;flex-wrap:wrap;align-items:baseline;column-gap:12px}
+.tvnm b{font-size:clamp(1.15rem,2.3vw,2.4rem);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.tvnm small{flex-basis:100%;color:#a9b8c6;font-size:clamp(.75rem,1.1vw,1.1rem)}
+.tvmv{font-style:normal;font-weight:800;font-size:clamp(.75rem,1.1vw,1.1rem);padding:2px 8px;border-radius:99px}
+.tvmv.up{background:rgba(70,200,120,.2);color:#7ee2a5}.tvmv.down{background:rgba(255,110,90,.18);color:#ff9b8a}
+.tvpt{font-size:clamp(1.6rem,3.4vw,3.6rem);font-weight:900;font-variant-numeric:tabular-nums;letter-spacing:.02em}
+.tvempty{margin:auto;text-align:center;font-size:clamp(1.2rem,2.4vw,2.2rem);color:#b9c7d4}
+.tvempty small{font-size:.6em}
+.tvjoin{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:clamp(6px,.8vw,12px);padding:clamp(14px,1.8vw,28px);border-radius:clamp(18px,2vw,30px);background:linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.03));border:1px solid rgba(224,187,74,.45)}
+.tvqr{width:100%;max-width:300px;aspect-ratio:1}
+.tvqr svg{width:100%;height:100%;display:block;border-radius:12px;box-shadow:0 10px 30px rgba(0,0,0,.4)}
+.tvsc{margin:.4em 0 0;font-weight:800;font-size:clamp(1rem,1.6vw,1.6rem)}
+.tvcl{color:#a9b8c6;font-size:clamp(.75rem,1vw,1rem);letter-spacing:.14em;text-transform:uppercase}
+.tvcode{font-size:clamp(2.4rem,5vw,5rem);font-weight:900;letter-spacing:.16em;padding-left:.16em;color:var(--gold);font-variant-numeric:tabular-nums;line-height:1}
+.tvjoin small{color:#a9b8c6;font-size:clamp(.7rem,.95vw,.95rem)}
+.tvsec{margin-top:8px;padding:8px 14px;border-radius:99px;background:rgba(224,187,74,.15);color:var(--gold);font-weight:700;font-size:clamp(.8rem,1.1vw,1.1rem)}
+#tvAdm .go{margin-top:10px}
+.tvtoast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:300;background:#10233a;color:#fff;border:1px solid var(--gold);padding:10px 18px;border-radius:99px;font-weight:700;transition:opacity .4s}
+.tvtoast.out{opacity:0}
+.tvmod{position:fixed;inset:0;z-index:250;background:rgba(3,8,14,.7);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:grid;place-items:center;padding:16px}
+.tvmc{width:min(560px,100%);max-height:90vh;overflow:auto;position:relative}
+.tvx{position:absolute;top:10px;right:10px;margin:0!important;width:auto!important;padding:6px 12px!important}
+.tvholes{display:grid;grid-template-columns:repeat(auto-fill,minmax(54px,1fr));gap:6px;margin:6px 0}
+.tvhole{display:flex;flex-direction:column;align-items:center;gap:2px;margin:0;text-transform:none;letter-spacing:0}
+.tvhole small{font-size:.7rem;color:var(--mut)}
+.tvhole input{margin:0;text-align:center;font-weight:800;font-size:1.1rem;padding:8px 0}
+.tvsum{font-weight:800;margin:6px 0 4px;color:var(--gold)}
+.tvav{display:flex;align-items:baseline;gap:10px;margin:4px 0 8px}.tvav b{font-size:2.4rem}.tvav small{color:var(--mut)}
+.tvadj{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:6px}.tvadj .chip{margin:0}
+.adm3 .tvbtn{background:var(--gold)!important;color:#1a1405!important;border-color:transparent!important;font-weight:800}
+@media (max-width:820px) and (orientation:portrait){.tvb{grid-template-columns:1fr;grid-template-rows:1fr auto}.tvjoin{flex-direction:row;flex-wrap:wrap;justify-content:center}.tvqr{max-width:140px}.tvh .lg{display:none}}
+#v-tv{display:block!important;width:100%}
+#v-tv.hide{display:none!important}
+#tvBody{width:100%}
+@media (max-width:640px){.tvh{flex-wrap:wrap}.tvctl{order:-1;width:100%}.tvctl .ghost{padding:6px 10px;font-size:.75rem}.tvt h1{white-space:normal}}
 </style></head>
 <body><svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <linearGradient id="lg-grad" x1="0" y1="0" x2="0" y2="1"><stop offset=".6" style="stop-color:currentColor"/><stop offset=".88" style="stop-color:var(--gold)"/></linearGradient>
@@ -892,6 +956,8 @@ body[data-view="home"] .scene .birds{display:inline}
 <button class="ghost" data-go="contact" style="margin:0;justify-content:flex-start"><svg class="i s"><use href="#i-back"/></svg>Tillbaka</button>
 <div class="card"><h2 id="admTitle">Admin</h2><div id="admBody">Laddar…</div></div>
 </section>
+
+<section class="view hide" id="v-tv"><div id="tvBody"></div></section>
 
 <section class="view hide" id="v-comp">
 <div class="crumb"><button class="ghost" data-go="play"><svg class="i s"><use href="#i-back"/></svg>Spela</button><span>›</span><b>Träningstävling</b></div>
@@ -985,7 +1051,7 @@ let myId=store("bt_id");if(!myId){myId=(window.crypto&&crypto.randomUUID)?crypto
 let myPid=store("bt_pid");if(!myPid){myPid=Math.random().toString(36).slice(2,10)+Date.now().toString(36);store("bt_pid",myPid)}
 let _x="",admin=null,shared=[];
 async function api(body){return {ok:false,error:"Admin sköts i Supabase"}}
-async function loadAll(){if(!sb)return;if(!betSid){shared=[];renderBoard();return}try{const {data,error}=await sb.rpc("betting_board",{p_sid:betSid});if(error)throw error;shared=(data||[]).map(r=>({...r,ts:Date.parse(r.updated_at)}));$("live").classList.remove("hide");renderBoard()}catch(e){$("live").classList.add("hide");$("place").textContent="Kunde inte hämta topplistan just nu."}}
+async function loadAll(){if(!sb)return;if(!betSid){shared=[];renderBoard();return}try{const {data,error}=await sb.rpc("betting_board",{p_sid:betSid});if(error)throw error;shared=(data||[]).map(r=>({...r,ts:Date.parse(r.updated_at)}));{const mine2=shared.find(x=>x.pid===myPid);if(mine2&&mine2.name&&me.name&&mine2.name!==me.name&&played(me)>0){me.name=mine2.name;save()}}$("live").classList.remove("hide");renderBoard()}catch(e){$("live").classList.add("hide");$("place").textContent="Kunde inte hämta topplistan just nu."}}
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)loadAll()});
 async function push(){if(!sb||!betSid)return;try{const r=await sb.rpc("betting_save",{p_sid:betSid,p_pid:myPid,p_secret:myId,p_name:me.name||"",p_rounds:me.rounds||{},p_history:me.history||[]});if(!r.error&&r.data===false){const m=$("msg");if(m){m.textContent="Kunde inte spara – passet kan vara avslutat.";m.classList.add("err")}betRefreshSess()}}catch(e){}}
 async function adminOp(pid,op,value){try{const r=await api({action:"admin",pin:admin,op,pid,value});if(!r.ok)$("place").textContent=r.error||"Misslyckades";await loadAll()}catch(e){$("place").textContent="Kunde inte nå servern"}}
@@ -999,7 +1065,7 @@ seg("drives");seg("ok");seg("dist");
 $("name").value=store("bt_name")||"";
 RULES.forEach((t,i)=>{const d=document.createElement("div");d.className="rl";const b=document.createElement("b");b.textContent="Omgång "+(i+1)+": ";d.append(b,t);$("rlist").appendChild(d)});
 
-const ORD={home:0,play:1,comp:1.5,betting:2,board:3,rules:4,contact:5,admin:6};
+const ORD={home:0,play:1,comp:1.5,betting:2,board:3,rules:4,contact:5,admin:6,tv:7};
 function go(v,np){
   if(v===view)return;
   const dir=ORD[v]>=ORD[view]?"fwd":"back";
@@ -1086,8 +1152,8 @@ function renderBoard(){
   });
   const n=played(mine());$("bPlay").textContent=n>=5?"Lås in resultatet":n>0?"Fortsätt spela":"Börja spela";
 }
-function render(){document.body.dataset.view=view;if(view==="admin")renderAdmin();if(view==="play")playResume();if(view==="comp")compShow();requestAnimationFrame(placeScene);
-  ["home","play","comp","betting","board","rules","contact","admin"].forEach(v=>$("v-"+v).classList.toggle("hide",v!==view));
+function render(){document.body.dataset.view=view;if(view==="admin")renderAdmin();if(view==="play")playResume();if(view==="tv"){tvShow();try{if(tvId)history.replaceState({v:"tv"},"","#tv-"+tvId)}catch(e){}}if(view==="comp")compShow();requestAnimationFrame(placeScene);
+  ["home","play","comp","betting","board","rules","contact","admin","tv"].forEach(v=>$("v-"+v).classList.toggle("hide",v!==view));
   const grp=["betting","board","rules","comp"].includes(view);document.querySelectorAll("nav button").forEach(b=>{const on=b.dataset.go===(grp?"play":view);b.classList.toggle("on",on);on?b.setAttribute("aria-current","page"):b.removeAttribute("aria-current")});document.querySelectorAll(".sub3 .chip").forEach(c=>c.classList.toggle("on",c.dataset.go===view));
   renderPlay();renderBoard();
 }
@@ -1096,8 +1162,9 @@ function render(){document.body.dataset.view=view;if(view==="admin")renderAdmin(
 function init(){
   {const pc=$("playCode");if(pc)pc.append(codeBox("Har du en kod?","Skriv in koden från din tränare så kommer du direkt till rätt övning."))}
   betBar();if(betSid)betRefreshSess();
+  {const m=location.hash.match(/^#tv-([a-z0-9]{4,20})$/i);if(m){tvId=m[1];view="tv"}}
   {const m=location.hash.match(/^#kod-([0-9]{4})$/);if(m&&sb){history.replaceState(null,"","#play");sb.rpc("session_join",{p_code:m[1]}).then(r=>{if(r.data)joinSession(r.data)})}}
-  const h=location.hash.slice(1);if(["home","play","comp","betting","board","rules","contact","admin"].includes(h))view=h;
+  const h=location.hash.slice(1);if(["home","play","comp","betting","board","rules","contact","admin","tv"].includes(h))view=h;
   if(!$("name").value&&me.name)$("name").value=me.name;
   $("send").disabled=false;$("msg").textContent=API?"":"Dina resultat sparas på den här enheten.";
   $("admbox").classList.add("hide");$("localnote").textContent=API?"Bara de som har passets kod ser topplistan.":"Resultaten sparas bara på den här enheten.";
@@ -1410,6 +1477,7 @@ function sessRow(c,compact,inside){
   if(c.kind==="betting"&&!inside){const bH=el("button",null,"Hantera");bH.onclick=()=>{admPage="bet";admBetSid=c.id;renderAdmin();scrollTo({top:0,behavior:"smooth"})};a.append(bH)}
   if(c.kind==="betting"){const bO=el("button",null,"Topplistan");bO.onclick=()=>{betUse(c.id,c);go("board")};a.append(bO)}
   if(c.kind==="comp"){const bO=el("button",null,"Topplistan");bO.onclick=()=>{compTab="board";compJoin(c.id);go("comp")};a.append(bO)}
+  if(c.status==="open"||c.players>0){const bT=el("button","tvbtn","📺 Storbild");bT.onclick=()=>openTv(c.id);a.prepend(bT)}
   if(compact){w.append(a);return w}
   if(c.hide_last>0){const bR=el("button",c.revealed?null:"gold",c.revealed?"Dölj igen":"Avslöja!");bR.onclick=()=>op(c.revealed?"unreveal":"reveal",null,c.revealed?"De sista är dolda igen.":"Slutställningen är avslöjad för alla!");a.append(bR)}
   const bS=el("button",null,c.status==="open"?"Avsluta":"Öppna igen");bS.onclick=()=>op(c.status==="open"?"close":"open",null,c.status==="open"?"Avslutat – koden fungerar inte längre.":"Öppet igen.");a.append(bS);
@@ -1417,6 +1485,7 @@ function sessRow(c,compact,inside){
     bP.onclick=async()=>{if(!pl.classList.toggle("hide")){pl.textContent="Laddar…";const es=await aRpc("admin_comp_entries",{p_pin:apin,p_code:c.id}).catch(()=>[]);pl.textContent="";if(!es||!es.length){pl.append(el("p","msg","Inga spelare än."));return}
       es.forEach(e=>{const rr=el("div","cplr");const sc=(e.scores||[]).map(v=>v==null?"–":v).join(" ");rr.append(el("span",null,(e.name||"(utan namn)")+(e.blocked?" · dold":"")),el("small",null,sc));const d=el("button","danger","Ta bort");twoTap(d,"Säker?",()=>op("delete_entry",e.pid,"Spelaren är borttagen."));rr.append(d);pl.append(rr)})}};
     a.append(bP);w.append(a,pl)}else w.append(a);
+  const bL=el("button",null,"Kopiera storbildslänk");bL.onclick=async()=>{const u=tvLink(c.id);try{if(navigator.share&&matchMedia("(pointer:coarse)").matches){await navigator.share({title:c.name,url:u})}else{await navigator.clipboard.writeText(u);admMsg("Länken är kopierad – öppna den på TV:n eller iPaden.")}}catch(e){admMsg(u)}};a.append(bL);
   const bK=el("button",null,"Kör igen");bK.title="Starta ett nytt pass med samma inställningar och ny kod";bK.onclick=async()=>{bK.disabled=true;try{const r=await aRpc("admin_session_create",{p_pin:apin,p_kind:c.kind,p_name:c.name,p_holes:c.holes,p_mode:c.mode,p_unit:c.unit,p_hide:c.hide_last});if(!r||!r.code)throw 0;await renderAdmin();admMsg("Nytt pass startat med kod "+r.code+".");showCode(r.code,c.name)}catch(e){admMsg("Det gick inte.",1)}finally{bK.disabled=false}};a.append(bK);
   const bD=el("button","danger","Radera");twoTap(bD,"Säker?",()=>op("delete",null,"Raderat."));a.append(bD);
   return w;
@@ -1569,6 +1638,7 @@ async function compFetch(){
     if(!m.data){compCode=null;store("bt_comp","");comp=null;compShow();return}
     const was=comp&&comp.id===m.data.id?comp.revealed:null,ost=comp&&comp.id===m.data.id?comp.status+comp.revealed:null;
     comp=m.data;compRows=b.data||[];
+    {const me2=compRows.find(x=>x.pid===myPid);if(me2&&!compDirty){const L=cLoc(comp.id);let ch=false;const v2=comp.revealed?comp.holes:comp.holes-comp.hide_last;for(let i=0;i<v2;i++){const sv=(me2.scores||[])[i];const nv=sv==null?null:sv;if((L.scores[i]==null?null:L.scores[i])!==nv){L.scores[i]=nv;ch=true}}if(me2.name&&me2.name!==L.name){L.name=me2.name;ch=true}if(ch){cSaveLoc(comp.id,L);if(compTab==="card"&&!(document.activeElement&&document.activeElement.closest&&document.activeElement.closest("#cCard")))compDrawCard()}}}
     if(view==="comp"){
       if(compTab==="rules"&&ost===null)compRules();
       if(compTab==="card"&&(ost===null||ost!==comp.status+comp.revealed)&&!(document.activeElement&&document.activeElement.closest&&document.activeElement.closest("#cCard")))compDrawCard();
@@ -1673,14 +1743,15 @@ function compRules(){
    .forEach(([n,t])=>{const r=el("div","step");r.append(el("span","num",n),el("p",null,t));c.append(r)});
 }
 
+let compDirty=false;
 function compQueue(L){
-  clearTimeout(compSaveT);
+  clearTimeout(compSaveT);compDirty=true;
   compSaveT=setTimeout(async()=>{
     const m=$("cMsg");const name=(L.name||"").trim();
     if(!name){if(m){m.textContent="Skriv ditt namn så hamnar du i topplistan.";m.classList.add("err")}return}
     const arr=L.scores.slice();while(arr.length&&arr[arr.length-1]==null)arr.pop();
     try{const r=await sb.rpc("comp_save",{p_code:comp.id,p_pid:myPid,p_secret:myId,p_name:name,p_scores:arr});
-      if(r.error||!r.data)throw r.error||new Error("x");if(m){m.textContent="Sparat ✓";m.classList.remove("err")}}
+      if(r.error||!r.data)throw r.error||new Error("x");compDirty=false;if(m){m.textContent="Sparat ✓";m.classList.remove("err")}}
     catch(e){if(m){m.textContent="Kunde inte spara – kontrollera nätet. Vi försöker igen när du ändrar något.";m.classList.add("err")}}
   },500);
 }
@@ -1748,6 +1819,130 @@ async function playResume(){playGuide();
   if(betSid&&!betSess)betRefreshSess().then(()=>{if(view==="play"&&betSess)playResume()});
   if(compCode&&(!comp||comp.id!==compCode)&&sb){try{const r=await sb.rpc("session_get",{p_id:compCode});if(r.data){comp=r.data;if(view==="play")playResume()}else{compCode=null;store("bt_comp","")}}catch(e){}}
 }
+
+/* === Storbild (TV/iPad) med QR-kod och redigering === */
+let tvGone=false,tvId=null,tvSess=null,tvRows=[],tvPrev={},tvMove={},tvLock=null,tvBusy=false,tvScrollDir=1;
+const SITE="https://ringenas-tranare.github.io/";
+function tvLink(id){return SITE+"#tv-"+id}
+function openTv(id){tvId=id;tvSess=null;tvRows=[];tvPrev={};tvMove={};if(view==="tv")tvShow();else go("tv")}
+function loadQrLib(){return new Promise((ok,no)=>{if(window.qrcode)return ok();const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/qrcode-generator/1.4.4/qrcode.min.js";s.onload=()=>ok();s.onerror=no;document.head.append(s)})}
+async function tvQr(box,text){
+  try{await loadQrLib();const q=qrcode(0,"M");q.addData(text);q.make();const n=q.getModuleCount();
+    let d="";for(let r=0;r<n;r++)for(let c=0;c<n;c++)if(q.isDark(r,c))d+="M"+c+" "+r+"h1v1h-1z";
+    box.innerHTML='<svg viewBox="-2 -2 '+(n+4)+' '+(n+4)+'" shape-rendering="crispEdges" role="img" aria-label="QR-kod för att gå med"><rect x="-2" y="-2" width="'+(n+4)+'" height="'+(n+4)+'" fill="#fff" rx="2"/><path d="'+d+'" fill="#0b1a2b"/></svg>';
+  }catch(e){box.textContent=""}
+}
+function tvRank(){
+  const s=tvSess;if(!s)return[];
+  if(s.kind==="comp")return compRank(tvRows,s).map(p=>({pid:p.pid,name:p.name,val:p.total,played:p.played,raw:p}));
+  return tvRows.filter(p=>played(p)>0).map(p=>({pid:p.pid,name:p.name,val:total(p),played:played(p),raw:p})).sort((a,b)=>b.val-a.val||b.played-a.played);
+}
+async function tvFetch(){
+  if(!sb||!tvId)return;
+  try{
+    const m=await sb.rpc("session_get",{p_id:tvId});if(m.error)throw m.error;
+    if(!m.data){tvSess=null;tvGone=true;tvDraw();return}tvGone=false;
+    const was=tvSess?tvSess.revealed:null;tvSess=m.data;
+    const b=tvSess.kind==="comp"?await sb.rpc("comp_board",{p_code:tvId}):await sb.rpc("betting_board",{p_sid:tvId});
+    if(b.error)throw b.error;tvRows=b.data||[];
+    if(view!=="tv")return;
+    if(was===false&&tvSess.revealed&&tvSess.hide_last>0&&!matchMedia("(prefers-reduced-motion:reduce)").matches){revealFx(()=>{tvDraw(true);setTimeout(()=>{const f=document.querySelector(".tvlist .tvr.p1");if(f)f.classList.add("win");confetti()},900)})}
+    else tvDraw();
+    const l=$("tvLive");if(l)l.classList.remove("off");
+  }catch(e){const l=$("tvLive");if(l)l.classList.add("off")}
+}
+function tvShow(){
+  const box=$("tvBody");if(!box)return;box.textContent="";
+  const wrap=el("div","tv");
+  const h=el("header","tvh");
+  h.innerHTML='<svg class="lg" aria-hidden="true"><use href="#i-logo"/></svg><div class="tvt"><small><span class="tvlive" id="tvLive">LIVE</span> Ringenäs Tränare</small><h1 id="tvName">Laddar…</h1><p id="tvInfo"></p></div>';
+  const ctl=el("div","tvctl");
+  const fs=el("button","ghost","⛶ Helskärm");fs.onclick=()=>{const d=document.documentElement;if(document.fullscreenElement)document.exitFullscreen();else if(d.requestFullscreen)d.requestFullscreen().catch(()=>{});else if(d.webkitRequestFullscreen)d.webkitRequestFullscreen()};
+  const ed=el("button","ghost",apin?"✎ Redigera på":"🔒 Redigera");ed.id="tvEd";ed.onclick=()=>{if(!apin)tvLogin();else tvToast("Tryck på en spelare för att rätta poäng")};
+  const cl=el("button","ghost","✕");cl.title="Stäng storbild";cl.onclick=()=>{if(document.fullscreenElement)document.exitFullscreen();go(apin?"admin":"home")};
+  ctl.append(fs,ed,cl);h.append(ctl);
+  const body=el("div","tvb");
+  const list=el("div","tvlist");list.id="tvList";
+  const side=el("aside","tvjoin");side.innerHTML='<div class="tvqr" id="tvQr"></div><p class="tvsc">Scanna och var med!</p><div class="tvcl">eller skriv koden</div><div class="tvcode" id="tvCode">––––</div><small>ringenas-tranare.github.io → Spela</small><div id="tvHide"></div><div id="tvAdm"></div>';
+  body.append(list,side);wrap.append(h,body);box.append(wrap);
+  tvDraw();tvFetch();tvWake();
+}
+function tvDraw(anim){
+  const s=tvSess,list=$("tvList");if(!list)return;
+  if(!tvId||tvGone){list.innerHTML='<p class="tvempty">Passet finns inte längre.</p>';const n=$("tvName");if(n)n.textContent="Storbild";return}
+  if(!s)return;
+  $("tvName").textContent=s.name;
+  $("tvInfo").textContent=(s.kind==="betting"?"Bettingträning · 5 omgångar":s.holes+" "+unitW(s,s.holes)+" · "+(s.mode==="strokes"?"slag – lägst vinner":"poäng – högst vinner"))+(s.status==="closed"?" · avslutat":"");
+  const code=$("tvCode");if(code&&code.textContent!==s.code){code.textContent=s.status==="open"?s.code:"Stängt";const q=$("tvQr");if(q){if(s.status==="open")tvQr(q,SITE+"#kod-"+s.code);else q.textContent=""}}
+  const hd=$("tvHide");if(hd){hd.textContent="";if(s.hide_last>0&&!s.revealed){const n=s.hide_last,u=s.kind==="betting"?(n>1?"omgångarna":"omgången"):unitW(s,n);hd.append(el("div","tvsec","🤫 Sista "+(n>1?n+" ":"")+u+" är hemliga"))}}
+  const ad=$("tvAdm");if(ad){ad.textContent="";if(apin&&s.hide_last>0){const b=el("button","go",s.revealed?"Dölj de sista igen":"Avslöja slutställningen!");b.onclick=async()=>{b.disabled=true;try{await aRpc("admin_comp_update",{p_pin:apin,p_code:s.id,p_op:s.revealed?"unreveal":"reveal",p_value:null});await tvFetch()}catch(e){}b.disabled=false};ad.append(b)}}
+  const r=tvRank(),now=Date.now();
+  const before={};list.querySelectorAll(".tvr[data-pid]").forEach(x=>before[x.dataset.pid]=x.getBoundingClientRect().top);
+  r.forEach((p,i)=>{const o=tvPrev[p.pid];if(o!=null&&o!==i)tvMove[p.pid]={d:o-i,until:now+10000};tvPrev[p.pid]=i});
+  list.textContent="";
+  if(!r.length){list.innerHTML='<p class="tvempty">Väntar på första resultatet…<br><small>Scanna QR-koden och kör igång!</small></p>';return}
+  const vis=s.kind==="comp"?(s.revealed?s.holes:s.holes-s.hide_last):(s.revealed?5:5-s.hide_last);
+  let place=0,last=null;
+  r.forEach((p,i)=>{
+    const key=s.kind==="comp"&&s.mode==="strokes"?(p.played?p.val/p.played:0)+"|"+p.played:p.val+"|"+p.played;if(key!==last){place=i+1;last=key}
+    const row=el("button","tvr"+(place<=3?" p"+place:"")+(apin?" ed":""));row.dataset.pid=p.pid;row.type="button";
+    const rk=el("span","tvrk",String(place));
+    const nm=el("span","tvnm");const nn=el("b",null,p.name);nm.append(nn);
+    const mv=tvMove[p.pid];if(mv&&mv.until>now)nm.append(el("i","tvmv "+(mv.d>0?"up":"down"),(mv.d>0?"▲":"▼")+Math.abs(mv.d)));
+    nm.append(el("small",null,(p.played>=vis?"Klar":(s.kind==="comp"?"Efter "+p.played+"/"+vis:"Omgång "+p.played+"/"+vis))+(s.kind==="comp"&&s.mode==="strokes"&&p.played&&p.played<vis?" · snitt "+(p.val/p.played).toFixed(1).replace(".",","):"")));
+    const pt=el("span","tvpt",String(p.val));
+    row.append(rk,nm,pt);row.onclick=()=>{if(apin)tvEdit(p);else tvLogin(p)};list.append(row);
+    if(before[p.pid]!=null&&row.animate){requestAnimationFrame(()=>{const dy=before[p.pid]-row.getBoundingClientRect().top;if(Math.abs(dy)>2)row.animate([{transform:"translateY("+dy+"px)"},{transform:"none"}],{duration:anim?1500:800,easing:"cubic-bezier(.2,.8,.2,1)"})})}
+    else if(row.animate)row.animate([{opacity:0,transform:"translateX(-24px)"},{opacity:1,transform:"none"}],{duration:500,delay:Math.min(i,12)*70,fill:"backwards"});
+  });
+}
+function tvToast(t){const d=el("div","tvtoast",t);document.body.append(d);setTimeout(()=>d.classList.add("out"),2200);setTimeout(()=>d.remove(),2700)}
+function tvModal(title){const o=el("div","tvmod");const c=el("div","card tvmc");const x=el("button","ghost tvx","✕");x.onclick=()=>o.remove();c.append(x,el("h2",null,title));o.append(c);o.onclick=e=>{if(e.target===o)o.remove()};document.body.append(o);return{o,c}}
+function tvLogin(after){
+  const {o,c}=tvModal("Tränarinloggning");c.append(el("p","msg","Logga in för att kunna rätta spelares poäng direkt från storbilden."));
+  const i=el("input");i.type="password";i.placeholder="Admin-kod";const b=el("button","go","Logga in");const m=el("div","msg");
+  const go2=async()=>{b.disabled=true;try{if(await aRpc("admin_login",{p_pin:i.value})){apin=i.value;try{sessionStorage.setItem("bt_apin",apin)}catch(e){}o.remove();const e=$("tvEd");if(e)e.textContent="✎ Redigera på";tvDraw();if(after)tvEdit(after)}else{m.textContent="Fel kod.";m.classList.add("err")}}catch(e){m.textContent="Kunde inte nå databasen.";m.classList.add("err")}b.disabled=false};
+  b.onclick=go2;i.onkeydown=e=>{if(e.key==="Enter")go2()};c.append(i,b,m);setTimeout(()=>i.focus(),50);
+}
+async function tvEdit(p){
+  const s=tvSess;if(!s||!apin)return;
+  const {o,c}=tvModal("Rätta resultat");
+  const m=el("div","msg");
+  const nl=el("label",null,"Namn");const ni=el("input");ni.value=p.name||"";ni.maxLength=24;c.append(nl,ni);
+  const done=async ok=>{if(ok){o.remove();tvToast("Sparat ✓");await tvFetch();if(betSid===s.id)loadAll()}else{m.textContent="Det gick inte att spara.";m.classList.add("err")}};
+  if(s.kind==="comp"){
+    let full=null;try{const es=await aRpc("admin_comp_entries",{p_pin:apin,p_code:s.id});full=(es||[]).find(e=>e.pid===p.pid)}catch(e){}
+    const sc=(full&&full.scores)||p.raw.scores||[];const arr=Array.from({length:s.holes},(_,i)=>sc[i]==null?null:sc[i]);
+    c.append(el("label",null,(s.unit==="station"?"Stationer":"Hål")+" – ändra direkt i rutorna"));
+    const g=el("div","tvholes");const ins=[];
+    arr.forEach((v,i)=>{const w=el("label","tvhole");w.append(el("small",null,String(i+1)));const x=el("input");x.inputMode="numeric";x.value=v==null?"":v;x.placeholder="–";ins.push(x);w.append(x);g.append(w)});
+    const sum=el("div","tvsum");const upd=()=>{let t=0,n=0;ins.forEach(x=>{const v=x.value.trim();if(v!==""&&!isNaN(+v)){t+=+v;n++}});sum.textContent="Totalt "+t+" · "+n+" av "+s.holes};ins.forEach(x=>x.oninput=upd);upd();
+    c.append(g,sum);
+    const sv=el("button","go","Spara ändringar");sv.onclick=async()=>{sv.disabled=true;const out=ins.map(x=>{const v=x.value.trim().replace(",",".");return v===""||isNaN(+v)?null:Math.round(+v)});while(out.length&&out[out.length-1]==null)out.pop();
+      try{done(await aRpc("admin_comp_entry_update",{p_pin:apin,p_code:s.id,p_pid:p.pid,p_name:ni.value.trim(),p_scores:out}))}catch(e){done(false)}sv.disabled=false};
+    const del=el("button","ghost danger","Ta bort spelaren");twoTap(del,"Säker? Tryck igen",async()=>{try{done(await aRpc("admin_comp_update",{p_pin:apin,p_code:s.id,p_op:"delete_entry",p_value:p.pid}))}catch(e){done(false)}});
+    c.append(sv,m,del);
+  }else{
+    let raw=p.raw||{};try{const fl=await aRpc("admin_bet_list",{p_pin:apin,p_sid:s.id});const f=(fl||[]).find(x=>x.pid===p.pid);if(f)raw=f}catch(e){}
+    const base=total({...raw,adj:0});let adj=+raw.adj||0;
+    c.append(el("label",null,"Justera poäng"));
+    const box=el("div","tvadj");const val=el("div","tvav");const show=()=>{val.innerHTML="";val.append(el("b",null,String(Math.max(0,base+adj))),el("small",null,"poäng ("+(adj>=0?"+":"")+adj+" justerat)"))};
+    [-5,-1,1,5].forEach(d=>{const b=el("button","chip",(d>0?"+":"")+d);b.onclick=()=>{adj+=d;show()};box.append(b)});
+    show();c.append(val,box);
+    if(tvSess.hide_last>0&&!tvSess.revealed)c.append(el("p","msg","Obs: totalen här inkluderar de hemliga omgångarna."));
+    const sv=el("button","go","Spara ändringar");sv.onclick=async()=>{sv.disabled=true;try{let ok=true;
+      if(ni.value.trim()&&ni.value.trim()!==p.name)ok=await aRpc("admin_bet_update",{p_pin:apin,p_sid:s.id,p_pid:p.pid,p_op:"name",p_value:ni.value.trim()});
+      if(ok&&adj!==(+raw.adj||0))ok=await aRpc("admin_bet_update",{p_pin:apin,p_sid:s.id,p_pid:p.pid,p_op:"adj",p_value:String(adj)});
+      done(ok)}catch(e){done(false)}sv.disabled=false};
+    const del=el("button","ghost danger","Ta bort spelaren");twoTap(del,"Säker? Tryck igen",async()=>{try{done(await aRpc("admin_bet_update",{p_pin:apin,p_sid:s.id,p_pid:p.pid,p_op:"delete",p_value:null}))}catch(e){done(false)}});
+    c.append(sv,m,del);
+  }
+}
+async function tvWake(){try{if(view==="tv"&&navigator.wakeLock&&!tvLock){tvLock=await navigator.wakeLock.request("screen");tvLock.addEventListener("release",()=>{tvLock=null})}}catch(e){}}
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&view==="tv"){tvWake();tvFetch()}});
+setInterval(()=>{if(!document.hidden&&view==="tv"&&tvId)tvFetch()},3000);
+// Långa listor rullar långsamt av sig själva på storbilden
+setInterval(()=>{const l=$("tvList");if(view!=="tv"||!l||l.scrollHeight<=l.clientHeight+4)return;const max=l.scrollHeight-l.clientHeight;if(l.scrollTop>=max-2)tvScrollDir=-1;else if(l.scrollTop<=2)tvScrollDir=1;l.scrollBy({top:tvScrollDir*Math.min(220,max),behavior:"smooth"})},6000);
 
 if(compCode)compSub();
 init();
