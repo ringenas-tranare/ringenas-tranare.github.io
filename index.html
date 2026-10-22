@@ -821,7 +821,10 @@ body:not([data-view="home"]) .scene,body:not([data-view="home"]) .scene *,body:n
 .gcard td.dp{color:#1f8a4c;font-weight:800}.gcard td.dm{color:#c0392b;font-weight:800}.gcard td.d0{color:#8a96a3}
 .gcard td.nd{background:#ffe6a6;font-weight:900}
 .gcard tr.h td.lk{font-size:.7rem}
-.dform{margin-top:18px}
+.csact{display:flex;flex-direction:column;gap:8px;width:min(320px,80vw);margin-top:16px}
+.csact button{margin:0}
+.admh3.first{margin-top:4px}
+.admset{margin-top:18px}
 body.sun .dsb,body.sun .dpb{background:#fff!important;border:1.5px solid #cdd6e0!important;color:#10233a}
 body.sun .dsb.on,body.sun .dpb.on{background:#fff3cf!important;border-color:#d4a33a!important}
 body.sun .dpb.pos.on{background:#e3f6ea!important;border-color:#2f9e5b!important}body.sun .dpb.neg.on{background:#fde7e3!important;border-color:#d0492f!important}
@@ -1276,9 +1279,12 @@ function betBar(){
     const l=el("button","ghost","Lämna");l.onclick=()=>{betUse(null);render()};b.append(t,l)});
   document.querySelectorAll(".betgate").forEach(g=>{g.textContent="";if(!betSid)g.append(codeBox("Gå med i passet","Skriv in den fyrsiffriga koden du fått av din tränare."))});
 }
-function showCode(code,name){
-  const o=el("div","cdwn codeshow");o.append(el("small",null,name||"Kod"),el("b",null,code),el("p",null,"Gå in på ringenas-tranare.github.io → Spela och skriv in koden"),el("span","msg","Tryck för att stänga"));
-  o.onclick=()=>o.remove();document.body.append(o);
+function showCode(code,name,id){
+  const o=el("div","cdwn codeshow");o.append(el("small",null,name||"Kod"),el("b",null,code),el("p",null,"Gå in på ringenas-tranare.github.io → Spela och skriv in koden"));
+  const act=el("div","csact");
+  if(id){const tv=el("button","go","📺 Visa på storbild");tv.onclick=e=>{e.stopPropagation();o.remove();openTv(id)};act.append(tv)}
+  const cl=el("button","ghost","Klar");cl.onclick=e=>{e.stopPropagation();o.remove()};act.append(cl);o.append(act);
+  o.onclick=e=>{if(e.target===o)o.remove()};document.body.append(o);
 }
 
 /* === Admin: startmeny + undersidor === */
@@ -1289,7 +1295,7 @@ function admNav(passName){
   if(!apin)crumbs.push(["Tränarinloggning",null]);
   else{
     crumbs.push(["Tränarzon",admPage==="home"?null:()=>{admPage="home";admBetSid=null;renderAdmin()}]);
-    const lab={comp:"Tävlingar",bet:"Bettingträning",settings:"Inställningar"}[admPage];
+    const lab={comp:"Träningstävling",bet:"Bettingträning",drive:"Driver med låsning",settings:"Inställningar"}[admPage];
     if(lab)crumbs.push([lab,admBetSid?()=>{admBetSid=null;renderAdmin()}:null]);
     if(admBetSid)crumbs.push([passName||"Pass",null]);
   }
@@ -1324,20 +1330,22 @@ async function renderAdmin(){
   if(!list.length&&!(await aRpc("admin_login",{p_pin:apin}))){apin=null;try{sessionStorage.removeItem("bt_apin");localStorage.removeItem("bt_apin_keep")}catch(e){}return renderAdmin()}
   
   const msg=()=>{const m=el("div","msg");m.id="admMsg";return m};
-  const comps=list.filter(x=>x.kind==="comp"),bets=list.filter(x=>x.kind==="betting");
+  const comps=list.filter(x=>x.kind==="comp"&&x.format!=="drive"),bets=list.filter(x=>x.kind==="betting"),drives=list.filter(x=>x.format==="drive");
+  const dag=()=>["söndag","måndag","tisdag","onsdag","torsdag","fredag","lördag"][new Date().getDay()];
+  const listSess=arr=>{const op=arr.filter(x=>x.status==="open"),cl=arr.filter(x=>x.status!=="open");if(op.length){box.append(el("h3","admh3","Pågår"));op.forEach(x=>box.append(sessRow(x)))}if(cl.length){box.append(el("h3","admh3","Avslutade i dag"));cl.forEach(x=>box.append(sessRow(x)))}};
   if(admPage==="home"){
     if(ttl)ttl.textContent="Tränarzon";
-    const qa=el("div","quick");const q1=el("button","go","＋ Ny tävling");q1.onclick=()=>{admPage="comp";admFocus=1;renderAdmin()};const q2=el("button","go alt","＋ Nytt bettingpass");q2.onclick=()=>{admPage="bet";admBetSid=null;admFocus=1;renderAdmin()};const q3=el("button","go alt","＋ Driver med låsning");q3.onclick=()=>{admPage="comp";admFocus=2;renderAdmin()};qa.append(q1,q2,q3);box.append(qa);
-    box.append(el("p","msg","Eller välj vad du vill hantera:"));
-    const g=el("div","admtiles");
-    const tile=(ic,t,s,fn)=>{const b=el("button","ex");b.innerHTML='<span class="ic"><svg class="i"><use href="#'+ic+'"/></svg></span><div><b></b><small></small></div><i><svg class="i"><use href="#i-next"/></svg></i>';b.querySelector("b").textContent=t;b.querySelector("small").textContent=s;b.onclick=fn;g.append(b)};
-    const oc=comps.filter(x=>x.status==="open").length,ob=bets.filter(x=>x.status==="open").length;
-    tile("i-trophy","Träningstävlingar",oc?oc+" pågår just nu":"Starta en tävling med live-topplista",()=>{admPage="comp";renderAdmin()});
-    tile("i-target","Bettingträning",ob?ob+" pass pågår just nu":"Starta ett bettingpass med egen kod",()=>{admPage="bet";renderAdmin()});
-    tile("i-pin","Inställningar","Byt admin-kod · logga ut",()=>{admPage="settings";renderAdmin()});
-    box.append(g);
     const open=list.filter(x=>x.status==="open");
+    const exK=x=>x.kind==="betting"?"bet":x.format==="drive"?"drive":"comp";
+    box.append(el("h3","admh3 first","Starta ny övning"));
+    const g=el("div","admtiles");
+    const tile=(ic,t,sub,k)=>{const n=open.filter(x=>exK(x)===k).length;const b=el("button","ex");b.innerHTML='<span class="ic"><svg class="i"><use href="#'+ic+'"/></svg></span><div><b></b><small></small></div><i><svg class="i"><use href="#i-next"/></svg></i>';b.querySelector("b").textContent=t;b.querySelector("small").textContent=(n?n+" pågår · ":"")+sub;b.onclick=()=>{admPage=k;admFocus=1;renderAdmin();scrollTo({top:0,behavior:"smooth"})};g.append(b)};
+    tile("i-trophy","Träningstävling","Live-topplista · upp till 18 hål eller stationer","comp");
+    tile("i-target","Bettingträning","5 omgångar · satsa smart och klättra","bet");
+    tile("i-club","Driver med låsning","18 drives · pott och låsputt var tredje hål","drive");
+    box.append(g);
     if(open.length){box.append(el("h3","admh3","Pågår nu"));open.forEach(x=>box.append(sessRow(x,true)))}
+    const st=el("button","ghost admset","Inställningar · byt kod · logga ut");st.onclick=()=>{admPage="settings";renderAdmin()};box.append(st);
     return;
   }
   if(admPage==="settings"){
@@ -1351,7 +1359,7 @@ async function renderAdmin(){
   if(admPage==="comp"){
     if(ttl)ttl.textContent="Träningstävlingar";
     const f=el("div","cform");
-    const nm=el("input");nm.placeholder="t.ex. Närspelsfighten";nm.maxLength=40;
+    const nm=el("input");nm.placeholder="t.ex. Närspelsfighten "+dag();nm.maxLength=40;
     const row=el("div","cgrid");
     const mk=(lab,opts,val)=>{const w=el("div");const l=el("label",null,lab);const s=el("select");opts.forEach(([v,t])=>{const o=el("option",null,t);o.value=v;s.append(o)});s.value=val;w.append(l,s);row.append(w);return s};
     const sH=mk("Antal",Array.from({length:18},(_,i)=>[i+1,String(i+1)]),"9");
@@ -1359,34 +1367,36 @@ async function renderAdmin(){
     const sM=mk("Räkna",[["points","Poäng (högst)"],["strokes","Slag (lägst)"]],"points");
     const sD=mk("Spänning",[["0","Visa allt live"],["1","Dölj sista 1"],["2","Dölj sista 2"],["3","Dölj sista 3"]],"0");
     const b=el("button","go","Starta tävlingen");const m=msg();
-    b.onclick=async()=>{b.disabled=true;try{const r=await aRpc("admin_session_create",{p_pin:apin,p_kind:"comp",p_name:nm.value.trim(),p_holes:+sH.value,p_mode:sM.value,p_unit:sU.value,p_hide:Math.min(+sD.value,+sH.value-1)});
-      if(!r||!r.code)throw 0;await renderAdmin();admMsg("Tävlingen är startad! Koden är "+r.code+".");showCode(r.code,nm.value.trim()||"Träningstävling")}
+    b.onclick=async()=>{b.disabled=true;try{const cname=nm.value.trim()||"Tävling "+dag();const r=await aRpc("admin_session_create",{p_pin:apin,p_kind:"comp",p_name:cname,p_holes:+sH.value,p_mode:sM.value,p_unit:sU.value,p_hide:Math.min(+sD.value,+sH.value-1)});
+      if(!r||!r.code)throw 0;await renderAdmin();admMsg("Tävlingen är startad! Koden är "+r.code+".");showCode(r.code,cname,r.id)}
       catch(e){admMsg("Det gick inte att starta tävlingen.",1)}finally{b.disabled=false}};
     const pre=el("div","presets");[["9 hål · poäng",9,"hal","points",0],["9 hål · slag",9,"hal","strokes",0],["18 hål · slag",18,"hal","strokes",3],["6 stationer · poäng",6,"station","points",0],["Närspel 10 st · dold final",10,"station","points",2]].forEach(([t,h,u,mo,d])=>{const x=el("button","chip",t);x.type="button";x.onclick=()=>{sH.value=String(h);sU.value=u;sM.value=mo;sD.value=String(d);pre.querySelectorAll(".chip").forEach(y=>y.classList.toggle("on",y===x))};pre.append(x)});
-    f.append(el("label",null,"Snabbval"),pre,el("label",null,"Namn på tävlingen"),nm,row,b,m);box.append(f);
-    // Driver med låsning: färdig övning, 18 hål med låsputt var tredje hål
-    const df=el("div","cform dform");df.id="drvForm";const dn=el("input");dn.placeholder="t.ex. Juniorer torsdag";dn.maxLength=40;
+    f.append(el("label",null,"Snabbval"),pre,el("label",null,"Namn på tävlingen (valfritt)"),nm,row,b,m);box.append(f);
+    setTimeout(()=>{if(admFocus){admFocus=0;nm.focus()}},50);
+    listSess(comps);return;
+  }
+  if(admPage==="drive"){
+    if(ttl)ttl.textContent="Driver med låsning";
+    const df=el("div","cform");const dn=el("input");dn.placeholder="t.ex. Juniorer "+dag();dn.maxLength=40;
     const dh=el("select");[["3","Dolt slut – hål 16–18 hemliga"],["0","Visa allt live"]].forEach(([v,t])=>{const o=el("option",null,t);o.value=v;dh.append(o)});
-    const db=el("button","go","Starta Driver med låsning");
-    db.onclick=async()=>{db.disabled=true;try{const r=await aRpc("admin_session_create",{p_pin:apin,p_kind:"comp",p_name:dn.value.trim(),p_holes:18,p_mode:"points",p_unit:"hal",p_hide:+dh.value,p_format:"drive"});
-      if(!r||!r.code)throw 0;await renderAdmin();admMsg("Driver med låsning är startad! Koden är "+r.code+".");showCode(r.code,dn.value.trim()||"Driver med låsning")}
+    const db=el("button","go","Starta Driver med låsning");const m=msg();
+    db.onclick=async()=>{db.disabled=true;const name=dn.value.trim()||"Driver "+dag();try{const r=await aRpc("admin_session_create",{p_pin:apin,p_kind:"comp",p_name:name,p_holes:18,p_mode:"points",p_unit:"hal",p_hide:+dh.value,p_format:"drive"});
+      if(!r||!r.code)throw 0;await renderAdmin();admMsg("Startad! Koden är "+r.code+".");showCode(r.code,name,r.id)}
       catch(e){admMsg("Det gick inte att starta övningen.",1)}finally{db.disabled=false}};
-    df.append(el("h3","admh3","Driver med låsning"),el("p","msg","18 drives med farlig sida, pott och låsputt var tredje hål (1 m 75 %, 2 m allt, 4 m dubbelt). Hål 16–18 ger dubbla poäng."),el("label",null,"Namn på passet"),dn,el("label",null,"Spänning"),dh,db);box.append(df);
-    setTimeout(()=>{if(admFocus===2){admFocus=0;df.scrollIntoView({block:"start",behavior:"smooth"});dn.focus()}else if(admFocus){admFocus=0;nm.focus()}},50);
-    if(comps.length)box.append(el("h3","admh3","Dina tävlingar"));
-    comps.forEach(x=>box.append(sessRow(x)));return;
+    df.append(el("p","msg","18 drives med farlig sida. Plus och minus i varje block om tre hål blir en pott som låses med en putt: 1 m sparar 75 %, 2 m allt, 4 m dubblar. Hål 16–18 ger dubbla poäng."),el("label",null,"Namn på passet (valfritt)"),dn,el("label",null,"Spänning"),dh,db,m);box.append(df);
+    setTimeout(()=>{if(admFocus){admFocus=0;dn.focus()}},50);
+    listSess(drives);return;
   }
   if(admPage==="bet"&&!admBetSid){
     if(ttl)ttl.textContent="Bettingträning";
-    const nm=el("input");nm.placeholder="t.ex. Juniorer tisdag";nm.maxLength=40;
+    const nm=el("input");nm.placeholder="t.ex. Juniorer "+dag();nm.maxLength=40;
     const hl=el("label",null,"Spänning");const sh=el("select");[["0","Visa allt live"],["1","Dölj sista omgången"],["2","Dölj sista 2 omgångarna"]].forEach(([v,t])=>{const o=el("option",null,t);o.value=v;sh.append(o)});
     const b=el("button","go","Starta bettingpass");const m=msg();
-    b.onclick=async()=>{b.disabled=true;try{const r=await aRpc("admin_session_create",{p_pin:apin,p_kind:"betting",p_name:nm.value.trim(),p_holes:5,p_mode:"points",p_unit:"hal",p_hide:+sh.value});
-      if(!r||!r.code)throw 0;await renderAdmin();admMsg("Passet är startat! Koden är "+r.code+".");showCode(r.code,nm.value.trim()||"Bettingpass")}
+    b.onclick=async()=>{b.disabled=true;try{const bname=nm.value.trim()||"Bettingpass "+dag();const r=await aRpc("admin_session_create",{p_pin:apin,p_kind:"betting",p_name:bname,p_holes:5,p_mode:"points",p_unit:"hal",p_hide:+sh.value});
+      if(!r||!r.code)throw 0;await renderAdmin();admMsg("Passet är startat! Koden är "+r.code+".");showCode(r.code,bname,r.id)}
       catch(e){admMsg("Det gick inte att starta passet.",1)}finally{b.disabled=false}};
-    box.append(el("label",null,"Namn på passet"),nm,hl,sh,b,m);setTimeout(()=>{if(admFocus){admFocus=0;nm.focus()}},50);
-    if(bets.length)box.append(el("h3","admh3","Dina bettingpass"));
-    bets.forEach(x=>box.append(sessRow(x)));return;
+    box.append(el("label",null,"Namn på passet (valfritt)"),nm,hl,sh,b,m);setTimeout(()=>{if(admFocus){admFocus=0;nm.focus()}},50);
+    listSess(bets);return;
   }
   if(admPage==="bet"&&admBetSid){
     const s=list.find(x=>x.id===admBetSid);if(!s){admBetSid=null;return renderAdmin()}
@@ -1427,7 +1437,7 @@ function sessRow(c,compact,inside){
   const w=el("div","admrow sessrow"+(c.status==="closed"?" blk":""));
   const top=el("div","srtop");
   const info=el("div","admh");const nmEl=el("b",null,c.name);nmEl.prepend(el("i","sdot "+(c.status==="open"?"on":"off")));info.append(nmEl,el("small",null,(c.format==="drive"?"Driver med låsning · ":"")+(c.kind==="betting"?"Bettingpass"+(c.hide_last?" · dolda: "+c.hide_last+(c.revealed?" (avslöjade)":""):""):c.holes+" "+unitW(c,c.holes)+" · "+(c.mode==="strokes"?"slag":"poäng")+(c.hide_last?" · dolda: "+c.hide_last+(c.revealed?" (avslöjade)":""):""))+" · "+(c.players||0)+" spelare · "+(c.status==="open"?"pågår":"avslutad")+" · "+new Date(c.created_at).toLocaleDateString("sv-SE")));
-  const code=el("button","codepill",c.code);code.title="Visa koden stort";code.onclick=()=>showCode(c.code,c.name);
+  const code=el("button","codepill",c.code);code.title="Visa koden stort";code.onclick=()=>showCode(c.code,c.name,c.id);
   if(c.status==="open")top.append(info,code);else top.append(info);
   w.append(top);
   const a=el("div","adm3");
@@ -1444,7 +1454,7 @@ function sessRow(c,compact,inside){
       es.forEach(e=>{const rr=el("div","cplr");const sc=(e.scores||[]).map(v=>v==null?"–":v).join(" ");rr.append(el("span",null,(e.name||"(utan namn)")+(e.blocked?" · dold":"")),el("small",null,sc));const d=el("button","danger","Ta bort");twoTap(d,"Säker?",()=>op("delete_entry",e.pid,"Spelaren är borttagen."));rr.append(d);pl.append(rr)})}};
     a.append(bP);w.append(a,pl)}else w.append(a);
   const bL=el("button",null,"Kopiera storbildslänk");bL.onclick=async()=>{const u=tvLink(c.id);try{if(navigator.share&&matchMedia("(pointer:coarse)").matches){await navigator.share({title:c.name,url:u})}else{await navigator.clipboard.writeText(u);admMsg("Länken är kopierad – öppna den på TV:n eller iPaden.")}}catch(e){admMsg(u)}};a.append(bL);
-  const bK=el("button",null,"Kör igen");bK.title="Starta ett nytt pass med samma inställningar och ny kod";bK.onclick=async()=>{bK.disabled=true;try{const r=await aRpc("admin_session_create",{p_pin:apin,p_kind:c.kind,p_name:c.name,p_holes:c.holes,p_mode:c.mode,p_unit:c.unit,p_hide:c.hide_last,p_format:c.format||null});if(!r||!r.code)throw 0;await renderAdmin();admMsg("Nytt pass startat med kod "+r.code+".");showCode(r.code,c.name)}catch(e){admMsg("Det gick inte.",1)}finally{bK.disabled=false}};a.append(bK);
+  const bK=el("button",null,"Kör igen");bK.title="Starta ett nytt pass med samma inställningar och ny kod";bK.onclick=async()=>{bK.disabled=true;try{const r=await aRpc("admin_session_create",{p_pin:apin,p_kind:c.kind,p_name:c.name,p_holes:c.holes,p_mode:c.mode,p_unit:c.unit,p_hide:c.hide_last,p_format:c.format||null});if(!r||!r.code)throw 0;await renderAdmin();admMsg("Nytt pass startat med kod "+r.code+".");showCode(r.code,c.name,r.id)}catch(e){admMsg("Det gick inte.",1)}finally{bK.disabled=false}};a.append(bK);
   const bD=el("button","danger","Radera");twoTap(bD,"Säker?",()=>op("delete",null,"Raderat."));a.append(bD);
   return w;
 }
@@ -1631,6 +1641,7 @@ function compShow(){
   if(!comp)compFetch();
 }
 function compDrawHead(){
+  {const tb=document.querySelector("#v-comp .trail b");if(tb)tb.textContent=comp&&comp.format==="drive"?"Driver med låsning":"Träningstävling"}
   const h=$("cHead");if(!h)return;h.textContent="";
   if(!comp){h.append(el("h2",null,"Laddar tävling…"));return}
   h.append(el("h2",null,comp.name));
@@ -1705,9 +1716,10 @@ function compRules(){
    18 hål. Udda hål: miss vänster kostar. Jämna hål: miss höger kostar.
    Hål 1–15: träff +1, miss åt farliga sidan −1, miss åt säkra sidan 0.
    Hål 16–18: träff +2, miss åt farliga sidan −2.
-   Pluspoäng hamnar i en pott. Var tredje hål (3, 6 … 18) låser man potten med en putt:
-   1 m sparar 75 % (avrundat nedåt), 2 m sparar allt, 4 m dubblar. Miss = potten försvinner.
-   Minuspoäng låses alltid direkt. Sparat per hål = de låsta poängen, så topplistan,
+   Alla poäng (plus och minus) i varje block om tre hål läggs i en pott. På hål 3, 6 … 18
+   låser man potten med en putt om den är plus: 1 m sparar 75 % (avrundat nedåt), 2 m sparar
+   allt, 4 m dubblar. Miss = potten försvinner. Är potten 0 eller minus låses den direkt utan putt
+   (minus går inte att putta bort). Sparat per hål = de låsta poängen, så topplistan,
    dolda hål, storbild och tränarverktygen fungerar precis som för en vanlig tävling. */
 const DRV_N=18,DRV_PUTTS=[{d:1,t:"1 m",s:"sparar 75 %"},{d:2,t:"2 m",s:"sparar allt"},{d:4,t:"4 m",s:"dubblar"}];
 const drvIsLock=i=>i%3===2;
@@ -1721,11 +1733,12 @@ function drvCalc(L){
   const R=L.drv||{s:[],p:{}},out=[],info=[];let pot=0;
   for(let i=0;i<DRV_N;i++){
     const s=R.s[i]||null;let v=null,ext=false;
-    if(s){const p=drvPts(i,s);if(p<0)v=p;else{v=0;pot+=p}}
+    if(s){v=0;pot+=drvPts(i,s)}
     else if(L.scores[i]!=null){v=L.scores[i];ext=true}
     let need=false,locked=null,potBefore=pot;
     if(drvIsLock(i)){
       if(s&&pot>0){const pu=R.p[i];if(pu&&pu.d&&pu.ok!=null){locked=pu.ok?drvLockVal(pot,pu.d):0;v+=locked}else need=true}
+      else if(s&&pot<0){locked=pot;v+=pot}           // minuspott låses direkt
       pot=0; // potten följer aldrig med till nästa tre-hålsblock
     }
     out.push(v);info.push({s,ext,need,locked,pot:potBefore,putt:R.p[i]||null});
@@ -1767,7 +1780,7 @@ function drvDrawCard(){
         const th=el("td",cur+(i>=vis?"hid ":"")+(drvIsLock(i)?"lk":""),(drvIsLock(i)?"🔒":"")+(i+1));th.onclick=()=>{compHole=i;drawFocus();drawGrid()};h.append(th);
         const dv=el("td",cur+(inf.s?(drvPts(i,inf.s)>0?"dp":drvPts(i,inf.s)<0?"dm":"d0"):""),inf.s?sideSym[inf.s]:inf.ext?"·":"");dv.onclick=th.onclick;rd.append(dv);
         const v=L.scores[i];if(v!=null){sum+=v;n++}
-        const td=el("td",cur+(v!=null?"f ":"")+(inf.need?"nd":""),inf.need?"?":v==null?"":String(v));td.onclick=th.onclick;r.append(td)}
+        const td=el("td",cur+(v!=null?"f ":"")+(inf.need?"nd":""),inf.need?"?":v==null?"":(inf.s&&!drvIsLock(i))?"·":String(v));td.onclick=th.onclick;r.append(td)}
       h.append(el("td","s",lab));rd.append(el("td","s",""));r.append(el("td","s",n?String(sum):"–"));t.append(h,rd,r);gc.append(t)});
     const pl=L.scores.filter(v=>v!=null).length,tt=L.scores.reduce((a,v)=>a+(v||0),0);
     tot.textContent="";tot.append(el("span",null,"Låst totalt"),el("b",null,pl?String(tt):"–"),el("small",null,C.pot>0?"Pott i spel: "+C.pot+" p":pl+" av "+DRV_N+" hål"));
@@ -1784,7 +1797,7 @@ function drvDrawCard(){
       b.disabled=closed;b.onclick=()=>{if(navigator.vibrate)navigator.vibrate(8);L.drv.s[i]=inf.s===k?null:k;if(!L.drv.s[i])delete L.drv.p[i];save();drawFocus(true);drawGrid()};sb.append(b)});
     fp.append(sb);
     // Pott och låsputt
-    const potNow=drvIsLock(i)?inf.pot:C.info.slice(i-(i%3),i+1).reduce((a,x,j)=>{const ii=i-(i%3)+j;const p=drvPts(ii,x.s);return a+(p>0?p:0)},0);
+    const potNow=drvIsLock(i)?inf.pot:C.info.slice(i-(i%3),i+1).reduce((a,x,j)=>{const ii=i-(i%3)+j;return a+(drvPts(ii,x.s)||0)},0);
     const pb=el("div","dpot");
     if(drvIsLock(i)&&inf.s){
       if(inf.pot>0){
@@ -1797,9 +1810,9 @@ function drvDrawCard(){
           [[true,"✓ I hål"],[false,"✗ Miss"]].forEach(([ok,tx])=>{const b=el("button","dpb"+(pu.ok===ok?" on":"")+(ok?" pos":" neg"),tx);b.type="button";b.disabled=closed;b.onclick=()=>{L.drv.p[i]={d:pu.d,ok};save();drawFocus(true);drawGrid()};res.append(b)});
           pb.append(res);
           if(pu.ok!=null)pb.append(el("p","dsum",pu.ok?"Låst: +"+drvLockVal(inf.pot,pu.d)+" p 🔒":"Potten försvann – nya chanser nästa hål!"));}
-      }else pb.append(el("small",null,"Ingen pott att låsa på det här hålet – minuspoäng är redan låsta."));
+      }else pb.append(el("b",null,inf.pot<0?"Potten blev "+inf.pot+" p – låst direkt":"Potten blev 0 p – ingen putt"),el("small",null,inf.pot<0?"Minus går inte att putta bort. Nya chanser nästa hål!":"Nytt block börjar på nästa hål."));
     }else if(!inf.ext){
-      const nxt=i+(2-i%3)+1;pb.append(el("b",null,"Pott: "+potNow+" p"),el("small",null,"Låses med en putt på hål "+nxt+". Minuspoäng låses direkt."));
+      const nxt=i+(2-i%3)+1;pb.append(el("b",null,"Pott: "+potNow+" p"),el("small",null,"Plus och minus räknas ihop. Potten låses med en putt på hål "+nxt+"."));
     }
     if(inf.ext)pb.append(el("small",null,"Det här hålet är ifyllt av tränaren eller på en annan telefon."));
     fp.append(pb);
@@ -1819,13 +1832,13 @@ function drvRules(){
   [["1","18 hål med driver. Fairway är 30 m bred för juniorer och 35–40 m för vuxna (tränaren bestämmer)."],
    ["2","Varje hål har en farlig sida: udda hål kostar det att missa vänster, jämna hål att missa höger. Fairway ger +1 p, miss åt farliga sidan −1 p, miss åt säkra sidan 0 p."],
    ["3","Hål 16–18 är finalen: fairway ger +2 p och miss åt farliga sidan −2 p."],
-   ["4","Pluspoängen hamnar i en pott. På hål 3, 6, 9, 12, 15 och 18 låser du potten med en putt: 1 m sparar 75 % (avrundat nedåt), 2 m sparar allt, 4 m dubblar. Missar du putten försvinner potten."],
-   ["5","Minuspoäng låses alltid direkt – de går inte att putta bort. Är potten tom puttar du inte."],
+   ["4","Poängen från varje block om tre hål (plus och minus) räknas ihop till en pott. På hål 3, 6, 9, 12, 15 och 18 låser du potten med en putt: 1 m sparar 75 % (avrundat nedåt), 2 m sparar allt, 4 m dubblar. Missar du putten försvinner potten."],
+   ["5","Är potten 0 eller minus puttar du inte – den låses direkt. Minus går inte att putta bort."],
    ["6","Topplistan visar bara låsta poäng och uppdateras live."],
    ["7",comp.hide_last>0?"De sista "+comp.hide_last+" hålen är hemliga 🤫 – slutställningen avslöjas av tränaren vid prisutdelningen.":"Alla 18 hål syns direkt i topplistan."]]
    .forEach(([n,t])=>{const r=el("div","step");r.append(el("span","num",n),el("p",null,t));c.append(r)});
   c.append(el("h2",null,"Exempel"));
-  c.append(el("p",null,"Du träffar fairway på hål 1 och 2 (+2 i potten) och missar åt farliga sidan på hål 3 (−1, låst direkt). Du väljer 4 m och sätter putten: potten dubblas till 4 p. Totalt 4 − 1 = 3 p efter tre hål."));
+  c.append(el("p",null,"Hål 1 fairway (+1), hål 2 fairway (+1), hål 3 miss åt farliga sidan (−1): potten är 1 p. Du väljer 4 m och sätter putten – potten dubblas och du låser 2 p. Missar du putten blir det 0 p för blocket."));
 }
 
 let compDirty=false;
