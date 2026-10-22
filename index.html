@@ -962,16 +962,17 @@ const API=sb?SB_URL:"";
 let rtOk=false;
 let myId=store("bt_id");if(!myId){myId=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():String(Date.now())+Math.random().toString(36).slice(2);store("bt_id",myId)}
 let myPid=store("bt_pid");if(!myPid){myPid=Math.random().toString(36).slice(2,10)+Date.now().toString(36);store("bt_pid",myPid)}
+let betPid=myPid; // spelarens rad i aktuellt bettingpass, sparas per pass
 let shared=[];
-async function loadAll(){if(!sb)return;if(!betSid){shared=[];renderBoard();return}try{const {data,error}=await sb.rpc("betting_board",{p_sid:betSid});if(error)throw error;shared=(data||[]).map(r=>({...r,ts:Date.parse(r.updated_at)}));{const mine2=shared.find(x=>x.pid===myPid);if(mine2&&Date.now()-betPushAt>6000&&!lockedMsg){let ch=false;
+async function loadAll(){if(!sb)return;if(!betSid){shared=[];renderBoard();return}try{const {data,error}=await sb.rpc("betting_board",{p_sid:betSid});if(error)throw error;shared=(data||[]).map(r=>({...r,ts:Date.parse(r.updated_at)}));{const mine2=shared.find(x=>x.pid===betPid);if(mine2&&Date.now()-betPushAt>6000&&!lockedMsg){let ch=false;
   if(mine2.name&&me.name&&mine2.name!==me.name&&played(me)>0){me.name=mine2.name;ch=true}
   const v=betSess?(betSess.revealed?5:5-betSess.hide_last):5,sr=mine2.rounds||{};
   for(let k=1;k<=v;k++){const a=JSON.stringify(sr[k]||null),b=JSON.stringify((me.rounds||{})[k]||null);if(a!==b){if(sr[k])me.rounds[k]=sr[k];else delete me.rounds[k];ch=true}}
   if(ch){save();if(view==="betting")renderPlay()}}}$("live").classList.remove("hide");renderBoard()}catch(e){$("live").classList.add("hide");$("place").textContent="Kunde inte hämta topplistan just nu."}}
 document.addEventListener("visibilitychange",()=>{if(!document.hidden)loadAll()});
 let betPushAt=0;
-async function push(){if(!sb||!betSid)return;betPushAt=Date.now();try{const r=await sb.rpc("betting_save",{p_sid:betSid,p_pid:myPid,p_secret:myId,p_name:me.name||"",p_rounds:me.rounds||{},p_history:me.history||[]});if(!r.error&&r.data===false){const m=$("msg");if(m){m.textContent="Kunde inte spara – passet kan vara avslutat.";m.classList.add("err")}betRefreshSess()}}catch(e){}}
-let betSid=store("bt_bsid")||null,betSess=null;let me;try{me=JSON.parse(store("bt_me"+(betSid?"_"+betSid:""))||"null")}catch(e){me=null}
+async function push(){if(!sb||!betSid)return;betPushAt=Date.now();try{const r=await sb.rpc("betting_save",{p_sid:betSid,p_pid:betPid,p_secret:myId,p_name:me.name||"",p_rounds:me.rounds||{},p_history:me.history||[]});if(!r.error&&r.data===true)store("bt_pid_"+betSid,betPid);if(!r.error&&r.data===false){const m=$("msg");if(m){m.textContent="Kunde inte spara – passet kan vara avslutat.";m.classList.add("err")}betRefreshSess()}}catch(e){}}
+let betSid=store("bt_bsid")||null,betSess=null;if(betSid)betPid=store("bt_pid_"+betSid)||myPid;let me;try{me=JSON.parse(store("bt_me"+(betSid?"_"+betSid:""))||"null")}catch(e){me=null}
 me=me||{};me.rounds=me.rounds||{};me.history=me.history||[];
 function save(){store("bt_me"+(betSid?"_"+betSid:""),JSON.stringify(me))}
 const mine=()=>me;
@@ -1033,7 +1034,7 @@ function renderPlay(){
   if(bet>=1&&bet<=max){const bonus=ok?bet*(mult-1):-bet;$("pv").textContent="Omgången ger "+(drives+bonus)+" poäng ("+drives+" "+(bonus>=0?"+ ":"− ")+Math.abs(bonus)+")"}
   else $("pv").textContent="";
 }
-const isMe=p=>p.pid==="me"||(myPid&&p.pid===myPid);
+const isMe=p=>p.pid==="me"||(betPid&&p.pid===betPid);
 function ranked(){
   const key=mode==="best"?best:total;
   const base=API?shared:((played(me)||me.history.length)?[{...me,pid:"me"}]:[]);
@@ -1080,6 +1081,8 @@ $("send").onclick=async()=>{
   if(max<1)bet=0;
   else if(!Number.isInteger(bet)||bet<1||bet>max){bad("Du måste betta minst 1 och högst "+max+" poäng.");return}
   const ok=$("ok").value==="1",bonus=ok?bet*(mult-1):-bet;
+  if($("send").disabled)return;
+  if(played(p)===0&&sb&&betSid){$("send").disabled=true;const go2=await betNameOk(name);$("send").disabled=false;if(!go2)return}
   const rounds={...(p.rounds||{})};rounds[r]={drives,bet,ok,mult,bonus};
   store("bt_name",name);$("send").disabled=true;
   try{
@@ -1089,6 +1092,18 @@ $("send").onclick=async()=>{
   $("send").disabled=false;
 };
 $("bNext").onclick=()=>{sent=null;render();window.scrollTo(0,0)};
+const nameKey=n=>String(n||"").trim().replace(/\s+/g," ").toLowerCase();
+function askSheet(title,q,yes,no){return new Promise(res=>{const o=el("div","sheet");o.setAttribute("role","dialog");o.setAttribute("aria-modal","true");const c=el("div","sheetc");const y=el("button","go",yes),n=el("button","ghost",no);const end=v=>{o.remove();res(v)};y.onclick=()=>end(true);n.onclick=()=>end(false);o.onclick=e=>{if(e.target===o)end(false)};c.append(el("h2",null,title),el("p",null,q),y,n);o.append(c);document.body.append(o);y.focus()})}
+// Finns namnet redan i passet? Ja = fortsätt på raden (bara samma enhet), Nej = välj annat namn
+async function betNameOk(name){
+  let rows=shared;try{const r=await sb.rpc("betting_board",{p_sid:betSid});if(!r.error&&r.data)rows=r.data}catch(e){}
+  const hit=rows.find(x=>x.pid!==betPid&&nameKey(x.name)===nameKey(name));if(!hit)return true;
+  if(!await askSheet("Samma spelare?","Det finns redan en "+hit.name+" här – är det du?","Ja, det är jag","Nej")){bad("Välj ett annat namn, till exempel "+name+" 2.");$("name").focus();return false}
+  if(![store("bt_pid_"+betSid),myPid].includes(hit.pid)){bad(hit.name+" spelar redan på en annan enhet. Fortsätt där, eller välj ett annat namn, till exempel "+name+" 2.");return false}
+  betPid=hit.pid;store("bt_pid_"+betSid,hit.pid);
+  const loc=betLoadMe();me=nameKey(loc.name)===nameKey(hit.name)?loc:{name:hit.name,rounds:hit.rounds||{},history:hit.history||[],ts:Date.now()};save();
+  sent=null;$("msg").textContent="Välkommen tillbaka, "+hit.name+"! Du fortsätter där du var.";$("msg").classList.remove("err");render();loadAll();return false;
+}
 let lastRes="",conf=0,lockedMsg=null,prevV={};
 function renderCard(p){
   const el=$("scorecard");el.textContent="";const n=played(p);if(!n)return;
@@ -1201,7 +1216,7 @@ function codeBox(title,lead){
   const c=el("div","card codebox");c.append(el("h2",null,title));if(lead)c.append(el("p","msg",lead));
   const w=el("div","cbrow");const i=el("input","codein");i.inputMode="numeric";i.maxLength=4;i.placeholder="••••";i.setAttribute("aria-label","Fyrsiffrig kod");i.pattern="[0-9]*";
   const b=el("button","go","Gå med");const m=el("div","msg");
-  const sub=async()=>{const v=i.value.replace(/\D/g,"");if(v.length!==4){m.textContent="Koden har fyra siffror.";m.classList.add("err");return}
+  const sub=async()=>{if(b.disabled)return;const v=i.value.replace(/\D/g,"");if(v.length!==4){m.textContent="Koden har fyra siffror.";m.classList.add("err");return}
     if(!sb){m.textContent="Ingen anslutning till databasen just nu.";m.classList.add("err");return}
     b.disabled=true;m.textContent="Söker…";m.classList.remove("err");
     try{const r=await sb.rpc("session_join",{p_code:v});if(r.error)throw r.error;
@@ -1218,7 +1233,7 @@ function joinSession(s){
 }
 function betLoadMe(){let m=null;try{m=JSON.parse(store("bt_me"+(betSid?"_"+betSid:""))||"null")}catch(e){}m=m||{};m.rounds=m.rounds||{};m.history=m.history||[];return m}
 function betUse(sid,sess){
-  betSid=sid;betSess=sess||null;store("bt_bsid",sid||"");
+  betSid=sid;betSess=sess||null;store("bt_bsid",sid||"");betPid=(sid&&store("bt_pid_"+sid))||myPid;
   me=betLoadMe();shared=[];sent=null;lockedMsg=null;
   if($("name"))$("name").value=me.name||store("bt_name")||"";
   if(sid){loadAll();if(!sess)betRefreshSess()}betBar();
@@ -1871,7 +1886,18 @@ function tvAdd(){
   const s=tvSess;if(!s||!apin)return;
   const {o,c}=tvModal("Lägg till spelare");c.append(el("p","msg","För spelare utan telefon – du rapporterar deras resultat här från storbilden."));
   const i=el("input");i.placeholder="Spelarens namn";i.maxLength=24;const b=el("button","go","Lägg till och fyll i resultat");const m=el("div","msg");
-  const add=async()=>{const n=i.value.trim();if(!n){i.focus();return}b.disabled=true;try{const pid=await aRpc("admin_entry_add",{p_pin:apin,p_sid:s.id,p_name:n});if(!pid)throw 0;o.remove();await tvFetch();tvEdit({pid,name:n,raw:s.kind==="comp"?{scores:[]}:{rounds:{},adj:0}})}catch(e){m.textContent="Det gick inte att lägga till.";m.classList.add("err")}b.disabled=false};
+  let busy=false;
+  const add=async()=>{if(busy)return;const n=i.value.trim();if(!n){i.focus();return}busy=true;b.disabled=true;try{
+    // Spelare utan resultat syns inte i listan – kolla om namnet redan finns innan en ny rad skapas
+    await tvFetch();c.querySelectorAll(".tvq").forEach(x=>x.remove());
+    const hit=tvRows.find(x=>nameKey(x.name)===nameKey(n));
+    if(hit){const q=el("div","tvq");q.append(el("p","msg","Det finns redan en "+hit.name+" i passet – är det samma spelare?"));
+      const y=el("button","go","Ja, fortsätt på den"),no=el("button","ghost","Nej, annat namn");
+      const other=t=>{q.remove();m.textContent=t;m.classList.add("err");i.focus()};
+      y.onclick=()=>{if(String(hit.pid).startsWith("tr-")){o.remove();tvEdit({pid:hit.pid,name:hit.name,raw:hit})}else other(hit.name+" spelar med egen telefon – skriv ett annat namn, till exempel "+n+" 2.")};
+      no.onclick=()=>other("Skriv ett annat namn, till exempel "+n+" 2.");
+      q.append(y,no);c.append(q);return}
+    const pid=await aRpc("admin_entry_add",{p_pin:apin,p_sid:s.id,p_name:n});if(!pid)throw 0;o.remove();await tvFetch();tvEdit({pid,name:n,raw:s.kind==="comp"?{scores:[]}:{rounds:{},adj:0}})}catch(e){m.textContent="Det gick inte att lägga till.";m.classList.add("err")}finally{busy=false;b.disabled=false}};
   b.onclick=add;i.onkeydown=e=>{if(e.key==="Enter")add()};c.append(i,b,m);setTimeout(()=>i.focus(),50);
 }
 async function tvWake(){try{if(view==="tv"&&navigator.wakeLock&&!tvLock){tvLock=await navigator.wakeLock.request("screen");tvLock.addEventListener("release",()=>{tvLock=null})}}catch(e){}}
