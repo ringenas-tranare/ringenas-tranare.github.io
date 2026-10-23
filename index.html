@@ -911,6 +911,42 @@ body:not(.sun) .stp .sb{background:linear-gradient(180deg,rgba(255,255,255,.18),
 .pd .block{box-shadow:inset 0 1.5px 0 rgba(255,255,255,.55),inset 0 -10px 18px -10px rgba(255,255,255,.25),0 8px 20px rgba(0,0,0,.3)}
 .codepill,.tvbtn,button.gold,.step .num{box-shadow:inset 0 1.5px 0 rgba(255,255,255,.6),inset 0 -6px 12px -6px rgba(120,80,0,.35),0 4px 12px rgba(224,187,74,.25)!important}
 body:not(.sun) .tvr{box-shadow:var(--lq-edge),0 8px 22px rgba(0,0,0,.28)}
+/* === Allt i Liquid Glass: guld, prispall, scorekort och solläge === */
+:root{--lq-gold:linear-gradient(180deg,rgba(255,255,255,.5) 0%,rgba(255,255,255,.08) 48%,rgba(255,255,255,0) 60%,rgba(255,240,190,.25) 100%),linear-gradient(180deg,rgba(248,214,120,.88),rgba(214,166,52,.86) 55%,rgba(170,124,26,.9))}
+/* Guld blir guldglas: valda flikar, kodrutan, siffror, guldknappar, ledaren */
+.chip.on,.seg button.on,.chips.sub3 .chip.on,.ctabs .chip.on,body.sun .chip.on,body.sun .seg button.on,.codepill,.tvbtn,.adm3 .tvbtn,button.gold,.adm3 button.gold,.row.first .rk,.step .num{background:var(--lq-gold)!important;color:#1a1405!important;border:1px solid rgba(255,240,190,.75)!important;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.75),inset 0 -6px 12px -6px rgba(120,80,0,.4),0 4px 14px rgba(224,187,74,.28)!important;-webkit-backdrop-filter:blur(14px) saturate(160%);backdrop-filter:blur(14px) saturate(160%)}
+.codepill{border-radius:16px!important}
+body:not(.sun) .row.me{background:linear-gradient(180deg,rgba(224,187,74,.2),rgba(224,187,74,.07))!important;box-shadow:inset 0 1px 0 rgba(255,240,190,.4),inset 0 0 0 1px rgba(224,187,74,.3)!important;border-radius:16px}
+body.sun .row.me{background:linear-gradient(180deg,rgba(255,236,170,.6),rgba(255,246,214,.5))!important;box-shadow:inset 0 1px 0 #fff,inset 0 0 0 1px rgba(212,163,58,.35)!important;border-radius:16px}
+/* Prispallen: guld-, is- och bronsglas */
+.pd .medal,.pd .block{border:1px solid rgba(255,255,255,.4)!important;-webkit-backdrop-filter:var(--lq-blur);backdrop-filter:var(--lq-blur);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.75),inset 0 -12px 20px -12px rgba(255,255,255,.35),0 8px 22px rgba(0,0,0,.35)!important}
+.pd .block{border-radius:20px 20px 8px 8px}
+.pd.p1 .medal,.pd.p1 .block{background:linear-gradient(180deg,rgba(255,255,255,.45),rgba(255,255,255,0) 50%),linear-gradient(180deg,rgba(248,214,120,.75),rgba(181,139,36,.7))}
+.pd.p2 .medal,.pd.p2 .block{background:linear-gradient(180deg,rgba(255,255,255,.5),rgba(255,255,255,0) 50%),linear-gradient(180deg,rgba(214,232,250,.5),rgba(120,160,200,.45))}
+.pd.p3 .medal,.pd.p3 .block{background:linear-gradient(180deg,rgba(255,255,255,.42),rgba(255,255,255,0) 50%),linear-gradient(180deg,rgba(236,170,120,.68),rgba(143,90,51,.66))}
+.pd .medal,.pd .block .pp,.pd.p2 .block .pp{color:#fff!important;text-shadow:0 1px 3px rgba(0,0,0,.45)}
+/* Scorekortet i navyglas (tidigare papper) */
+body:not(.sun) .gcard,body:not(.sun) #scorecard .sc{background:var(--lq-sheen),linear-gradient(180deg,rgba(12,30,52,.78),rgba(6,16,30,.86));color:#e8eef4;border-radius:22px;padding:8px;border:1px solid rgba(255,255,255,.28);box-shadow:var(--lq-shadow);-webkit-backdrop-filter:var(--lq-blur);backdrop-filter:var(--lq-blur)}
+body:not(.sun) .gcard th,body:not(.sun) .gcard td{border-color:rgba(255,255,255,.12)}
+body:not(.sun) .gcard th{color:#b8c6d3}
+body:not(.sun) .gcard tr.h td,body:not(.sun) .gcard tr.h th{background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.04));color:#f3d77a;border-color:rgba(255,255,255,.12)}
+body:not(.sun) .gcard td.cur{box-shadow:inset 0 0 0 2px rgba(240,200,90,.95),inset 0 1px 0 rgba(255,255,255,.3);background:rgba(224,187,74,.2)}
+body:not(.sun) .gcard tr.h td.cur{background:var(--lq-gold);color:#1a1405}
+body:not(.sun) .gcard td.s{background:rgba(255,255,255,.08)}
+body:not(.sun) .gcard tr.h td.s{background:rgba(0,0,0,.28);color:#fff}
+body:not(.sun) .gcard td.nd{background:rgba(224,187,74,.3)}
+body:not(.sun) .gcard td.dp{color:#7ee2a5}
+body:not(.sun) .gcard td.dm{color:#ff9b8a}
+body:not(.sun) .gcard td.d0{color:#8a96a3}
+body.sun .gcard,body.sun #scorecard .sc{background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(238,243,248,.85));border-radius:22px;border:1px solid #d3dce5;box-shadow:inset 0 1.5px 0 #fff,0 10px 28px rgba(11,34,56,.12);-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%)}
+body.sun .gcard th,body.sun .gcard td{border-color:#dde4eb}
+body.sun .gcard tr.h td,body.sun .gcard tr.h th{background:#eef3f8;color:#8a6a10;border-color:#dde4eb}
+body.sun .gcard td.s{background:#f3f6f9}
+body.sun .gcard tr.h td.s{background:#10233a;color:#fff}
+/* Solläget: ljust frostat glas med skimrande kant */
+body.sun .card,body.sun #result{background:radial-gradient(120% 70% at var(--gx,50%) var(--gy,-10%),#fff,transparent 60%),linear-gradient(180deg,rgba(255,255,255,.9),rgba(244,248,252,.76))!important;-webkit-backdrop-filter:blur(26px) saturate(180%);backdrop-filter:blur(26px) saturate(180%);box-shadow:inset 0 1.5px 0 #fff,inset 1.5px 0 0 rgba(255,205,235,.5),inset -1.5px 0 0 rgba(150,215,255,.6),inset 0 -1.5px 0 rgba(255,226,150,.6),0 12px 30px rgba(11,34,56,.14)!important}
+body.sun .ex:not(.hl){background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(240,245,250,.8))!important;box-shadow:inset 0 1.5px 0 #fff,inset -1.5px 0 0 rgba(150,215,255,.5),0 6px 16px rgba(11,34,56,.10)!important}
+body.sun .top{-webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%)}
 /* Lilla loggan (toppen, Spela, storbild) i samma glas */
 .lg .lgd{fill-opacity:.88;stroke:#fff;stroke-opacity:.7;stroke-width:.8}
 .lg .lgw{fill-opacity:.88;stroke:#fff;stroke-opacity:.6;stroke-width:.8}
