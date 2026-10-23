@@ -390,10 +390,10 @@ label{color:#c7d3de!important}
 button.ghost{color:#dbe4ec!important}
 button.ghost:hover{color:var(--gold)!important}
 .ex i{color:#dbe4ec}
-.sunb{position:absolute;top:12px;left:12px;z-index:3;display:inline-flex;align-items:center;gap:6px;width:auto;min-height:36px;padding:.4em .8em;border-radius:99px;font-size:.75rem;font-weight:700;letter-spacing:.04em;color:#eef4fa;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.22);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
-.hero>.sunb{position:absolute!important;z-index:3!important}
-.sunb .i{width:16px;height:16px}
-.sunb.on{background:var(--gold);color:#1a1405;border-color:transparent}
+
+
+
+
 .podium{display:grid;grid-template-columns:1fr 1fr 1fr;align-items:end;gap:8px;margin:6px 0 14px}
 .pd{display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0}
 .pd .medal{width:34px;height:34px;border-radius:50%;display:grid;place-items:center;font-weight:800;margin-bottom:6px;color:#1a1405;box-shadow:inset 0 1px 0 rgba(255,255,255,.8),0 4px 10px rgba(0,0,0,.3)}
@@ -417,32 +417,6 @@ button.ghost:hover{color:var(--gold)!important}
 .coach{display:flex;flex-direction:column;align-items:center;gap:2px;text-align:center}
 .coach .av{width:58px;height:58px;border-radius:50%;display:grid;place-items:center;font-weight:800;font-size:1.3rem;color:#0b2238;background:var(--ss);box-shadow:inset 0 1px 0 #fff,0 6px 14px rgba(0,0,0,.3);margin-bottom:6px}
 .coach small{font-size:.7rem}
-/* Solläge */
-body.sun{background:#e9eef3}
-body.sun .card,body.sun #result{border-color:#d3dce5!important;color:#0b2238;box-shadow:0 8px 24px rgba(11,34,56,.12)!important}
-body.sun h2{background:none!important;-webkit-text-fill-color:#0b2238!important;color:#0b2238!important}
-body.sun label,body.sun .sub,body.sun small,body.sun .msg,body.sun p{color:#3a4f63!important}
-body.sun .ex{background:#f3f6f9!important;border-color:#d3dce5!important;color:#0b2238!important}
-body.sun .ex i{background:#e3e9ef!important;color:#0b2238}
-body.sun input,body.sun select{background:#fff!important;color:#0b2238!important;border-color:#c5d0da!important}
-body.sun .chip,body.sun .seg button{background:#eef2f6!important;color:#0b2238!important;border-color:#d3dce5!important}
-body.sun .chip.on,body.sun .seg button.on{background:var(--gold)!important;color:#1a1405!important}
-body.sun .seg.q button{background:transparent!important}
-body.sun button.ghost{color:#0b2238!important}
-body.sun #formcard .rule{color:#5a4510!important;background:#fff6dc!important}
-body.sun .big{-webkit-text-fill-color:#0b2238!important;color:#0b2238!important;background:none!important}
-body.sun .rk{background:#eef2f6!important;color:#0b2238!important}
-body.sun .row{border-bottom-color:#e1e7ed!important}
-body.sun .dots span{background:#eef2f6!important;color:#0b2238!important}
-body.sun .dots .c{background:var(--gold)!important}
-body.sun .sc td{border-top-color:#e1e7ed}
-body.sun .top,body.sun nav{background:rgba(255,255,255,.85)!important;border-color:#d3dce5!important}
-body.sun .top b{color:#0b2238}
-body.sun nav button{color:#3a4f63!important}
-body.sun nav button.on{color:#0b2238!important;background:#eef2f6!important}
-body.sun .empty b{color:#0b2238}
-body.sun .scene.bd{opacity:.25}
-body.sun[data-view="home"] .scene.bd{opacity:1}
 /* Admin */
 .admlink{margin-top:4px;font-size:.8rem;opacity:.75}
 .admg{display:grid;gap:8px}
@@ -460,14 +434,11 @@ body.sun[data-view="home"] .scene.bd{opacity:1}
 .admpin{margin-top:16px}
 .admpin summary{cursor:pointer;font-weight:700;color:var(--lk);padding:.4em 0}
 .admpin input{margin-top:8px}
-body.sun .admrow{background:#f3f6f9;border-color:#d3dce5}
-body.sun .adma button{background:#eef2f6!important;color:#0b2238!important;border-color:#d3dce5!important}
 /* PGA */
 .pga{display:block;width:96px;height:auto;margin:6px auto 4px;filter:drop-shadow(0 6px 14px rgba(0,0,0,.35))}
 .pgafoot{display:flex;flex-direction:column;align-items:center;gap:8px;padding:10px 0 4px;text-align:center}
 .pgafoot img{width:64px;height:auto;filter:drop-shadow(0 4px 10px rgba(0,0,0,.35))}
 .pgafoot span{font-size:.72rem;font-weight:700;letter-spacing:.16em;padding-left:.16em;text-transform:uppercase;color:#c9d4de}
-body.sun .pgafoot span{color:#3a4f63}
 body.kb nav{transform:translateY(120%)!important;opacity:0;pointer-events:none}
 nav{transition:transform .2s ease,opacity .2s ease}
 body.kb main{padding-bottom:24px!important}
@@ -497,7 +468,6 @@ main{min-height:calc(100lvh + 1px);box-sizing:border-box}
 .hero .xl+.eyebrow{margin-top:18px!important}
 /* Glaset speglar ljuset när du lutar telefonen / rör musen */
 .card,#result{background:radial-gradient(120% 70% at var(--gx,50%) var(--gy,-10%),rgba(255,255,255,.11),transparent 60%),linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.035))!important}
-body.sun .card,body.sun #result{background:radial-gradient(120% 70% at var(--gx,50%) var(--gy,-10%),#fff,transparent 60%),rgba(255,255,255,.94)!important}
 /* Länkar glider in en i taget */
 .rv .ex{opacity:0;translate:0 14px;transition:opacity .5s ease,translate .6s cubic-bezier(.16,1,.3,1);transition-delay:calc(var(--i,0)*70ms + 80ms)}
 .rv.in .ex{opacity:1;translate:0 0}
@@ -552,8 +522,6 @@ body.sun .card,body.sun #result{background:radial-gradient(120% 70% at var(--gx,
 .cplr{display:grid;grid-template-columns:1fr auto;gap:2px 8px;align-items:center;padding:6px 0;border-top:1px solid var(--line,rgba(255,255,255,.1))}
 .cplr small{grid-column:1;color:var(--mut);font-variant-numeric:tabular-nums}
 .cplr button{grid-row:1/3;grid-column:2}
-body.sun .stp .sb{background:#eef3f7;border-color:#cfd9e3}
-body.sun .ctot{background:#eef3f7}
 @media(prefers-reduced-motion:reduce){.cdwn b.pop,.row.win,.row .mv{animation:none}}
 /* === Koder & adminmeny === */
 .codebox .cbrow{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
@@ -609,7 +577,6 @@ label.keep input{width:20px;height:20px;margin:0;accent-color:var(--gold)}
 .chips.sub3,.ctabs{display:flex;gap:4px;padding:4px;border-radius:999px;background:rgba(255,255,255,.06);border:1px solid var(--line,rgba(255,255,255,.12))}
 .chips.sub3 .chip,.ctabs .chip{flex:1;margin:0;border:0!important;background:transparent;box-shadow:none}
 .chips.sub3 .chip.on,.ctabs .chip.on{background:var(--gold)!important;color:#1a1405!important}
-body.sun .chips.sub3,body.sun .ctabs{background:#e8eef3;border-color:#d3dce5}
 .guide .step,.rules .step{display:flex;gap:12px;align-items:flex-start;padding:8px 0}
 .guide .step b{display:block}
 .guide .step small{color:var(--mut)}
@@ -670,7 +637,6 @@ body.sun .chips.sub3,body.sun .ctabs{background:#e8eef3;border-color:#d3dce5}
 .hnav{display:grid;grid-template-columns:auto 1fr;gap:8px}
 .hnav .ghost{margin:0;width:auto;padding:0 14px}
 .hnav .go{margin:0}
-body.sun .hstep .sb{background:#eef3f7;border-color:#cfd9e3}
 /* Topplista: rubrikrad */
 .rowh{display:grid;grid-template-columns:44px 1fr auto;gap:8px;padding:0 12px 6px;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--mut)}
 /* Rubinnäktergalar över ön (bara på startsidan) – diskreta, studsande småfågelflykt */
@@ -771,7 +737,6 @@ body[data-view="tv"]{background:radial-gradient(120% 90% at 20% 0%,#1d3550 0%,#0
 .phero{padding-right:64px}
 .qbtn{position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;padding:0;margin:0;display:grid;place-items:center;font-weight:900;font-size:1.1rem;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.28);color:inherit;cursor:pointer;z-index:2}
 .qbtn:hover{border-color:var(--gold);color:var(--gold)}
-body.sun .qbtn{background:#eef3f7;border-color:#cfd9e3}
 #playCode .codebox{padding-top:22px;padding-bottom:26px}
 #playCode .codebox .codein{font-size:2.4rem;padding-top:14px;padding-bottom:14px}
 .lg:not(.big){filter:drop-shadow(0 0 1px rgba(255,255,255,.6)) drop-shadow(0 0 6px rgba(240,170,70,.35))!important}
@@ -787,8 +752,6 @@ body.sun .qbtn{background:#eef3f7;border-color:#cfd9e3}
 .trail button:hover{color:#fff;text-decoration:underline;text-underline-offset:3px}
 .trail span{color:var(--mut);opacity:.6}
 .trail b{color:var(--gold);font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60vw}
-body.sun .nback{background:#fff;border-color:#d8b45a;color:#8a6a10}
-body.sun .trail button{color:#5d6b78}
 .tvctl .tvadd{opacity:1!important;border:1px solid color-mix(in srgb,var(--gold) 60%,transparent)!important;color:var(--gold)}
 .bred{display:flex;flex-direction:column;gap:6px;margin:4px 0 8px}
 .brow{display:grid;grid-template-columns:34px 1fr 1fr 1.3fr 48px;gap:6px;align-items:center}
@@ -824,10 +787,6 @@ body:not([data-view="home"]) .scene,body:not([data-view="home"]) .scene *,body:n
 .csact button{margin:0}
 .admh3.first{margin-top:4px}
 .admset{margin-top:18px}
-body.sun .dsb,body.sun .dpb{background:#fff!important;border:1.5px solid #cdd6e0!important;color:#10233a}
-body.sun .dsb.on,body.sun .dpb.on{background:#fff3cf!important;border-color:#d4a33a!important}
-body.sun .dpb.pos.on{background:#e3f6ea!important;border-color:#2f9e5b!important}body.sun .dpb.neg.on{background:#fde7e3!important;border-color:#d0492f!important}
-body.sun .dsb.neg small{color:#c0392b}body.sun .dsb.pos small{color:#1f8a4c}body.sun .dpot{background:#fffaf0}
 /* === Liquid Glass x2, mörk navy (som iPhone, iOS 26) – 2026-10 ===
    Klarare glas som bryter ljuset: skimrande kant (ljusbrytning), glansreflex upptill,
    ljus som samlas i nederkanten, mjukare former och en svävande bottenmeny.
@@ -842,28 +801,27 @@ body.sun .dsb.neg small{color:#c0392b}body.sun .dsb.pos small{color:#1f8a4c}body
   --lq-blur:blur(34px) saturate(200%) brightness(.9);
 }
 /* Kort och rutor */
-body:not(.sun) .card,body:not(.sun) #result,body:not(.sun):not([data-view="home"]) .hero{
+body .card,body #result,body:not([data-view="home"]) .hero{
   background:radial-gradient(120% 70% at var(--gx,50%) var(--gy,-10%),rgba(255,255,255,.14),transparent 58%),var(--lq-sheen),var(--lq-fill)!important;
   border:1px solid rgba(255,255,255,.30)!important;box-shadow:var(--lq-shadow)!important;
   -webkit-backdrop-filter:var(--lq-blur);backdrop-filter:var(--lq-blur)}
-body:not(.sun) #result{border-color:rgba(224,187,74,.55)!important}
+body #result{border-color:rgba(224,187,74,.55)!important}
 /* Startsidans topp: bara kanten och glansen, scenen syns fritt igenom */
-body:not(.sun)[data-view="home"] .hero{background:var(--lq-sheen),linear-gradient(rgba(255,255,255,.012),rgba(255,255,255,.012))!important;border:1px solid rgba(255,255,255,.30)!important;box-shadow:var(--lq-edge),inset 0 -28px 46px -28px rgba(255,255,255,.40),0 18px 44px rgba(0,0,0,.22)!important}
+body[data-view="home"] .hero{background:var(--lq-sheen),linear-gradient(rgba(255,255,255,.012),rgba(255,255,255,.012))!important;border:1px solid rgba(255,255,255,.30)!important;box-shadow:var(--lq-edge),inset 0 -28px 46px -28px rgba(255,255,255,.40),0 18px 44px rgba(0,0,0,.22)!important}
 .card{border-radius:34px!important}
 .hero{border-radius:38px!important}
 /* Toppen: tunt glas */
-body:not(.sun) .top{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,0)),rgba(6,16,30,.72)!important;-webkit-backdrop-filter:var(--lq-blur);backdrop-filter:var(--lq-blur);border-bottom:1px solid rgba(255,255,255,.16)!important;box-shadow:inset 0 -1px 0 rgba(150,215,255,.10)!important}
+body .top{background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,0)),rgba(6,16,30,.72)!important;-webkit-backdrop-filter:var(--lq-blur);backdrop-filter:var(--lq-blur);border-bottom:1px solid rgba(255,255,255,.16)!important;box-shadow:inset 0 -1px 0 rgba(150,215,255,.10)!important}
 /* Bottenmenyn: svävande glaskapsel */
 nav{left:12px!important;right:12px!important;bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;padding:6px!important;border-radius:32px!important;gap:4px}
-body:not(.sun) nav{background:var(--lq-sheen),linear-gradient(rgba(6,16,30,.72),rgba(6,16,30,.72))!important;border:1px solid rgba(255,255,255,.30)!important;box-shadow:var(--lq-shadow)!important;-webkit-backdrop-filter:var(--lq-blur);backdrop-filter:var(--lq-blur)}
-body.sun nav{border:1px solid #d3dce5!important;box-shadow:inset 0 1px 0 #fff,0 12px 30px rgba(11,34,56,.16)!important;-webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%)}
+body nav{background:var(--lq-sheen),linear-gradient(rgba(6,16,30,.72),rgba(6,16,30,.72))!important;border:1px solid rgba(255,255,255,.30)!important;box-shadow:var(--lq-shadow)!important;-webkit-backdrop-filter:var(--lq-blur);backdrop-filter:var(--lq-blur)}
 nav button{border-radius:26px!important;min-height:50px!important}
-body:not(.sun) nav button.on{background:linear-gradient(180deg,rgba(255,255,255,.20),rgba(150,215,255,.06))!important;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.85),inset 0 0 0 1px rgba(255,255,255,.22),0 4px 14px rgba(0,0,0,.18)!important}
+body nav button.on{background:linear-gradient(180deg,rgba(255,255,255,.20),rgba(150,215,255,.06))!important;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.85),inset 0 0 0 1px rgba(255,255,255,.22),0 4px 14px rgba(0,0,0,.18)!important}
 main{padding-bottom:calc(124px + env(safe-area-inset-bottom,0px))!important}
 /* Länkar och övningsrader: glaspiller */
 .ex{border-radius:26px!important}
-body:not(.sun) .ex:not(.hl){background:var(--lq-sheen),linear-gradient(180deg,rgba(12,30,52,.7),rgba(7,18,33,.8))!important;border:1px solid rgba(255,255,255,.26)!important;box-shadow:var(--lq-edge),0 8px 22px rgba(0,0,0,.20)!important}
-body:not(.sun) .ex:not(.hl):hover{background:var(--lq-sheen),linear-gradient(180deg,rgba(20,44,72,.8),rgba(10,26,46,.85))!important}
+body .ex:not(.hl){background:var(--lq-sheen),linear-gradient(180deg,rgba(12,30,52,.7),rgba(7,18,33,.8))!important;border:1px solid rgba(255,255,255,.26)!important;box-shadow:var(--lq-edge),0 8px 22px rgba(0,0,0,.20)!important}
+body .ex:not(.hl):hover{background:var(--lq-sheen),linear-gradient(180deg,rgba(20,44,72,.8),rgba(10,26,46,.85))!important}
 .ex .ic,.ex i{border-radius:16px!important}
 /* Knappar i Liquid Glass (ingen metall/stål): blått Ringenäs-glas med guldskimrande kant och vit text */
 button.go,.ex.hl{border-radius:26px!important;border:1.5px solid transparent!important;color:#fff!important;-webkit-text-fill-color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.35)!important;background:linear-gradient(180deg,rgba(255,255,255,.34) 0%,rgba(255,255,255,.06) 46%,rgba(255,255,255,0) 60%,rgba(150,215,255,.16) 100%) padding-box,linear-gradient(180deg,#2c78c8 0%,#1a559c 55%,#0f3a72 100%) padding-box,var(--lq-rim-gold) border-box!important;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.6),inset 0 -10px 18px -10px rgba(150,215,255,.45),0 12px 30px rgba(0,0,0,.4),0 0 22px rgba(44,120,200,.25)!important;-webkit-backdrop-filter:var(--lq-blur);backdrop-filter:var(--lq-blur)}
@@ -877,25 +835,20 @@ button.go:active{translate:0 1px}
 /* Rubriker: klart glas-vitt i stället för metallisk silver */
 h1{background:linear-gradient(180deg,#ffffff 0%,#eef6ff 55%,#cfe4f7 100%)!important;-webkit-background-clip:text!important;background-clip:text!important}
 h2{background:linear-gradient(180deg,#ffffff 0%,#e3effa 60%,#bcd6ee 100%)!important;-webkit-background-clip:text!important;background-clip:text!important}
-body.sun .ex.hl small{color:#d6e6f5!important}
-body.sun .hero .sunb,body.sun .hero .inst{color:#0b2238!important;-webkit-text-fill-color:#0b2238!important;background:rgba(255,255,255,.75)!important;border:1px solid #cdd6e0!important;opacity:1!important}
-body.sun .ex.hl{background:linear-gradient(180deg,rgba(255,255,255,.34) 0%,rgba(255,255,255,.06) 46%,rgba(255,255,255,0) 60%,rgba(150,215,255,.16) 100%) padding-box,linear-gradient(180deg,#2c78c8 0%,#1a559c 55%,#0f3a72 100%) padding-box,var(--lq-rim-gold) border-box!important;color:#fff!important}
 /* Val, flikar, fält och runda knappar */
 .chip,.seg button{border-radius:999px!important}
-body:not(.sun) .chip:not(.on),body:not(.sun) .seg button:not(.on){background:linear-gradient(180deg,rgba(20,44,72,.85),rgba(8,20,36,.85))!important;border-color:rgba(255,255,255,.30)!important;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.55)!important}
+body .chip:not(.on),body .seg button:not(.on){background:linear-gradient(180deg,rgba(20,44,72,.85),rgba(8,20,36,.85))!important;border-color:rgba(255,255,255,.30)!important;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.55)!important}
 .chip.on,.seg button.on{box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 4px 12px rgba(224,187,74,.25)!important}
 input,select{border-radius:16px!important}
-body:not(.sun) input,body:not(.sun) select{background:linear-gradient(180deg,rgba(0,0,0,.22),rgba(0,0,0,.12))!important;border-color:rgba(255,255,255,.16)!important;box-shadow:inset 0 1px 3px rgba(0,0,0,.25),inset 0 -1px 0 rgba(255,255,255,.08)!important}
-body:not(.sun) .nback{background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,.07));box-shadow:inset 0 1.5px 0 rgba(255,255,255,.7),0 6px 16px rgba(0,0,0,.22);-webkit-backdrop-filter:var(--lq-blur);backdrop-filter:var(--lq-blur)}
-body:not(.sun) .rk{box-shadow:inset 0 1px 0 rgba(255,255,255,.25)!important}
+body input,body select{background:linear-gradient(180deg,rgba(0,0,0,.22),rgba(0,0,0,.12))!important;border-color:rgba(255,255,255,.16)!important;box-shadow:inset 0 1px 3px rgba(0,0,0,.25),inset 0 -1px 0 rgba(255,255,255,.08)!important}
+body .nback{background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,.07));box-shadow:inset 0 1.5px 0 rgba(255,255,255,.7),0 6px 16px rgba(0,0,0,.22);-webkit-backdrop-filter:var(--lq-blur);backdrop-filter:var(--lq-blur)}
+body .rk{box-shadow:inset 0 1px 0 rgba(255,255,255,.25)!important}
 .dsb,.dpb,.okb,.dpot{border-radius:18px}
-body:not(.sun) .dsb:not(.on),body:not(.sun) .dpb:not(.on){background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.03));box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
-/* Solläge: ljust glas med samma mjuka former */
-body.sun .card,body.sun #result,body.sun .ex{box-shadow:inset 0 1px 0 #fff,0 10px 28px rgba(11,34,56,.12)!important}
-@media(prefers-reduced-transparency:reduce){body:not(.sun) .card,body:not(.sun) #result,body:not(.sun) nav,body:not(.sun) .top{-webkit-backdrop-filter:none;backdrop-filter:none;background-color:#14243a!important}}
+body .dsb:not(.on),body .dpb:not(.on){background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.03));box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
+@media(prefers-reduced-transparency:reduce){body .card,body #result,body nav,body .top{-webkit-backdrop-filter:none;backdrop-filter:none;background-color:#14243a!important}}
 /* Mörk navy-bas bakom glaset */
-body:not(.sun){background:radial-gradient(120% 80% at 50% 0%,#132a45 0%,#0a1a2e 45%,#050d18 100%) fixed!important}
-body:not(.sun) .scene.bd{filter:brightness(.82) saturate(1.05)}
+body{background:radial-gradient(120% 80% at 50% 0%,#132a45 0%,#0a1a2e 45%,#050d18 100%) fixed!important}
+body .scene.bd{filter:brightness(.82) saturate(1.05)}
 /* Glasloggan i Liquid Glass: släta, genomskinliga glasstenar i bärnsten (inga facetter, ingen kristallkrona),
    vågen i klart blått glas, skimrande glaskant (vit/blå/rosa/guld) och djup som syns igenom glaset */
 .xl .b{fill:url(#xl-cg);fill-opacity:.82}
@@ -904,20 +857,19 @@ body:not(.sun) .scene.bd{filter:brightness(.82) saturate(1.05)}
 .xl .o{stroke:url(#xl-rim);stroke-opacity:1;stroke-width:.85}
 .xl .tf polygon:not(.o):not(.b){stroke:none}
 /* Övriga delar i samma navy Liquid Glass: rutor, admin, stegknappar, prispall, storbild */
-body:not(.sun) .sheetc{background:var(--lq-sheen),linear-gradient(180deg,rgba(10,26,46,.86),rgba(6,16,30,.92))!important;border:1px solid rgba(255,255,255,.28)!important;box-shadow:var(--lq-shadow)!important;-webkit-backdrop-filter:var(--lq-blur);backdrop-filter:var(--lq-blur);border-radius:30px!important}
-body:not(.sun) .admrow{background:var(--lq-sheen),linear-gradient(180deg,rgba(12,30,52,.7),rgba(7,18,33,.8));border:1px solid rgba(255,255,255,.2);box-shadow:var(--lq-edge),0 8px 22px rgba(0,0,0,.25);border-radius:22px}
-body:not(.sun) .adma button:not(.gold):not(.danger):not(.tvbtn):not(.codepill){background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.4);border-radius:14px}
-body:not(.sun) .stp .sb{background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.04));border-color:rgba(255,255,255,.3);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.5),0 4px 12px rgba(0,0,0,.3)}
+body .sheetc{background:var(--lq-sheen),linear-gradient(180deg,rgba(10,26,46,.86),rgba(6,16,30,.92))!important;border:1px solid rgba(255,255,255,.28)!important;box-shadow:var(--lq-shadow)!important;-webkit-backdrop-filter:var(--lq-blur);backdrop-filter:var(--lq-blur);border-radius:30px!important}
+body .admrow{background:var(--lq-sheen),linear-gradient(180deg,rgba(12,30,52,.7),rgba(7,18,33,.8));border:1px solid rgba(255,255,255,.2);box-shadow:var(--lq-edge),0 8px 22px rgba(0,0,0,.25);border-radius:22px}
+body .adma button:not(.gold):not(.danger):not(.tvbtn):not(.codepill){background:linear-gradient(180deg,rgba(255,255,255,.14),rgba(255,255,255,.04));border:1px solid rgba(255,255,255,.22);box-shadow:inset 0 1px 0 rgba(255,255,255,.4);border-radius:14px}
+body .stp .sb{background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(255,255,255,.04));border-color:rgba(255,255,255,.3);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.5),0 4px 12px rgba(0,0,0,.3)}
 .pd .block{box-shadow:inset 0 1.5px 0 rgba(255,255,255,.55),inset 0 -10px 18px -10px rgba(255,255,255,.25),0 8px 20px rgba(0,0,0,.3)}
 .codepill,.tvbtn,button.gold,.step .num{box-shadow:inset 0 1.5px 0 rgba(255,255,255,.6),inset 0 -6px 12px -6px rgba(120,80,0,.35),0 4px 12px rgba(224,187,74,.25)!important}
-body:not(.sun) .tvr{box-shadow:var(--lq-edge),0 8px 22px rgba(0,0,0,.28)}
+body .tvr{box-shadow:var(--lq-edge),0 8px 22px rgba(0,0,0,.28)}
 /* === Allt i Liquid Glass: guld, prispall, scorekort och solläge === */
 :root{--lq-gold:linear-gradient(180deg,rgba(255,255,255,.5) 0%,rgba(255,255,255,.08) 48%,rgba(255,255,255,0) 60%,rgba(255,240,190,.25) 100%),linear-gradient(180deg,rgba(248,214,120,.88),rgba(214,166,52,.86) 55%,rgba(170,124,26,.9))}
 /* Guld blir guldglas: valda flikar, kodrutan, siffror, guldknappar, ledaren */
-.chip.on,.seg button.on,.chips.sub3 .chip.on,.ctabs .chip.on,body.sun .chip.on,body.sun .seg button.on,.codepill,.tvbtn,.adm3 .tvbtn,button.gold,.adm3 button.gold,.row.first .rk,.step .num{background:var(--lq-gold)!important;color:#1a1405!important;border:1px solid rgba(255,240,190,.75)!important;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.75),inset 0 -6px 12px -6px rgba(120,80,0,.4),0 4px 14px rgba(224,187,74,.28)!important;-webkit-backdrop-filter:blur(14px) saturate(160%);backdrop-filter:blur(14px) saturate(160%)}
+.chip.on,.seg button.on,.chips.sub3 .chip.on,.ctabs .chip.on,.codepill,.tvbtn,.adm3 .tvbtn,button.gold,.adm3 button.gold,.row.first .rk,.step .num{background:var(--lq-gold)!important;color:#1a1405!important;border:1px solid rgba(255,240,190,.75)!important;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.75),inset 0 -6px 12px -6px rgba(120,80,0,.4),0 4px 14px rgba(224,187,74,.28)!important;-webkit-backdrop-filter:blur(14px) saturate(160%);backdrop-filter:blur(14px) saturate(160%)}
 .codepill{border-radius:16px!important}
-body:not(.sun) .row.me{background:linear-gradient(180deg,rgba(224,187,74,.2),rgba(224,187,74,.07))!important;box-shadow:inset 0 1px 0 rgba(255,240,190,.4),inset 0 0 0 1px rgba(224,187,74,.3)!important;border-radius:16px}
-body.sun .row.me{background:linear-gradient(180deg,rgba(255,236,170,.6),rgba(255,246,214,.5))!important;box-shadow:inset 0 1px 0 #fff,inset 0 0 0 1px rgba(212,163,58,.35)!important;border-radius:16px}
+body .row.me{background:linear-gradient(180deg,rgba(224,187,74,.2),rgba(224,187,74,.07))!important;box-shadow:inset 0 1px 0 rgba(255,240,190,.4),inset 0 0 0 1px rgba(224,187,74,.3)!important;border-radius:16px}
 /* Prispallen: guld-, is- och bronsglas */
 .pd .medal,.pd .block{border:1px solid rgba(255,255,255,.4)!important;-webkit-backdrop-filter:var(--lq-blur);backdrop-filter:var(--lq-blur);box-shadow:inset 0 1.5px 0 rgba(255,255,255,.75),inset 0 -12px 20px -12px rgba(255,255,255,.35),0 8px 22px rgba(0,0,0,.35)!important}
 .pd .block{border-radius:20px 20px 8px 8px}
@@ -926,27 +878,37 @@ body.sun .row.me{background:linear-gradient(180deg,rgba(255,236,170,.6),rgba(255
 .pd.p3 .medal,.pd.p3 .block{background:linear-gradient(180deg,rgba(255,255,255,.42),rgba(255,255,255,0) 50%),linear-gradient(180deg,rgba(236,170,120,.68),rgba(143,90,51,.66))}
 .pd .medal,.pd .block .pp,.pd.p2 .block .pp{color:#fff!important;text-shadow:0 1px 3px rgba(0,0,0,.45)}
 /* Scorekortet i navyglas (tidigare papper) */
-body:not(.sun) .gcard,body:not(.sun) #scorecard .sc{background:var(--lq-sheen),linear-gradient(180deg,rgba(12,30,52,.78),rgba(6,16,30,.86));color:#e8eef4;border-radius:22px;padding:8px;border:1px solid rgba(255,255,255,.28);box-shadow:var(--lq-shadow);-webkit-backdrop-filter:var(--lq-blur);backdrop-filter:var(--lq-blur)}
-body:not(.sun) .gcard th,body:not(.sun) .gcard td{border-color:rgba(255,255,255,.12)}
-body:not(.sun) .gcard th{color:#b8c6d3}
-body:not(.sun) .gcard tr.h td,body:not(.sun) .gcard tr.h th{background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.04));color:#f3d77a;border-color:rgba(255,255,255,.12)}
-body:not(.sun) .gcard td.cur{box-shadow:inset 0 0 0 2px rgba(240,200,90,.95),inset 0 1px 0 rgba(255,255,255,.3);background:rgba(224,187,74,.2)}
-body:not(.sun) .gcard tr.h td.cur{background:var(--lq-gold);color:#1a1405}
-body:not(.sun) .gcard td.s{background:rgba(255,255,255,.08)}
-body:not(.sun) .gcard tr.h td.s{background:rgba(0,0,0,.28);color:#fff}
-body:not(.sun) .gcard td.nd{background:rgba(224,187,74,.3)}
-body:not(.sun) .gcard td.dp{color:#7ee2a5}
-body:not(.sun) .gcard td.dm{color:#ff9b8a}
-body:not(.sun) .gcard td.d0{color:#8a96a3}
-body.sun .gcard,body.sun #scorecard .sc{background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(238,243,248,.85));border-radius:22px;border:1px solid #d3dce5;box-shadow:inset 0 1.5px 0 #fff,0 10px 28px rgba(11,34,56,.12);-webkit-backdrop-filter:blur(24px) saturate(180%);backdrop-filter:blur(24px) saturate(180%)}
-body.sun .gcard th,body.sun .gcard td{border-color:#dde4eb}
-body.sun .gcard tr.h td,body.sun .gcard tr.h th{background:#eef3f8;color:#8a6a10;border-color:#dde4eb}
-body.sun .gcard td.s{background:#f3f6f9}
-body.sun .gcard tr.h td.s{background:#10233a;color:#fff}
-/* Solläget: ljust frostat glas med skimrande kant */
-body.sun .card,body.sun #result{background:radial-gradient(120% 70% at var(--gx,50%) var(--gy,-10%),#fff,transparent 60%),linear-gradient(180deg,rgba(255,255,255,.9),rgba(244,248,252,.76))!important;-webkit-backdrop-filter:blur(26px) saturate(180%);backdrop-filter:blur(26px) saturate(180%);box-shadow:inset 0 1.5px 0 #fff,inset 1.5px 0 0 rgba(255,205,235,.5),inset -1.5px 0 0 rgba(150,215,255,.6),inset 0 -1.5px 0 rgba(255,226,150,.6),0 12px 30px rgba(11,34,56,.14)!important}
-body.sun .ex:not(.hl){background:linear-gradient(180deg,rgba(255,255,255,.95),rgba(240,245,250,.8))!important;box-shadow:inset 0 1.5px 0 #fff,inset -1.5px 0 0 rgba(150,215,255,.5),0 6px 16px rgba(11,34,56,.10)!important}
-body.sun .top{-webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%)}
+body .gcard,body #scorecard .sc{background:var(--lq-sheen),linear-gradient(180deg,rgba(12,30,52,.78),rgba(6,16,30,.86));color:#e8eef4;border-radius:22px;padding:8px;border:1px solid rgba(255,255,255,.28);box-shadow:var(--lq-shadow);-webkit-backdrop-filter:var(--lq-blur);backdrop-filter:var(--lq-blur)}
+body .gcard th,body .gcard td{border-color:rgba(255,255,255,.12)}
+body .gcard th{color:#b8c6d3}
+body .gcard tr.h td,body .gcard tr.h th{background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.04));color:#f3d77a;border-color:rgba(255,255,255,.12)}
+body .gcard td.cur{box-shadow:inset 0 0 0 2px rgba(240,200,90,.95),inset 0 1px 0 rgba(255,255,255,.3);background:rgba(224,187,74,.2)}
+body .gcard tr.h td.cur{background:var(--lq-gold);color:#1a1405}
+body .gcard td.s{background:rgba(255,255,255,.08)}
+body .gcard tr.h td.s{background:rgba(0,0,0,.28);color:#fff}
+body .gcard td.nd{background:rgba(224,187,74,.3)}
+body .gcard td.dp{color:#7ee2a5}
+body .gcard td.dm{color:#ff9b8a}
+body .gcard td.d0{color:#8a96a3}
+/* === Funktion först (2026-10): läsbart ute på rangen, snabbt på mobilen, lätt att träffa === */
+/* Läsbarhet: tätare glas bakom text, ljusare dämpad text, siffror som syns i solljus */
+:root{--lq-fill:linear-gradient(180deg,rgba(10,26,46,.74),rgba(6,16,30,.86));--mut:#c3d0dc!important}
+body small,body .sub,body .msg,body .ps{color:#c3d0dc}
+.pts{color:#fff;font-size:1.05em;text-shadow:0 1px 2px rgba(0,0,0,.4)}
+/* Bottenmenyn och toppen: tätare så text bakom inte stör */
+body nav{background:var(--lq-sheen),linear-gradient(rgba(6,16,30,.9),rgba(6,16,30,.9))!important}
+body .top{background:linear-gradient(180deg,rgba(255,255,255,.05),rgba(255,255,255,0)),rgba(6,16,30,.9)!important}
+/* Prestanda: suddning bara på de stora ytorna (kort, meny, topp, rutor) – inte på saker inuti korten */
+.ex,.chip,.seg button,.codepill,.tvbtn,button.gold,.row.first .rk,.step .num,.pd .medal,.pd .block,.gcard,#scorecard .sc,.nback,button.go{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+/* Lätt att träffa med tummen: minst 44 px */
+.chip,.seg button{min-height:44px}
+nav button{min-height:52px!important}
+/* Ingen inzoomning i iPhone när man skriver */
+input,select,textarea{font-size:max(16px,1em)!important}
+/* Tydlig markering med tangentbord/tillgänglighet */
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #f0c85a!important;outline-offset:2px}
+/* Din egen rad i topplistan */
+body .row.me.me{background:linear-gradient(180deg,rgba(240,200,90,.34),rgba(224,187,74,.14))!important;box-shadow:inset 0 1px 0 rgba(255,240,190,.4),inset 0 0 0 1px rgba(224,187,74,.35)!important}
 /* Lilla loggan (toppen, Spela, storbild) i samma glas */
 .lg .lgd{fill-opacity:.88;stroke:#fff;stroke-opacity:.7;stroke-width:.8}
 .lg .lgw{fill-opacity:.88;stroke:#fff;stroke-opacity:.6;stroke-width:.8}
@@ -995,7 +957,7 @@ body.sun .top{-webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:
 <rect width="400" height="260" fill="url(#shade)"/><g class="birds" aria-hidden="true"><g class="fl f1"><g class="bob"><path class="wf" d="M-0.6 -0.5 C-2.2 -4.4 -4.6 -6.6 -7.4 -7.4 C-5.4 -4.4 -3.6 -1.8 0.6 -0.1Z"/><path class="tl" d="M-9.2 0.2 L-4.6 -0.7 L-4.4 1.9Z"/><ellipse class="bd" cx="-0.6" cy="0.6" rx="5.2" ry="2.4"/><ellipse class="bl" cx="0.6" cy="1.7" rx="3.6" ry="1.2"/><circle class="bd" cx="4.4" cy="-0.6" r="2.1"/><path class="bk" d="M6.3 -0.9 L8.2 -0.4 L6.3 0Z"/><path class="sp" d="M3 -1.9 Q4.6 -2.4 6 -1.7"/><ellipse class="th" cx="5" cy="0.8" rx="1" ry=".75"/><path class="sp" d="M3.6 1.6 Q5 2 6 1.2"/><circle class="bk" cx="5" cy="-0.9" r=".38"/><path class="wn" d="M-0.9 -0.3 C-2 -5.2 -4.4 -8.2 -8 -9.4 C-5.6 -5.6 -3.8 -2.2 1.1 0.1Z"/></g></g><g class="fl f2"><g class="bob"><g transform="scale(-1,1)"><path class="wf" d="M-0.6 -0.5 C-2.2 -4.4 -4.6 -6.6 -7.4 -7.4 C-5.4 -4.4 -3.6 -1.8 0.6 -0.1Z"/><path class="tl" d="M-9.2 0.2 L-4.6 -0.7 L-4.4 1.9Z"/><ellipse class="bd" cx="-0.6" cy="0.6" rx="5.2" ry="2.4"/><ellipse class="bl" cx="0.6" cy="1.7" rx="3.6" ry="1.2"/><circle class="bd" cx="4.4" cy="-0.6" r="2.1"/><path class="bk" d="M6.3 -0.9 L8.2 -0.4 L6.3 0Z"/><path class="sp" d="M3 -1.9 Q4.6 -2.4 6 -1.7"/><ellipse class="th" cx="5" cy="0.8" rx="1" ry=".75"/><path class="sp" d="M3.6 1.6 Q5 2 6 1.2"/><circle class="bk" cx="5" cy="-0.9" r=".38"/><path class="wn" d="M-0.9 -0.3 C-2 -5.2 -4.4 -8.2 -8 -9.4 C-5.6 -5.6 -3.8 -2.2 1.1 0.1Z"/></g></g></g></g></svg><div class="top"><svg class="lg" aria-hidden="true"><use href="#i-logo"/></svg><b>Ringenäs Tränare</b></div><main>
 
 <section class="view" id="v-home">
-<div class="hero"><button class="sunb" id="sunBtn" type="button" aria-pressed="false" aria-label="Solläge: ljus design för utomhus"><svg viewBox="0 0 24 24" class="i"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg><span>Solläge</span></button><button class="inst hide" id="instBtn" type="button" aria-label="Spara appen på hemskärmen"><svg viewBox="0 0 24 24" class="i"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 19h14"/></svg><span>Spara app</span></button><div class="xl" id="xl" aria-hidden="true"></div><div class="eyebrow" style="margin-top:14px">Välkommen till</div><h1>Ringenäs Tränare</h1><p>Tillsammans blir vi bättre!</p><svg class="wave" viewBox="0 0 400 34" preserveAspectRatio="none" aria-hidden="true"><path class="w3" d="M0 6 C60 22 120 -4 200 10 S340 24 400 4 V34 H0Z"/><path class="w2" d="M0 12 C50 28 90 0 150 14 S250 30 300 12 S380 4 400 12 V34 H0Z"/><path class="wc c1" d="M0 12 C50 28 90 0 150 14 S250 30 300 12 S380 4 400 12"/><path class="w1" d="M0 20 C40 4 70 4 110 18 S180 34 220 18 S300 2 340 16 S390 26 400 20 V34 H0Z"/><path class="wc c2" d="M0 20 C40 4 70 4 110 18 S180 34 220 18 S300 2 340 16 S390 26 400 20"/></svg></div>
+<div class="hero"><button class="inst hide" id="instBtn" type="button" aria-label="Spara appen på hemskärmen"><svg viewBox="0 0 24 24" class="i"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 19h14"/></svg><span>Spara app</span></button><div class="xl" id="xl" aria-hidden="true"></div><div class="eyebrow" style="margin-top:14px">Välkommen till</div><h1>Ringenäs Tränare</h1><p>Tillsammans blir vi bättre!</p><svg class="wave" viewBox="0 0 400 34" preserveAspectRatio="none" aria-hidden="true"><path class="w3" d="M0 6 C60 22 120 -4 200 10 S340 24 400 4 V34 H0Z"/><path class="w2" d="M0 12 C50 28 90 0 150 14 S250 30 300 12 S380 4 400 12 V34 H0Z"/><path class="wc c1" d="M0 12 C50 28 90 0 150 14 S250 30 300 12 S380 4 400 12"/><path class="w1" d="M0 20 C40 4 70 4 110 18 S180 34 220 18 S300 2 340 16 S390 26 400 20 V34 H0Z"/><path class="wc c2" d="M0 20 C40 4 70 4 110 18 S180 34 220 18 S300 2 340 16 S390 26 400 20"/></svg></div>
 <div class="card"><h2>Boka &amp; följ oss</h2>
 <a class="ex hl" href="https://appointment.balancegolf.com/?embed=true&amp;clubId=9" target="_blank" rel="noopener"><span class="ic"><svg class="i"><use href="#i-club"/></svg></span><div><b>Boka lektion eller custom fitting</b><small>Personlig hjälp av våra PGA-tränare</small></div><i><svg class="i"><use href="#i-ext"/></svg></i></a>
 <a class="ex" href="https://appointment.balancegolf.com/?embed=true&amp;clubId=9" target="_blank" rel="noopener"><span class="ic"><svg class="i"><use href="#i-cal"/></svg></span><div><b>Svingkurs Vinterträning</b><small>Boka din plats och bli bättre redan i vinter</small></div><i><svg class="i"><use href="#i-ext"/></svg></i></a>
@@ -1337,11 +1299,8 @@ function placeScene(){
 addEventListener("resize",placeScene);addEventListener("load",placeScene);
 if(document.fonts&&document.fonts.ready)document.fonts.ready.then(placeScene);
 
-(function(){
-  const b=$("sunBtn");const on=v=>{document.body.classList.toggle("sun",v);b.setAttribute("aria-pressed",v);b.classList.toggle("on",v);const m=document.querySelector('meta[name="theme-color"]');if(m)m.content=v?"#eef3f7":"#0a3555"};
-  on(store("bt_sun")==="1");
-  b.onclick=()=>{const v=!document.body.classList.contains("sun");on(v);store("bt_sun",v?"1":"0")};
-})();
+// Solläget är borttaget (2026-10): appen har bara den mörka Liquid Glass-designen
+(function(){document.body.classList.remove("sun");try{localStorage.removeItem("bt_sun")}catch(e){}const m=document.querySelector('meta[name="theme-color"]');if(m)m.content="#0a1a2e"})();
 // 3 + 7: prispall och snyggare tomt läge
 const _rb=renderBoard;
 renderBoard=function(){
