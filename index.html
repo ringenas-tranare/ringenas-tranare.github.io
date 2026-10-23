@@ -829,6 +829,57 @@ body.sun .dsb,body.sun .dpb{background:#fff!important;border:1.5px solid #cdd6e0
 body.sun .dsb.on,body.sun .dpb.on{background:#fff3cf!important;border-color:#d4a33a!important}
 body.sun .dpb.pos.on{background:#e3f6ea!important;border-color:#2f9e5b!important}body.sun .dpb.neg.on{background:#fde7e3!important;border-color:#d0492f!important}
 body.sun .dsb.neg small{color:#c0392b}body.sun .dsb.pos small{color:#1f8a4c}body.sun .dpot{background:#fffaf0}
+/* === Liquid Glass (som iPhone, iOS 26) – 2026-10 ===
+   Klarare glas som bryter ljuset: skimrande kant (ljusbrytning), glansreflex upptill,
+   ljus som samlas i nederkanten, mjukare former och en svävande bottenmeny.
+   Gäller hela appen: hemsidan, Spela, övningar, topplistor, kontakt och admin. */
+:root{
+  --lq-rim:conic-gradient(from 210deg,rgba(255,255,255,.62) 0%,rgba(255,255,255,.10) 14%,rgba(150,215,255,.38) 27%,rgba(255,255,255,.07) 40%,rgba(255,190,230,.30) 54%,rgba(255,255,255,.10) 66%,rgba(255,226,150,.40) 80%,rgba(255,255,255,.62) 100%);
+  --lq-edge:inset 0 1px 0 rgba(255,255,255,.46),inset 1px 0 0 rgba(255,205,235,.20),inset -1px 0 0 rgba(150,215,255,.26),inset 0 -1px 0 rgba(255,226,150,.26);
+  --lq-sheen:linear-gradient(180deg,rgba(255,255,255,.11) 0%,rgba(255,255,255,.025) 34%,rgba(255,255,255,0) 62%,rgba(255,255,255,.045) 100%);
+  --lq-fill:linear-gradient(rgba(255,255,255,.03),rgba(255,255,255,.03));
+  --lq-shadow:var(--lq-edge),inset 0 -22px 34px -26px rgba(255,255,255,.22),0 18px 44px rgba(0,0,0,.30),0 2px 6px rgba(0,0,0,.14);
+  --lq-blur:blur(26px) saturate(185%) brightness(1.06);
+}
+/* Kort och rutor */
+body:not(.sun) .card,body:not(.sun) #result,body:not(.sun):not([data-view="home"]) .hero{
+  background:radial-gradient(120% 70% at var(--gx,50%) var(--gy,-10%),rgba(255,255,255,.16),transparent 58%),var(--lq-sheen),var(--lq-fill)!important;
+  border:1px solid rgba(255,255,255,.16)!important;box-shadow:var(--lq-shadow)!important;
+  -webkit-backdrop-filter:var(--lq-blur);backdrop-filter:var(--lq-blur)}
+body:not(.sun) #result{border-color:rgba(224,187,74,.55)!important}
+/* Startsidans topp: bara kanten och glansen, scenen syns fritt igenom */
+body:not(.sun)[data-view="home"] .hero{background:var(--lq-sheen),linear-gradient(rgba(255,255,255,.012),rgba(255,255,255,.012))!important;border:1px solid rgba(255,255,255,.16)!important;box-shadow:var(--lq-edge),inset 0 -24px 40px -28px rgba(255,255,255,.22),0 18px 44px rgba(0,0,0,.22)!important}
+.card{border-radius:28px!important}
+.hero{border-radius:32px!important}
+/* Toppen: tunt glas */
+body:not(.sun) .top{background:linear-gradient(180deg,rgba(255,255,255,.07),rgba(255,255,255,.02)),rgba(9,20,33,.38)!important;-webkit-backdrop-filter:var(--lq-blur);backdrop-filter:var(--lq-blur);border-bottom:1px solid rgba(255,255,255,.16)!important;box-shadow:inset 0 -1px 0 rgba(150,215,255,.10)!important}
+/* Bottenmenyn: svävande glaskapsel */
+nav{left:12px!important;right:12px!important;bottom:calc(10px + env(safe-area-inset-bottom,0px))!important;padding:6px!important;border-radius:32px!important;gap:4px}
+body:not(.sun) nav{background:var(--lq-sheen),linear-gradient(rgba(9,20,33,.42),rgba(9,20,33,.42))!important;border:1px solid rgba(255,255,255,.16)!important;box-shadow:var(--lq-shadow)!important;-webkit-backdrop-filter:var(--lq-blur);backdrop-filter:var(--lq-blur)}
+body.sun nav{border:1px solid #d3dce5!important;box-shadow:inset 0 1px 0 #fff,0 12px 30px rgba(11,34,56,.16)!important;-webkit-backdrop-filter:blur(22px) saturate(180%);backdrop-filter:blur(22px) saturate(180%)}
+nav button{border-radius:26px!important;min-height:50px!important}
+body:not(.sun) nav button.on{background:linear-gradient(180deg,rgba(255,255,255,.20),rgba(255,255,255,.07))!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.45),inset 0 0 0 1px rgba(255,255,255,.12)!important}
+main{padding-bottom:calc(124px + env(safe-area-inset-bottom,0px))!important}
+/* Länkar och övningsrader: glaspiller */
+.ex{border-radius:22px!important}
+body:not(.sun) .ex:not(.hl){background:var(--lq-sheen),linear-gradient(rgba(255,255,255,.035),rgba(255,255,255,.035))!important;border:1px solid rgba(255,255,255,.14)!important;box-shadow:var(--lq-edge),0 8px 22px rgba(0,0,0,.20)!important}
+body:not(.sun) .ex:not(.hl):hover{background:var(--lq-sheen),linear-gradient(rgba(255,255,255,.08),rgba(255,255,255,.08))!important}
+.ex .ic,.ex i{border-radius:16px!important}
+/* Stålknapparna behålls – med glasets glans och skimrande, ljusbrytande kant */
+button.go,.ex.hl{border-radius:22px!important;border:1px solid transparent!important;background:linear-gradient(180deg,rgba(255,255,255,.75) 0%,rgba(255,255,255,0) 46%) padding-box,var(--ss) padding-box,var(--lq-rim) border-box!important;box-shadow:inset 0 1px 0 #fff,inset 0 -8px 16px -10px rgba(11,34,56,.25),0 10px 26px rgba(0,0,0,.28)!important}
+/* Val, flikar, fält och runda knappar */
+.chip,.seg button{border-radius:999px!important}
+body:not(.sun) .chip:not(.on),body:not(.sun) .seg button:not(.on){background:linear-gradient(180deg,rgba(255,255,255,.12),rgba(255,255,255,.03))!important;border-color:rgba(255,255,255,.18)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.25)!important}
+.chip.on,.seg button.on{box-shadow:inset 0 1px 0 rgba(255,255,255,.6),0 4px 12px rgba(224,187,74,.25)!important}
+input,select{border-radius:16px!important}
+body:not(.sun) input,body:not(.sun) select{background:linear-gradient(180deg,rgba(0,0,0,.22),rgba(0,0,0,.12))!important;border-color:rgba(255,255,255,.16)!important;box-shadow:inset 0 1px 3px rgba(0,0,0,.25),inset 0 -1px 0 rgba(255,255,255,.08)!important}
+body:not(.sun) .nback{background:linear-gradient(180deg,rgba(255,255,255,.16),rgba(255,255,255,.04));box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 6px 16px rgba(0,0,0,.22);-webkit-backdrop-filter:var(--lq-blur);backdrop-filter:var(--lq-blur)}
+body:not(.sun) .rk{box-shadow:inset 0 1px 0 rgba(255,255,255,.25)!important}
+.dsb,.dpb,.okb,.dpot{border-radius:18px}
+body:not(.sun) .dsb:not(.on),body:not(.sun) .dpb:not(.on){background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.03));box-shadow:inset 0 1px 0 rgba(255,255,255,.22)}
+/* Solläge: ljust glas med samma mjuka former */
+body.sun .card,body.sun #result,body.sun .ex{box-shadow:inset 0 1px 0 #fff,0 10px 28px rgba(11,34,56,.12)!important}
+@media(prefers-reduced-transparency:reduce){body:not(.sun) .card,body:not(.sun) #result,body:not(.sun) nav,body:not(.sun) .top{-webkit-backdrop-filter:none;backdrop-filter:none;background-color:#14243a!important}}
 </style></head>
 <body><svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <linearGradient id="lg-grad" x1="0" y1="0" x2="0" y2="1"><stop offset=".6" style="stop-color:currentColor"/><stop offset=".88" style="stop-color:var(--gold)"/></linearGradient>
