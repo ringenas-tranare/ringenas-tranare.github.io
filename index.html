@@ -916,6 +916,47 @@ body .row.me.me{background:linear-gradient(180deg,rgba(240,200,90,.34),rgba(224,
 .xl .t{fill:url(#xl-gloss);fill-opacity:calc(var(--t,.25) * 3.6)}
 .xl .g{fill:url(#xl-gw);fill-opacity:.85;stroke:url(#xl-rim);stroke-opacity:1;stroke-width:.85}
 .xl #xl-sheenr{mix-blend-mode:screen}
+
+/* === Premium 3D – Ringenäs-tolkning (navy + guld, glas, ingen metall) === */
+:root{--spring:cubic-bezier(.34,1.56,.64,1);--ease-out:cubic-bezier(.16,1,.3,1);--frost:#eef4fa;--plat:#c9d4df;--eblue:#5ab0ff}
+/* Luft och skarpare typografi */
+.view{gap:20px!important}
+body .card{padding:22px 22px 32px!important}
+h2{letter-spacing:.14em!important}
+label,.msg{color:var(--plat)}
+/* Svävande glaskort: djupare, mjukare skugga och ljus som lutar med enheten */
+body .card,body #result{box-shadow:var(--lq-shadow),calc(var(--tilt-x,0)*-10px) calc(30px + var(--tilt-y,0)*-6px) 60px -22px rgba(0,0,0,.6)!important;transition:transform .7s var(--spring),box-shadow .5s var(--ease-out)}
+@media (hover:hover) and (pointer:fine){
+  .view{perspective:1600px}
+  body .card.p3d{transform:rotateX(var(--prx,0deg)) rotateY(var(--pry,0deg)) translateZ(0);transition:transform .25s var(--ease-out),box-shadow .4s var(--ease-out)}
+}
+/* Knappar: tjockt glas med kant som trycks ner */
+button.go,.ex.hl{position:relative;transform:translate(var(--mgx,0px),var(--mgy,0px));transition:transform .55s var(--spring),box-shadow .3s var(--ease-out),filter .3s!important;
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,.6),inset 0 -4px 8px rgba(5,20,45,.35),0 5px 0 #0b2b57,0 8px 0 rgba(224,187,74,.28),0 16px 30px -6px rgba(0,0,0,.55)!important}
+button.go:active,.ex.hl:active{transform:translate(var(--mgx,0px),calc(var(--mgy,0px) + 4px)) scale(.985)!important;transition:transform .08s ease,box-shadow .08s!important;
+  box-shadow:inset 0 1.5px 0 rgba(255,255,255,.45),inset 0 -2px 6px rgba(5,20,45,.4),0 1px 0 #0b2b57,0 3px 0 rgba(224,187,74,.25),0 6px 14px -4px rgba(0,0,0,.5)!important}
+@media (hover:hover) and (pointer:fine){button.go:hover,.ex.hl:hover{filter:brightness(1.08) saturate(1.05)}}
+/* Rader, piller och runda knappar: fjädrande tryck och lyft */
+.ex:not(.hl),.chip,.seg button,.nback,.qbtn,nav button,.sb,.okb,.codepill,.tvbtn{transform:translate(var(--mgx,0px),var(--mgy,0px));transition:transform .55s var(--spring),background .25s,box-shadow .3s var(--ease-out),border-color .25s}
+.ex:not(.hl):active,.chip:active,.seg button:active,.nback:active,.qbtn:active,nav button:active,.okb:active,.codepill:active,.tvbtn:active{transform:scale(.95)!important;transition:transform .08s ease!important}
+.sb:active{transform:scale(.9)!important;transition:transform .08s ease!important}
+@media (hover:hover) and (pointer:fine){
+  .ex:not(.hl):hover{transform:translate(var(--mgx,0px),calc(var(--mgy,0px) - 3px));box-shadow:0 14px 30px -12px rgba(0,0,0,.6),inset 0 1px 0 rgba(255,255,255,.18)!important;border-color:rgba(255,255,255,.28)!important}
+  .ex:not(.hl):hover .ic{box-shadow:0 0 0 1px color-mix(in srgb,var(--gold) 60%,transparent),0 6px 16px -6px rgba(224,187,74,.45)}
+}
+/* Ljusreflex som följer pekaren på knappar och rader */
+.ex::after,button.go::after{content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;opacity:0;transition:opacity .35s;background:radial-gradient(160px circle at var(--hx,50%) var(--hy,50%),rgba(255,255,255,.22),transparent 60%)}
+.ex{position:relative}
+@media (hover:hover) and (pointer:fine){.ex:hover::after,button.go:hover::after{opacity:1}}
+/* Diskret elektrisk blå för fokus och "sparat" */
+input:focus,select:focus{border-color:var(--eblue)!important;box-shadow:0 0 0 3px rgba(90,176,255,.28),0 0 22px rgba(90,176,255,.30)!important}
+input:focus-visible,select:focus-visible{outline:none!important}
+#cMsg:not(.err),.codebox .msg:not(.err){color:var(--plat)}
+/* 3D-loggan: ljus ovanifrån och mjuk glöd under */
+.hero .xl::after{content:"";position:absolute;left:12%;right:12%;bottom:-14%;height:26%;border-radius:50%;background:radial-gradient(closest-side,rgba(90,176,255,.30),rgba(224,187,74,.10) 60%,transparent);filter:blur(10px);transform:translateZ(-60px);pointer-events:none;animation:xlglow 5s ease-in-out infinite}
+.hero .xl::before{content:"";position:absolute;left:20%;right:20%;top:-30%;height:40%;border-radius:50%;background:radial-gradient(closest-side,rgba(255,255,255,.16),transparent);filter:blur(12px);pointer-events:none}
+@keyframes xlglow{50%{opacity:.6}}
+@media (prefers-reduced-motion:reduce){button.go,.ex,.chip,.nback,nav button,body .card{transition:none!important}.hero .xl::after{animation:none}}
 </style></head>
 <body><svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <linearGradient id="lg-grad" x1="0" y1="0" x2="0" y2="1"><stop offset=".6" style="stop-color:currentColor"/><stop offset=".88" style="stop-color:var(--gold)"/></linearGradient>
@@ -1627,7 +1668,7 @@ function sessRow(c,compact,inside){
     if(vis){
       const s=Math.min(1,Math.max(0,scrollY/380));sp+=(s-sp)*.18;
       const k=Math.min(1,(now-spinT)/1100),spin=k<1?360*(1-Math.pow(1-k,3)):0;
-      sv(host,"transform","perspective(900px) translateY("+(sp*28).toFixed(1)+"px) rotateX("+(8-C.y*16+sp*42).toFixed(2)+"deg) rotateY("+(C.x*24+spin).toFixed(2)+"deg) scale("+(1-sp*.14).toFixed(3)+")");
+      sv(host,"transform","perspective(900px) translateY("+(sp*28+Math.sin(now/1700)*3.2).toFixed(1)+"px) rotateX("+(8-C.y*16+sp*42).toFixed(2)+"deg) rotateY("+(C.x*24+spin).toFixed(2)+"deg) scale("+(1-sp*.14).toFixed(3)+")");
       sv(host,"opacity",(1-sp*.55).toFixed(3));
       light(C.x,C.y);
     }
@@ -2179,6 +2220,36 @@ setInterval(()=>{const l=$("tvList");if(view!=="tv"||!l||l.scrollHeight<=l.clien
     if(!i.name)i.name="f-"+Math.random().toString(36).slice(2,7);
   })};
   tune(document);new MutationObserver(ms=>ms.forEach(m=>m.addedNodes.forEach(n=>{if(n.nodeType===1){if(n.matches&&n.matches("input"))tune(n.parentNode||document);else tune(n)}}))).observe(document.body,{childList:true,subtree:true});
+})();
+
+
+/* === Premium 3D: magnetiska knappar, kort som lutar mot pekaren, ljusreflex === */
+(function(){
+  if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;
+  const fine=matchMedia("(hover:hover) and (pointer:fine)").matches;
+  const root=document.documentElement;
+  // Ljuset i korten följer telefonens/musens lutning (siffror för skuggan)
+  let tl=0;const tick=()=>{tl=0;const gx=parseFloat(getComputedStyle(root).getPropertyValue("--gx"))||50,gy=parseFloat(getComputedStyle(root).getPropertyValue("--gy"))||-10;root.style.setProperty("--tilt-x",((50-gx)/40).toFixed(2));root.style.setProperty("--tilt-y",((-10-gy)/30).toFixed(2))};
+  new MutationObserver(()=>{if(!tl)tl=requestAnimationFrame(tick)}).observe(root,{attributes:true,attributeFilter:["style"]});
+  if(!fine)return;
+  const MAG=".ex,button.go,.chip,.nback,.qbtn,nav button,.codepill,.tvbtn";
+  let curB=null,curC=null;
+  const resetB=b=>{b.style.removeProperty("--mgx");b.style.removeProperty("--mgy")};
+  const resetC=c=>{c.classList.remove("p3d");c.style.removeProperty("--prx");c.style.removeProperty("--pry");c.style.removeProperty("--gx");c.style.removeProperty("--gy")};
+  document.addEventListener("pointermove",e=>{
+    if(e.pointerType!=="mouse")return;
+    const b=e.target.closest&&e.target.closest(MAG);
+    if(curB&&curB!==b)resetB(curB);curB=b;
+    if(b){const r=b.getBoundingClientRect(),dx=e.clientX-(r.left+r.width/2),dy=e.clientY-(r.top+r.height/2),k=b.matches(".ex,button.go")?.06:.18,lim=b.matches(".ex,button.go")?4:6;
+      b.style.setProperty("--mgx",Math.max(-lim,Math.min(lim,dx*k)).toFixed(1)+"px");b.style.setProperty("--mgy",Math.max(-lim,Math.min(lim,dy*k)).toFixed(1)+"px");
+      b.style.setProperty("--hx",(e.clientX-r.left).toFixed(0)+"px");b.style.setProperty("--hy",(e.clientY-r.top).toFixed(0)+"px")}
+    const c=e.target.closest&&e.target.closest("body .card");
+    if(curC&&curC!==c)resetC(curC);curC=c;
+    if(c&&!c.closest("#v-home .hero")){const r=c.getBoundingClientRect(),px=(e.clientX-r.left)/r.width,py=(e.clientY-r.top)/r.height;
+      c.classList.add("p3d");c.style.setProperty("--prx",((.5-py)*3.2).toFixed(2)+"deg");c.style.setProperty("--pry",((px-.5)*4).toFixed(2)+"deg");
+      c.style.setProperty("--gx",(px*100).toFixed(1)+"%");c.style.setProperty("--gy",(py*100-20).toFixed(1)+"%")}
+  },{passive:true});
+  document.addEventListener("pointerleave",()=>{if(curB)resetB(curB);if(curC)resetC(curC);curB=curC=null});
 })();
 
 if(compCode)compSub();
