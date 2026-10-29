@@ -960,6 +960,12 @@ input:focus-visible,select:focus-visible{outline:none!important}
 
 /* Röd tråd: aktiv flik/val = Ringenäs-blått glas (guld bara för det viktiga) */
 .chip.on,.seg button.on,.chips.sub3 .chip.on,.ctabs .chip.on,.tvbtn,.adm3 .tvbtn{background:linear-gradient(180deg,rgba(255,255,255,.30) 0%,rgba(255,255,255,.05) 46%,rgba(255,255,255,0) 60%),linear-gradient(180deg,#2c78c8 0%,#1a559c 55%,#0f3a72 100%)!important;color:#fff!important;-webkit-text-fill-color:#fff;border:1px solid rgba(150,215,255,.6)!important;box-shadow:inset 0 1.5px 0 rgba(255,255,255,.6),inset 0 -6px 12px -6px rgba(5,20,45,.45),0 4px 14px rgba(47,127,208,.35)!important}
+/* Mindre header (2026-10-28): lägre kort och mindre logga – ön och fyren syns kvar i nederkanten */
+#v-home .hero{padding-top:24px!important;padding-bottom:108px!important}
+#v-home .hero .xl{width:min(150px,40vw)!important}
+#v-home .hero .xl+.eyebrow{margin-top:10px!important}
+#v-home .hero h1{font-size:clamp(1.2rem,5.4vw,1.75rem)!important}
+@media(max-width:600px){#v-home .hero{padding-top:52px!important}}
 </style></head>
 <body><svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <linearGradient id="lg-grad" x1="0" y1="0" x2="0" y2="1"><stop offset=".6" style="stop-color:currentColor"/><stop offset=".88" style="stop-color:var(--gold)"/></linearGradient>
