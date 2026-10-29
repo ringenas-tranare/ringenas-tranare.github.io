@@ -966,7 +966,7 @@ input:focus-visible,select:focus-visible{outline:none!important}
 #v-home .hero .xl+.eyebrow{margin-top:10px!important}
 #v-home .hero h1{font-size:clamp(1.2rem,5.4vw,1.75rem)!important}
 @media(max-width:600px){#v-home .hero{padding-top:52px!important}}
-</style></head>
+</style><link rel="stylesheet" href="golf.css"></head>
 <body><svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
 <linearGradient id="lg-grad" x1="0" y1="0" x2="0" y2="1"><stop offset=".6" style="stop-color:currentColor"/><stop offset=".88" style="stop-color:var(--gold)"/></linearGradient>
 <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></symbol>
@@ -1048,12 +1048,18 @@ input:focus-visible,select:focus-visible{outline:none!important}
 <div id="playGuide"></div>
 <div id="playResume"></div>
 <div id="playCode"></div>
+<div class="card" id="golfCard"><h2>Spel</h2><button class="ex hl" type="button" data-go="golf"><span class="ic"><svg class="i"><use href="#i-flag"/></svg></span><div><b>Ringenäs Golf Journey</b><small>Spring, hoppa och sänk ditt handicap – från 99 till +8</small></div><i><svg class="i"><use href="#i-next"/></svg></i></button></div>
 <div class="card hide" id="playList"><h2>Utmana dig själv</h2>
 <button class="ex" data-go="betting"><span class="ic"><svg class="i"><use href="#i-target"/></svg></span><div><b>Bettingträning</b><small>5 omgångar · satsa smart och klättra i topplistan</small></div><i><svg class="i"><use href="#i-next"/></svg></i></button>
 <button class="ex" data-go="comp"><span class="ic"><svg class="i"><use href="#i-trophy"/></svg></span><div><b>Träningstävling</b><small>Live-topplista för dagens tävling · upp till 18 hål eller stationer</small></div><i><svg class="i"><use href="#i-next"/></svg></i></button>
 <button class="ex" disabled><span class="ic"><svg class="i"><use href="#i-flag"/></svg></span><div><b>Putt-utmaning</b><small>Kommer snart – håll utkik!</small></div></button>
 <button class="ex" disabled><span class="ic"><svg class="i"><use href="#i-club"/></svg></span><div><b>Chip-utmaning</b><small>Kommer snart – håll utkik!</small></div></button>
 </div></section>
+
+<section class="view hide" id="v-golf">
+<div class="navbar"><button class="nback" type="button" data-go="play" aria-label="Tillbaka till Spela"><svg class="i"><use href="#i-back"/></svg></button><div class="trail"><button type="button" data-go="home">Hem</button><span>›</span><button type="button" data-go="play">Spela</button><span>›</span><b>Golf Journey</b></div></div>
+<div id="golfRoot"></div>
+</section>
 
 <section class="view hide" id="v-betting">
 <div class="navbar"><button class="nback" type="button" data-go="play" aria-label="Tillbaka till Spela"><svg class="i"><use href="#i-back"/></svg></button><div class="trail"><button type="button" data-go="home">Hem</button><span>›</span><button type="button" data-go="play">Spela</button><span>›</span><b>Bettingträning</b></div></div>
@@ -1114,6 +1120,7 @@ input:focus-visible,select:focus-visible{outline:none!important}
 </nav>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.49.4/dist/umd/supabase.min.js"></script>
+<script src="golf.js"></script>
 <script>
 const RULES=["Putt från 3 m.","Chippa i ringen.","Träffa en liten fairway med driver.","Up & down – chippa och sätt en putt.","Sista omgången: betta ALLA dina poäng. Putt från 3 m ger ×2, 5 m ×3 och 8 m ×5."];
 const $=id=>document.getElementById(id);
@@ -1148,7 +1155,7 @@ seg("drives");seg("ok");seg("dist");
 $("name").value=store("bt_name")||"";
 RULES.forEach((t,i)=>{const d=document.createElement("div");d.className="rl";const b=document.createElement("b");b.textContent="Omgång "+(i+1)+": ";d.append(b,t);$("rlist").appendChild(d)});
 
-const ORD={home:0,play:1,comp:1.5,betting:2,board:3,rules:4,contact:5,admin:6,tv:7};
+const ORD={home:0,play:1,comp:1.5,betting:2,board:3,rules:4,contact:5,admin:6,tv:7,golf:1.6};
 function go(v,np){
   if(v===view)return;
   const dir=ORD[v]>=ORD[view]?"fwd":"back";
@@ -1221,9 +1228,9 @@ function renderBoard(){
   });
   const n=played(mine());$("bPlay").textContent=n>=5?"Lås in resultatet":n>0?"Fortsätt spela":"Börja spela";
 }
-function render(){document.body.dataset.view=view;if(view==="admin")renderAdmin();if(view==="play")playResume();if(view==="tv"){tvShow();try{if(tvId)history.replaceState({v:"tv"},"","#tv-"+tvId)}catch(e){}}if(view==="comp")compShow();requestAnimationFrame(placeScene);
-  ["home","play","comp","betting","board","rules","contact","admin","tv"].forEach(v=>$("v-"+v).classList.toggle("hide",v!==view));
-  const grp=["betting","board","rules","comp"].includes(view);document.querySelectorAll("nav button").forEach(b=>{const on=b.dataset.go===(grp?"play":view);b.classList.toggle("on",on);on?b.setAttribute("aria-current","page"):b.removeAttribute("aria-current")});document.querySelectorAll(".sub3 .chip").forEach(c=>c.classList.toggle("on",c.dataset.go===view));
+function render(){document.body.dataset.view=view;if(view==="admin")renderAdmin();if(view==="play")playResume();if(view==="tv"){tvShow();try{if(tvId)history.replaceState({v:"tv"},"","#tv-"+tvId)}catch(e){}}if(view==="comp")compShow();if(window.RGJ){if(view==="golf")RGJ.show();else RGJ.hide()}requestAnimationFrame(placeScene);
+  ["home","play","comp","betting","board","rules","contact","admin","tv","golf"].forEach(v=>$("v-"+v).classList.toggle("hide",v!==view));
+  const grp=["betting","board","rules","comp","golf"].includes(view);document.querySelectorAll("nav button").forEach(b=>{const on=b.dataset.go===(grp?"play":view);b.classList.toggle("on",on);on?b.setAttribute("aria-current","page"):b.removeAttribute("aria-current")});document.querySelectorAll(".sub3 .chip").forEach(c=>c.classList.toggle("on",c.dataset.go===view));
   renderPlay();renderBoard();
 }
 ["drives","dist","bet","ok"].forEach(i=>$(i).addEventListener("input",renderPlay));
@@ -1234,7 +1241,7 @@ function init(){
   betBar();if(betSid)betRefreshSess();
   {const m=location.hash.match(/^#tv-([a-z0-9]{4,20})$/i);if(m){tvId=m[1];view="tv"}}
   {const m=location.hash.match(/^#kod-([0-9]{4})$/);if(m&&sb){history.replaceState(null,"","#play");sb.rpc("session_join",{p_code:m[1]}).then(r=>{if(r.data)joinSession(r.data)})}}
-  const h=location.hash.slice(1);if(["home","play","comp","betting","board","rules","contact","admin","tv"].includes(h))view=h;
+  const h=location.hash.slice(1);if(["home","play","comp","betting","board","rules","contact","admin","tv","golf"].includes(h))view=h;
   if(!$("name").value&&me.name)$("name").value=me.name;
   $("send").disabled=false;$("msg").textContent=API?"":"Dina resultat sparas på den här enheten.";
   $("localnote").textContent=API?"Bara de som har passets kod ser topplistan.":"Resultaten sparas bara på den här enheten.";
