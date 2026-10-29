@@ -200,221 +200,338 @@ function birch(c,x,y,s){c.save();c.translate(x,y);c.scale(s,s);c.fillStyle="rgba
   c.strokeStyle="rgba(92,80,74,.75)";c.lineWidth=.7;for(const [a,l] of[[-.7,18],[.6,17],[-.3,22],[.25,20],[-1,12],[1,13]]){c.beginPath();c.moveTo(0,-34);c.quadraticCurveTo(Math.sin(a)*l*.5,-34-l*.6,Math.sin(a)*l,-34-Math.cos(a)*l)}c.stroke();
   c.fillStyle="#ece8e0";c.fillRect(-1.3,-46,2.6,46);c.fillStyle="#2a2a28";for(const t of[-40,-31,-22,-12,-6])c.fillRect(-1.3,t,1.6,1);c.restore()}
 
-/* === 3D: Ringenäs driving range i tre dimensioner (three.js ligger på sidan själv: three.module.min.js) ===
+/* === 3D: Ringenäs i tecknad 3D-stil (three.js ligger på sidan själv: three.module.min.js) ===
    Spelmotorn räknar som förut i logiska enheter (samma tider, hinder och krockytor som Edge Function golf-submit litar på).
-   Här ritas bara samma läge i 3D: 20 logiska enheter = 1 meter, golfaren springer mot -z och kameran följer snett bakifrån. */
-const S=1/20,TL=80,LW3=700;
+   Här ritas bara samma läge i 3D: 20 logiska enheter = 1 meter, golfaren springer mot -z och kameran följer snett bakifrån.
+   Allt är rundat (kapslar, klot, svarvade former) med tecknad toon-skuggning, solnedgångsljus som på Ringenäs-fotot och kantljus. */
+const S=1/20,TL=80,LW3=700,SHORE=132;
 let T=null,R=null,loading3d=null;
 function load3D(){if(T)return Promise.resolve(T);if(!loading3d)loading3d=import("./three.module.min.js").then(m=>(T=m)).catch(e=>{loading3d=null;throw e});return loading3d}
 const GEO={},MAT={},TEX={};
 const gget=(k,f)=>GEO[k]||(GEO[k]=f());
-function lam(c,o){const k="l"+c+(o?JSON.stringify(o):"");return MAT[k]||(MAT[k]=new T.MeshLambertMaterial(Object.assign({color:c},o||{})))}
+// tecknad skuggning i fyra mjuka steg
+function toon(c,o){const k="t"+c+(o?JSON.stringify(o):"");return MAT[k]||(MAT[k]=new T.MeshToonMaterial(Object.assign({color:c,gradientMap:TEX.grad},o||{})))}
 function bas(c,o){const k="b"+c+(o?JSON.stringify(o):"");return MAT[k]||(MAT[k]=new T.MeshBasicMaterial(Object.assign({color:c},o||{})))}
 function mesh(g,m,x,y,z){const o=new T.Mesh(g,m);o.position.set(x||0,y||0,z||0);return o}
-const Box=(w,h,d)=>gget("B"+[w,h,d],()=>new T.BoxGeometry(w,h,d));
-const Cyl=(a,b,h,n)=>gget("C"+[a,b,h,n],()=>new T.CylinderGeometry(a,b,h,n||10));
-const Sph=(r,a,b)=>gget("S"+[r,a,b],()=>new T.SphereGeometry(r,a||14,b||10));
-const Cone=(r,h,n)=>gget("K"+[r,h,n],()=>new T.ConeGeometry(r,h,n||6));
-const Disc=n=>gget("D"+n,()=>new T.CircleGeometry(1,n||28).rotateX(-Math.PI/2));
+const Cap=(r,l,n)=>gget("A"+[r,l,n],()=>new T.CapsuleGeometry(r,l,4,n||12));
+const Cyl=(a,b,h,n)=>gget("C"+[a,b,h,n],()=>new T.CylinderGeometry(a,b,h,n||14));
+const Sph=(r,a,b)=>gget("S"+[r,a,b],()=>new T.SphereGeometry(r,a||18,b||12));
+const Ico=(r,d)=>gget("I"+[r,d],()=>new T.IcosahedronGeometry(r,d==null?1:d));
+const Cone=(r,h,n)=>gget("K"+[r,h,n],()=>new T.ConeGeometry(r,h,n||8));
+const Tor=(r,t,a)=>gget("T"+[r,t,a],()=>new T.TorusGeometry(r,t,8,28,a||Math.PI*2));
+const Disc=n=>gget("D"+n,()=>new T.CircleGeometry(1,n||32).rotateX(-Math.PI/2));
+const RBox=(w,h,d,r)=>gget("R"+[w,h,d,r],()=>{const s=new T.Shape(),x=-w/2,y=-h/2;s.moveTo(x+r,y);s.lineTo(x+w-r,y);s.quadraticCurveTo(x+w,y,x+w,y+r);s.lineTo(x+w,y+h-r);s.quadraticCurveTo(x+w,y+h,x+w-r,y+h);s.lineTo(x+r,y+h);s.quadraticCurveTo(x,y+h,x,y+h-r);s.lineTo(x,y+r);s.quadraticCurveTo(x,y,x+r,y);
+  const g=new T.ExtrudeGeometry(s,{depth:Math.max(.001,d-2*Math.min(r,d/2.2)),bevelEnabled:true,bevelSize:Math.min(r,d/2.2)*.9,bevelThickness:Math.min(r,d/2.2),bevelSegments:3,curveSegments:4});g.center();return g});
+const Lathe=(k,pts,n)=>gget("L"+k,()=>new T.LatheGeometry(pts.map(p=>new T.Vector2(p[0],p[1])),n||20));
 function ctex(w,h,fn){const c=document.createElement("canvas");c.width=w;c.height=h;fn(c.getContext("2d"),w,h);const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;t.anisotropy=4;return t}
 function rrp(c,x,y,w,h,r){c.beginPath();if(c.roundRect)c.roundRect(x,y,w,h,r);else c.rect(x,y,w,h)}
 const F3="Montserrat,Inter,system-ui,sans-serif";
-function pillTex(txt,bg,fg){return ctex(256,88,(c,w,h)=>{rrp(c,6,6,w-12,h-12,(h-12)/2);c.fillStyle=bg;c.fill();c.lineWidth=4;c.strokeStyle="rgba(255,255,255,.7)";c.stroke();c.fillStyle=fg;c.font="900 46px "+F3;c.textAlign="center";c.textBaseline="middle";c.fillText(txt,w/2,h/2+2)})}
+function pillTex(txt,bg,fg){return ctex(256,88,(c,w,h)=>{rrp(c,6,6,w-12,h-12,(h-12)/2);c.fillStyle=bg;c.fill();c.lineWidth=4;c.strokeStyle="rgba(255,255,255,.75)";c.stroke();c.fillStyle=fg;c.font="900 46px "+F3;c.textAlign="center";c.textBaseline="middle";c.fillText(txt,w/2,h/2+2)})}
 function sprite(tex,w,h,o){const m=new T.SpriteMaterial(Object.assign({map:tex,transparent:true},o||{})),s=new T.Sprite(m);s.scale.set(w,h,1);return s}
 function rng(s){s=(s*9301+49297)%233280||1;return()=>(s=(s*16807)%2147483647)/2147483647}
+function shade(o,cast){o.traverse(c=>{if(c.isMesh&&!c.userData.flat){c.castShadow=cast!==false;c.receiveShadow=true}});return o}
 function textures(){if(TEX.ok)return;TEX.ok=1;
-  TEX.blob=ctex(64,64,(c,w)=>{const g=c.createRadialGradient(w/2,w/2,0,w/2,w/2,w/2);g.addColorStop(0,"rgba(0,0,0,.5)");g.addColorStop(1,"rgba(0,0,0,0)");c.fillStyle=g;c.fillRect(0,0,w,w)});
-  TEX.ball=ctex(128,64,(c,w,h)=>{c.fillStyle="#fbfcfd";c.fillRect(0,0,w,h);c.fillStyle="rgba(120,140,160,.55)";for(let y=5;y<h;y+=9)for(let x=(y/9|0)%2*5;x<w;x+=10){c.beginPath();c.arc(x,y,2,0,7);c.fill()}c.fillStyle="#e0bb4a";c.fillRect(0,h/2-1,w,2)});
+  const gd=new Uint8Array([95,150,205,255]);TEX.grad=new T.DataTexture(gd,4,1,T.RedFormat);TEX.grad.minFilter=TEX.grad.magFilter=T.NearestFilter;TEX.grad.needsUpdate=true;
+  TEX.blob=ctex(64,64,(c,w)=>{const g=c.createRadialGradient(w/2,w/2,0,w/2,w/2,w/2);g.addColorStop(0,"rgba(20,40,20,.5)");g.addColorStop(1,"rgba(20,40,20,0)");c.fillStyle=g;c.fillRect(0,0,w,w)});
+  TEX.dot=ctex(64,64,(c,w)=>{const g=c.createRadialGradient(w/2,w/2,0,w/2,w/2,w/2);g.addColorStop(0,"rgba(255,255,255,1)");g.addColorStop(.45,"rgba(255,255,255,.85)");g.addColorStop(1,"rgba(255,255,255,0)");c.fillStyle=g;c.fillRect(0,0,w,w)});
+  TEX.ball=ctex(128,64,(c,w,h)=>{c.fillStyle="#fbfcfd";c.fillRect(0,0,w,h);c.fillStyle="rgba(140,160,180,.45)";for(let y=5;y<h;y+=9)for(let x=(y/9|0)%2*5;x<w;x+=10){c.beginPath();c.arc(x,y,2,0,7);c.fill()}c.fillStyle="#e0bb4a";c.fillRect(0,h/2-1,w,2)});
   const stripes=(a,b)=>ctex(8,64,(c,w,h)=>{c.fillStyle=a;c.fillRect(0,0,w,h/2);c.fillStyle=b;c.fillRect(0,h/2,w,h/2)});
-  TEX.ground=stripes("#4f7f40","#578a47");TEX.lane=stripes("#5d924c","#67a055");
+  TEX.ground=stripes("#3f9435","#4aa33d");TEX.lane=stripes("#57b043","#62bd4b");
   [TEX.ground,TEX.lane].forEach(t=>{t.wrapS=t.wrapT=T.RepeatWrapping;t.magFilter=T.NearestFilter});
-  TEX.hoppa=pillTex("HOPPA","#e0bb4a","#1a1405");TEX.ducka=pillTex("DUCKA","#2f7fd0","#ffffff");TEX.mal=pillTex("MÅL","#132a45","#e0bb4a");
-  TEX.gc=ctex(512,64,(c,w,h)=>{c.fillStyle="#22272b";c.fillRect(0,0,w,h);c.fillStyle="#f2f4f6";c.font="800 34px "+F3;c.textAlign="center";c.textBaseline="middle";c.fillText("RINGENÄS GOLFCENTER",w/2,h/2+2)});
+  TEX.sand=ctex(128,128,(c,w,h)=>{c.fillStyle="#f1dca4";c.fillRect(0,0,w,h);for(let i=0;i<500;i++){c.fillStyle=i%2?"rgba(196,160,96,.25)":"rgba(255,255,255,.35)";c.fillRect(Math.random()*w,Math.random()*h,2,2)}c.strokeStyle="rgba(190,150,90,.35)";c.lineWidth=2;for(let y=8;y<h;y+=12){c.beginPath();c.moveTo(0,y);for(let x=0;x<=w;x+=16)c.lineTo(x,y+Math.sin(x/12)*2);c.stroke()}});
+  TEX.hoppa=pillTex("HOPPA","#f2c94c","#1a1405");TEX.ducka=pillTex("DUCKA","#2f8be6","#ffffff");TEX.mal=pillTex("MÅL","#132a45","#f2c94c");
+  TEX.sign=ctex(512,72,(c,w,h)=>{c.fillStyle="#1e2326";c.fillRect(0,0,w,h);c.fillStyle="#f2f4f6";c.font="800 40px "+F3;c.textAlign="center";c.textBaseline="middle";c.fillText("RINGENÄS",w/2,h/2+2)});
+  TEX.gc=ctex(512,64,(c,w,h)=>{c.fillStyle="#22272b";c.fillRect(0,0,w,h);c.fillStyle="#f2f4f6";c.font="800 32px "+F3;c.textAlign="center";c.textBaseline="middle";c.fillText("RINGENÄS GOLFCENTER",w/2,h/2+2)});
   TEX.flag=ctex(160,100,(c,w,h)=>{c.fillStyle="#2f6fb5";c.fillRect(0,0,w,h);c.fillStyle="#f2c230";c.fillRect(50,0,20,h);c.fillRect(0,40,w,20)});
-  TEX.birch=ctex(16,128,(c,w,h)=>{c.fillStyle="#ece8e0";c.fillRect(0,0,w,h);c.fillStyle="#2a2a28";for(let i=0;i<14;i++)c.fillRect((i*7)%10,i*9+3,4+(i%3)*2,2)});
-  TEX.cloud=ctex(128,64,(c,w,h)=>{c.fillStyle="#fff";[[40,38,22],[66,30,26],[92,38,20],[64,42,24]].forEach(([x,y,r])=>{const g=c.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,"rgba(240,243,246,.9)");g.addColorStop(1,"rgba(240,243,246,0)");c.fillStyle=g;c.fillRect(0,0,w,h)})});
-  // Havet med ön, fyren och den röda bojen – längst bort, som i 2D-versionen
-  TEX.sea=ctex(2048,160,(c,w,h)=>{c.clearRect(0,0,w,h);const sy=104;c.fillStyle="#8797a6";c.fillRect(0,sy,w,h-sy);c.fillStyle="rgba(255,255,255,.22)";for(let i=0;i<60;i++)c.fillRect((i*157)%w,sy+6+(i%7)*7,40+(i%3)*20,1.5);
-    const ix=1350;c.fillStyle="#26323d";c.beginPath();c.moveTo(ix-210,sy+4);c.quadraticCurveTo(ix-60,sy-26,ix+40,sy-20);c.quadraticCurveTo(ix+160,sy-14,ix+240,sy+4);c.fill();
-    c.fillStyle="#ece6dd";c.fillRect(ix+4,sy-62,12,44);c.fillStyle="#26323d";c.fillRect(ix+1,sy-72,18,10);c.fillStyle="#ffd84a";c.fillRect(ix+7,sy-69,6,5);c.fillStyle="#c4473c";c.fillRect(ix+330,sy+14,5,10)});
-  TEX.trees=ctex(1024,64,(c,w,h)=>{c.clearRect(0,0,w,h);c.fillStyle="#56694d";c.beginPath();c.moveTo(0,h);for(let x=0;x<=w;x+=8)c.lineTo(x,h*.38+Math.abs(Math.sin(x/37))*10+Math.sin(x/113)*7);c.lineTo(w,h);c.fill();c.fillStyle="#4a5c43";c.fillRect(0,h-14,w,14)});
-  TEX.beam=ctex(256,64,(c,w,h)=>{const g=c.createLinearGradient(0,0,w,0);g.addColorStop(0,"rgba(255,216,74,.9)");g.addColorStop(1,"rgba(255,216,74,0)");c.fillStyle=g;c.beginPath();c.moveTo(0,h/2-3);c.lineTo(w,0);c.lineTo(w,h);c.lineTo(0,h/2+3);c.fill()});
+  TEX.birch=ctex(16,128,(c,w,h)=>{c.fillStyle="#f1ede6";c.fillRect(0,0,w,h);c.fillStyle="#2a2a28";for(let i=0;i<14;i++)c.fillRect((i*7)%10,i*9+3,4+(i%3)*2,2)});
+  TEX.cloud=ctex(256,128,(c,w,h)=>{[[80,76,44],[132,60,52],[184,76,40],[128,84,48]].forEach(([x,y,r])=>{const g=c.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,"rgba(255,246,238,.95)");g.addColorStop(.6,"rgba(255,236,222,.6)");g.addColorStop(1,"rgba(255,236,222,0)");c.fillStyle=g;c.fillRect(0,0,w,h)})});
+  TEX.sun=ctex(128,128,(c,w)=>{const g=c.createRadialGradient(w/2,w/2,0,w/2,w/2,w/2);g.addColorStop(0,"rgba(255,250,225,1)");g.addColorStop(.18,"rgba(255,226,160,.9)");g.addColorStop(1,"rgba(255,190,120,0)");c.fillStyle=g;c.fillRect(0,0,w,w)});
+  TEX.sea=ctex(256,256,(c,w,h)=>{c.fillStyle="#2f86c9";c.fillRect(0,0,w,h);for(let i=0;i<140;i++){c.fillStyle=i%3?"rgba(255,255,255,.18)":"rgba(15,60,110,.25)";c.fillRect(Math.random()*w,Math.random()*h,10+Math.random()*24,2)}});TEX.sea.wrapS=TEX.sea.wrapT=T.RepeatWrapping;
+  TEX.win=ctex(64,64,(c,w,h)=>{const g=c.createLinearGradient(0,0,0,h);g.addColorStop(0,"#ffe6b0");g.addColorStop(1,"#f4b968");c.fillStyle=g;c.fillRect(0,0,w,h);c.fillStyle="rgba(255,255,255,.35)";c.fillRect(0,0,w,6)});
 }
-function blob(r,y){const m=new T.Mesh(gget("P1",()=>new T.PlaneGeometry(1,1).rotateX(-Math.PI/2)),MAT.blob||(MAT.blob=new T.MeshBasicMaterial({map:TEX.blob,transparent:true,depthWrite:false})));m.scale.set(r*2,1,r*2);m.position.y=y||.015;m.renderOrder=1;return m}
+function blob(r,y){const m=new T.Mesh(gget("P1",()=>new T.PlaneGeometry(1,1).rotateX(-Math.PI/2)),MAT.blob||(MAT.blob=new T.MeshBasicMaterial({map:TEX.blob,transparent:true,depthWrite:false})));m.scale.set(r*2,1,r*2);m.position.y=y||.02;m.renderOrder=1;m.userData.flat=1;return m}
 
-/* --- Golfaren i 3D: samma kläder per nivå som tidigare (GEAR) --- */
+/* --- Golfaren: rundade kapslar, samma kläder per nivå som förut (GEAR) --- */
 function buildGolfer(lv){
   const k=GEAR[lv]||GEAR[1],root=new T.Group(),body=new T.Group(),hips=new T.Group();root.add(body);body.add(hips);
-  const pants=lam(k.pants),skin=lam(SKIN),jk=lam(k.jacket),pn=lam(k.panel),shoe=lam(k.shoe),legs=[],arms=[];
-  [-.115,.115].forEach(x=>{const th=new T.Group();th.position.x=x;hips.add(th);th.add(mesh(Box(.17,.5,.19),pants,0,-.24,0));
-    const kn=new T.Group();kn.position.y=-.48;th.add(kn);kn.add(mesh(Box(.15,.48,.16),pants,0,-.24,0),mesh(Box(.15,.09,.3),shoe,0,-.49,-.06));legs.push({th,kn})});
+  const pants=toon(k.pants),skin=toon("#f0c39c"),jk=toon(k.jacket),pn=toon(k.panel),shoe=toon(k.shoe),legs=[],arms=[];
+  hips.add(mesh(Sph(.17,16,10),pants,0,.02,0));hips.children[0].scale.set(1.25,.7,.95);
+  [-.11,.11].forEach(x=>{const th=new T.Group();th.position.x=x;hips.add(th);th.add(mesh(Cap(.1,.3),pants,0,-.24,0));
+    const kn=new T.Group();kn.position.y=-.48;th.add(kn);kn.add(mesh(Cap(.088,.3),pants,0,-.23,0));const sh=mesh(Cap(.08,.16),shoe,0,-.47,-.07);sh.rotation.x=Math.PI/2;sh.scale.set(1.05,1,.8);kn.add(sh);legs.push({th,kn})});
   const torso=new T.Group();hips.add(torso);
-  torso.add(mesh(Box(.46,.6,.28),jk,0,.33,0),mesh(Box(.47,.14,.29),pn,0,.57,0),mesh(Box(.47,.06,.29),pn,0,.05,0),mesh(Box(.04,.42,.29),pn,-.215,.3,0));
-  torso.add(mesh(Cyl(.06,.06,.1,8),skin,0,.66,0),mesh(Sph(.135),skin,0,.8,0));
-  const cap=lam(k.cap);torso.add(mesh(gget("cap",()=>new T.SphereGeometry(.148,14,8,0,Math.PI*2,0,Math.PI/2)),cap,0,.83,0),mesh(Box(.2,.025,.17),cap,0,.835,-.16),mesh(Sph(.025,6,4),lam("#ffffff"),0,.93,-.12));
-  [-1,1].forEach(sd=>{const sh=new T.Group();sh.position.set(sd*.29,.55,0);torso.add(sh);sh.add(mesh(Box(.12,.31,.13),sd<0?pn:jk,0,-.15,0));
-    const elb=new T.Group();elb.position.y=-.3;sh.add(elb);elb.add(mesh(Box(.11,.28,.12),jk,0,-.14,0),mesh(Sph(.065,8,6),k.glove&&sd<0?lam("#ffffff"):skin,0,-.3,0));
-    if(sd>0){const club=new T.Group();club.position.y=-.3;club.rotation.x=-.5;elb.add(club);club.add(mesh(Cyl(.013,.013,.95,6),lam("#22262b"),0,-.47,0),mesh(Box(.07,.1,.13),lam("#c9a14a"),0,-.95,-.04))}
-    arms.push({sh,elb})});
-  const stars=new T.Group();stars.position.y=2.15;for(let i=0;i<3;i++)stars.add(mesh(Sph(.07,6,4),bas("#e0bb4a"),0,0,0));stars.visible=false;root.add(stars);
-  const sh=blob(.42);return {root,body,hips,legs,arms,torso,stars,shadow:sh,lv};
+  const tr=mesh(Cap(.2,.24,16),jk,0,.32,0);tr.scale.set(1.12,1,.74);const yk=mesh(Sph(.2,16,10,),pn,0,.49,0);yk.scale.set(1.26,.55,.84);const bl=mesh(Tor(.2,.035),pn,0,.08,0);bl.rotation.x=Math.PI/2;bl.scale.set(1.12,.74,1);
+  torso.add(tr,yk,bl,mesh(Cyl(.06,.065,.1,10),skin,0,.64,0));
+  const head=new T.Group();head.position.y=.79;torso.add(head);
+  head.add(mesh(Sph(.145),skin),mesh(Sph(.03,8,6),skin,0,-.01,-.145),mesh(Sph(.035,8,6),skin,-.14,0,0),mesh(Sph(.035,8,6),skin,.14,0,0));
+  const cap=toon(k.cap);const cp=mesh(gget("cap",()=>new T.SphereGeometry(.155,18,10,0,Math.PI*2,0,Math.PI/2)),cap,0,.025,0);const br=mesh(Cyl(.13,.13,.025,18),cap,0,.03,-.13);br.scale.z=.85;
+  head.add(cp,br,mesh(Sph(.028,8,6),toon("#ffffff"),0,.13,-.1));
+  [-1,1].forEach(sd=>{const s=new T.Group();s.position.set(sd*.27,.5,0);torso.add(s);s.add(mesh(Sph(.085,12,8),pn),mesh(Cap(.068,.2),jk,0,-.15,0));
+    const elb=new T.Group();elb.position.y=-.3;s.add(elb);elb.add(mesh(Cap(.06,.18),jk,0,-.13,0),mesh(Sph(.066,10,8),k.glove&&sd<0?toon("#ffffff"):skin,0,-.29,0));
+    if(sd>0){const club=new T.Group();club.position.y=-.29;club.rotation.x=-.5;elb.add(club);club.add(mesh(Cyl(.014,.012,.95,6),toon("#2a2e33"),0,-.47,0),mesh(Cap(.045,.07,8),toon("#d4ad55"),.0,-.95,-.05));club.children[1].rotation.x=Math.PI/2}
+    arms.push({sh:s,elb})});
+  const stars=new T.Group();stars.position.y=2.15;for(let i=0;i<3;i++)stars.add(mesh(Ico(.08,0),bas("#f2c94c"),0,0,0));stars.visible=false;root.add(stars);
+  shade(root);const sh=blob(.42);return {root,body,hips,legs,arms,torso,head,stars,shadow:sh,lv};
 }
-function poseGolfer(P,g){
+function poseGolfer(P,g,V,now){
   const st=g.state,air=g.py>.5,duck=(g.duck>0||g.held)&&st==="run",ph=g.dist/11;
-  const run=i=>{const p=ph+i*Math.PI,a=Math.sin(p)*.8;return[a,a-(Math.max(0,Math.cos(p))*1.2+.15)]};
-  const L=st==="finish"||st==="crash"?[[.1,0],[-.1,0]]:air?[[1.0,-.4],[.2,-.9]]:duck?[[1.35,-.6],[.95,-1.0]]:[run(1),run(0)];
+  const run=i=>{const p=ph+i*Math.PI,a=Math.sin(p)*.8;return[a,a-(Math.max(0,Math.cos(p))*1.25+.15)]};
+  // hoppet: knän upp på väg upp, sträck ut inför landningen
+  const up=g.vy>0,L=st==="finish"?[[.05,0],[-.05,0]]:st==="crash"?[[.3,-.2],[-.2,0]]:air?(up?[[1.25,-.75],[.35,-1.3]]:[[.55,-.2],[.05,-.35]]):duck?[[1.35,-.6],[.95,-1.0]]:[run(1),run(0)];
   L.forEach((l,i)=>{P.legs[i].th.rotation.x=l[0];P.legs[i].kn.rotation.x=l[1]-l[0]});
-  const hip=air?1.0:Math.max(...L.map(l=>.48*Math.cos(l[0])+.48*Math.cos(l[1])))+.06;
-  P.hips.position.y=hip;P.torso.rotation.x=st==="finish"?0:duck?-1.05:air?-.15:st==="crash"?.2:-.24;
-  const sw=Math.sin(ph)*.9;
+  const hip=air?1.0:Math.max(...L.map(l=>.48*Math.cos(l[0])+.47*Math.cos(l[1])))+.07;
+  // fjädring i landningen och sträckning i uppstuds
+  const lt=V.landT,sq=lt<.16?Math.sin(lt/.16*Math.PI)*.16:0,st2=air&&up?Math.min(.1,g.vy/5400):0;
+  P.body.scale.set(1+sq*.6-st2*.4,1-sq+st2,1+sq*.6-st2*.4);
+  const bob=st==="run"&&!air&&!duck?Math.abs(Math.sin(ph))*.04:0;
+  P.hips.position.y=hip+bob;P.torso.rotation.x=st==="finish"?0:duck?-1.05:air?(up?-.35:-.1):st==="crash"?.2:-.26;
+  P.head.rotation.x=duck?.5:air?.15:0;
+  const sw=Math.sin(ph)*.95;
   P.arms.forEach((a,i)=>{const sd=i?1:-1;a.sh.rotation.z=0;
-    if(st==="finish"){a.sh.rotation.x=Math.PI-.25;a.sh.rotation.z=sd*.35;a.elb.rotation.x=.25}
+    if(st==="finish"){a.sh.rotation.x=Math.PI-.25+Math.sin(now*9+i)*.12;a.sh.rotation.z=sd*.4;a.elb.rotation.x=.25}
     else if(st==="crash"){a.sh.rotation.x=Math.sin(g.crashT*18+i*2)*1.3;a.elb.rotation.x=.8}
-    else if(duck){a.sh.rotation.x=.9;a.elb.rotation.x=1.3}
-    else if(air){a.sh.rotation.x=-.7*sd;a.sh.rotation.z=sd*.4;a.elb.rotation.x=.9}
-    else{a.sh.rotation.x=sd*sw;a.elb.rotation.x=.6}});
+    else if(duck){a.sh.rotation.x=.95;a.elb.rotation.x=1.35}
+    else if(air){a.sh.rotation.x=up?-1.1*sd-.2:-.4;a.sh.rotation.z=sd*(up?.55:.8);a.elb.rotation.x=.8}
+    else{a.sh.rotation.x=sd*sw;a.elb.rotation.x=.7}});
   P.body.rotation.x=st==="crash"?Math.min(1.25,g.crashT*4):0;
-  P.stars.visible=st==="crash";if(st==="crash")P.stars.children.forEach((s,i)=>{const a=g.crashT*6+i*2.1;s.position.set(Math.cos(a)*.45,Math.sin(a*1.3)*.08,Math.sin(a)*.45)});
+  P.root.position.y=g.py*S+(st==="finish"?Math.abs(Math.sin(g.endT*7))*.25:0);
+  P.stars.visible=st==="crash";if(st==="crash")P.stars.children.forEach((s,i)=>{const a=g.crashT*6+i*2.1;s.position.set(Math.cos(a)*.45,Math.sin(a*1.3)*.08,Math.sin(a)*.45);s.rotation.y=a*2});
   P.shadow.scale.setScalar(Math.max(.3,.84-g.py*S*.25));
 }
 
-/* --- Hindren i 3D: samma namn och krockytor som OBS (w = längd längs banan, y0–y1 = höjd) --- */
+/* --- Hindren: samma namn och krockytor som OBS (w = längd längs banan, y0–y1 = höjd) --- */
 const B3={
-  boll:()=>{const g=new T.Group(),b=mesh(Sph(.275,20,14),MAT.ball||(MAT.ball=new T.MeshLambertMaterial({map:TEX.ball})),0,.275,0);b.name="spin";g.add(b,blob(.3));return g},
+  boll:()=>{const g=new T.Group(),b=mesh(Sph(.275,24,16),MAT.ball||(MAT.ball=new T.MeshToonMaterial({map:TEX.ball,gradientMap:TEX.grad})),0,.275,0);b.name="spin";g.add(b,blob(.3));return g},
   pegg:()=>{const g=new T.Group();g.add(tee3(0),blob(.25));return g},
-  peggpar:()=>{const g=new T.Group();g.add(tee3(-.55),tee3(.55),blob(.25),blob(.25));g.children[2].position.z=-.55;g.children[3].position.z=.55;return g},
-  korg:()=>{const g=new T.Group(),p=new T.Group();p.name="sway";p.position.y=10;g.add(p);const gr=lam("#1f5e3a");
-    p.add(mesh(Cyl(.012,.012,8.05,5),lam("#dfe6ee"),0,-4.02,0),mesh(Cyl(.64,.5,.6,14),gr,0,-8.35,0),mesh(Cyl(.66,.66,.05,14),lam("#174a2d"),0,-8.06,0));
-    const h=mesh(gget("han",()=>new T.TorusGeometry(.5,.025,6,18,Math.PI)),lam("#e6eef7"),0,-8.05,0);p.add(h);
-    for(let i=0;i<9;i++)p.add(mesh(Sph(.075,8,6),lam("#ffffff"),Math.cos(i*2.4)*.38*(i%3?1:.4),-7.98+(i%2)*.06,Math.sin(i*2.4)*.38*(i%3?1:.4)));g.add(blob(.55));return g},
-  pinnar:()=>{const g=new T.Group(),a=mesh(Cyl(.025,.025,1.32,6),lam("#e8c33a"),-.06,.62,-.05),b=mesh(Cyl(.025,.025,1.3,6),lam("#e07a2e"),.06,.61,.08);a.rotation.set(.16,0,.12);b.rotation.set(-.14,0,-.1);g.add(a,b,blob(.2));return g},
-  bag:()=>{const g=new T.Group(),w=gget("whl",()=>new T.TorusGeometry(.15,.05,6,14).rotateY(Math.PI/2));
-    g.add(mesh(w,lam("#222222"),-.24,.17,.12),mesh(w,lam("#222222"),.24,.17,.12),mesh(Box(.52,.04,.06),lam("#3a4048"),0,.17,.12));
-    const b=new T.Group();b.position.set(0,.22,0);b.rotation.x=-.18;g.add(b);
-    b.add(mesh(Cyl(.18,.17,1.05,14),lam("#1c2b44"),0,.55,0),mesh(Cyl(.185,.185,.06,14),lam("#e6eef7"),0,.82,0),mesh(Cyl(.185,.185,.05,14),lam("#e0bb4a"),0,.2,0));
-    [[-.07,1.24,.02],[.07,1.2,-.05],[0,1.28,.08]].forEach(p=>{b.add(mesh(Cyl(.012,.012,.28,5),lam("#cfd8e2"),p[0],p[1]-.1,p[2]),mesh(Box(.06,.06,.11),lam("#c9a14a"),p[0],p[1]+.04,p[2]-.03))});g.add(blob(.4));return g},
-  flygboll:()=>{const g=new T.Group(),t=mesh(Cyl(.15,.01,1.6,8),bas("#ffffff",{transparent:true,opacity:.45,depthWrite:false}),0,1.75,-.85);t.rotation.x=-Math.PI/2;g.add(mesh(Sph(.17,14,10),MAT.ball,0,1.75,0),t,blob(.15));return g},
-  ruff:()=>{const g=new T.Group(),r=rng(7);for(let i=0;i<22;i++){const c=mesh(Cone(.08,.55+r()*.3,4),lam(i%2?"#2f5a2c":"#3b6b35"),(r()-.5)*2.6,.33,(r()-.5)*1.6);c.rotation.set((r()-.5)*.5,0,(r()-.5)*.5);g.add(c)}return g},
-  bunker:()=>{const g=new T.Group(),a=mesh(Disc(),lam("#c9b27c"),0,.012,0),b=mesh(Disc(),lam("#e6d3a3"),0,.018,0);a.scale.set(1.45,1,1.55);b.scale.set(1.3,1,1.4);g.add(a,b);
-    for(let i=-3;i<=3;i++){const l=mesh(Box(1.9-Math.abs(i)*.2,.004,.03),lam("#d6c08c"),0,.022,i*.32);g.add(l)}return g},
-  vatten:()=>{const g=new T.Group(),a=mesh(Disc(),lam("#2f5f8f"),0,.012,0),b=mesh(Disc(),new T.MeshLambertMaterial({color:"#4f86b8",emissive:"#1b3a5c"}),0,.018,0);a.scale.set(1.5,1,1.8);b.scale.set(1.36,1,1.65);g.add(a,b);
-    for(let i=0;i<2;i++){const r=mesh(gget("rip",()=>new T.RingGeometry(.92,1,32).rotateX(-Math.PI/2)),bas("#ffffff",{transparent:true,opacity:.5,depthWrite:false}),0,.024,0);r.name="rip";r.userData.ph=i*.5;g.add(r)}return g},
-  kratta:()=>{const g=new T.Group(),h=mesh(Cyl(.025,.025,2.1,6),lam("#c9b27c"),0,.2,.1);h.rotation.x=Math.PI/2-.18;g.add(h);
-    const hd=mesh(Box(.55,.06,.06),lam("#e6eef7"),0,.36,-.9);g.add(hd);for(let i=0;i<7;i++)g.add(mesh(Box(.025,.12,.025),lam("#e6eef7"),-.24+i*.08,.27,-.9));g.add(blob(.35));return g},
-  mas:()=>{const g=new T.Group(),b=new T.Group();b.position.y=1.78;g.add(b);const w=lam("#f4f6f8");
-    const bd=mesh(Sph(.28,12,8),w);bd.scale.set(.55,.5,1);b.add(bd,mesh(Sph(.12,10,8),w,0,.08,.26));const bk=mesh(Cone(.04,.16,5),lam("#e0bb4a"),0,.06,.42);bk.rotation.x=Math.PI/2;b.add(bk,mesh(Sph(.02,5,4),lam("#26323d"),-.08,.12,.32),mesh(Sph(.02,5,4),lam("#26323d"),.08,.12,.32));
-    [-1,1].forEach(sd=>{const p=new T.Group();p.name="wing";p.userData.sd=sd;p.position.x=sd*.1;b.add(p);const wg=mesh(Box(.7,.03,.3),w,sd*.36,0,0);p.add(wg,mesh(Box(.18,.031,.3),lam("#9aa6b2"),sd*.65,0,0))});g.add(blob(.3));return g},
-  vindby:()=>{const g=new T.Group();for(let i=0;i<5;i++){const r=mesh(gget("gst",()=>new T.TorusGeometry(.62,.035,6,26,Math.PI*1.25)),bas("#e6eef7",{transparent:true,opacity:.6,depthWrite:false}),0,1.5+i*.55,0);r.rotation.y=Math.PI/2;r.name="gust";r.userData.i=i;g.add(r)}return g}
+  peggpar:()=>{const g=new T.Group();g.add(tee3(-.55),tee3(.55));const a=blob(.25),b=blob(.25);a.position.z=-.55;b.position.z=.55;g.add(a,b);return g},
+  korg:()=>{const g=new T.Group(),p=new T.Group();p.name="sway";p.position.y=10;g.add(p);
+    p.add(mesh(Cyl(.014,.014,8.05,5),toon("#e8eef4"),0,-4.02,0));
+    const bk=mesh(Lathe("korg",[[.46,0],[.5,.05],[.6,.55],[.66,.6],[.62,.62]],22),toon("#1f7a45",{side:T.DoubleSide}),0,-8.65,0);p.add(bk);
+    const rim=mesh(Tor(.64,.04),toon("#16603a"),0,-8.04,0);rim.rotation.x=Math.PI/2;p.add(rim);
+    const h=mesh(Tor(.52,.03,Math.PI),toon("#e6eef7"),0,-8.05,0);p.add(h);
+    const bm=new T.InstancedMesh(Sph(.075,10,8),toon("#ffffff"),16),m=new T.Matrix4();for(let i=0;i<16;i++){const a=i*2.4,r=(i%4)*.14+.05;m.makeTranslation(Math.cos(a)*r,-8.05+(i%3)*.05+(.3-r)*.25,Math.sin(a)*r);bm.setMatrixAt(i,m)}p.add(bm);
+    shade(g);g.add(blob(.55));return g},
+  pinnar:()=>{const g=new T.Group(),a=mesh(Cap(.03,1.26,6),toon("#f2cf3a"),-.06,.66,-.05),b=mesh(Cap(.03,1.24,6),toon("#f08a32"),.06,.65,.08);a.rotation.set(.16,0,.12);b.rotation.set(-.14,0,-.1);g.add(shade(a),shade(b),blob(.2));return g},
+  bag:()=>{const g=new T.Group(),w=gget("whl",()=>new T.TorusGeometry(.14,.055,8,18).rotateY(Math.PI/2));
+    g.add(mesh(w,toon("#25282c"),-.25,.18,.12),mesh(w,toon("#25282c"),.25,.18,.12));const ax=mesh(Cap(.025,.5,6),toon("#4a5058"),0,.18,.12);ax.rotation.z=Math.PI/2;g.add(ax);
+    const b=new T.Group();b.position.set(0,.24,0);b.rotation.x=-.18;g.add(b);
+    b.add(mesh(Cap(.18,.78,16),toon("#1c3a6b"),0,.58,0),mesh(Tor(.18,.03),toon("#f4f6f8"),0,.85,0),mesh(Tor(.18,.025),toon("#f2c94c"),0,.3,0),mesh(Cap(.07,.3,8),toon("#16305a"),0,.55,-.2));
+    b.children[1].rotation.x=b.children[2].rotation.x=Math.PI/2;
+    [[-.07,1.22,.02,"#d4ad55"],[.07,1.18,-.05,"#c9d2dc"],[0,1.26,.08,"#1c1f23"]].forEach(p=>{b.add(mesh(Cyl(.014,.014,.3,6),toon("#cfd8e2"),p[0],p[1]-.1,p[2]),mesh(Cap(.05,.06,8),toon(p[3]),p[0],p[1]+.06,p[2]-.02))});
+    shade(g);g.add(blob(.42));return g},
+  flygboll:()=>{const g=new T.Group(),t=mesh(Cone(.13,1.8,12),new T.MeshBasicMaterial({color:"#fff7d6",transparent:true,opacity:.55,depthWrite:false,blending:T.AdditiveBlending}),0,1.75,-1.0);t.rotation.x=Math.PI/2;t.userData.flat=1;
+    g.add(shade(mesh(Sph(.17,16,12),MAT.ball,0,1.75,0)),t,blob(.15));return g},
+  ruff:()=>{const g=new T.Group(),r=rng(7);for(let i=0;i<26;i++){const c=mesh(Cone(.07,.5+r()*.35,5),toon(["#2f6b2a","#3d8a34","#4e9c3c"][i%3]),(r()-.5)*2.6,.3,(r()-.5)*1.6);c.rotation.set((r()-.5)*.6,r()*3,(r()-.5)*.6);g.add(c)}
+    for(let i=0;i<5;i++)g.add(mesh(Sph(.05,8,6),toon(i%2?"#ffffff":"#f2c94c"),(r()-.5)*2.2,.62,(r()-.5)*1.3));shade(g);return g},
+  bunker:()=>{const g=new T.Group(),lip=mesh(Tor(1,.16),toon("#4f9c3d"),0,.02,0);lip.rotation.x=Math.PI/2;lip.scale.set(1.45,1.55,.6);
+    const sd=mesh(gget("dune",()=>new T.SphereGeometry(1,28,8,0,Math.PI*2,0,Math.PI/2)),MAT.sand||(MAT.sand=new T.MeshToonMaterial({map:TEX.sand,gradientMap:TEX.grad})),0,-.02,0);sd.scale.set(1.36,.07,1.46);g.add(shade(lip,false),shade(sd,false));g.userData.fx="sand";return g},
+  vatten:()=>{const g=new T.Group(),lip=mesh(Tor(1,.14),toon("#3f8a35"),0,.02,0);lip.rotation.x=Math.PI/2;lip.scale.set(1.5,1.8,.55);
+    const w=mesh(Disc(),MAT.water||(MAT.water=new T.MeshStandardMaterial({color:"#2a8ad6",roughness:.5,metalness:0,emissive:"#0a3a6a",emissiveIntensity:.3})),0,.03,0);w.scale.set(1.4,1,1.7);g.add(shade(lip,false),w);
+    for(let i=0;i<3;i++){const r=mesh(gget("rip",()=>new T.RingGeometry(.9,1,40).rotateX(-Math.PI/2)),new T.MeshBasicMaterial({color:"#ffffff",transparent:true,opacity:.5,depthWrite:false}),0,.035,0);r.name="rip";r.userData.ph=i/3;r.userData.flat=1;g.add(r)}
+    for(let i=0;i<6;i++){const a=i*1.05+.3,rd=mesh(Cap(.025,.5,5),toon("#5b7d2e"),Math.cos(a)*1.45,.3,Math.sin(a)*1.75);rd.rotation.z=(i%2-.5)*.3;g.add(shade(rd))}
+    g.userData.fx="water";return g},
+  kratta:()=>{const g=new T.Group(),h=mesh(Cap(.028,2,6),toon("#d9b977"),0,.2,.1);h.rotation.x=Math.PI/2-.18;g.add(h);
+    const hd=mesh(Cap(.04,.48,8),toon("#eef2f6"),0,.36,-.9);hd.rotation.z=Math.PI/2;g.add(hd);for(let i=0;i<7;i++)g.add(mesh(Cap(.016,.08,5),toon("#eef2f6"),-.24+i*.08,.28,-.9));shade(g);g.add(blob(.35));return g},
+  mas:()=>{const g=new T.Group(),b=new T.Group();b.position.y=1.78;g.add(b);const w=toon("#fbfcfd"),gr=toon("#b8c3cf");
+    const bd=mesh(Cap(.14,.3,12),w);bd.rotation.x=Math.PI/2;b.add(bd,mesh(Sph(.12,14,10),w,0,.1,.26),mesh(Cone(.06,.16,6),gr,0,.02,-.32));b.children[2].rotation.x=-Math.PI/2;
+    const bk=mesh(Cone(.035,.15,6),toon("#f2c94c"),0,.07,.42);bk.rotation.x=Math.PI/2;b.add(bk,mesh(Sph(.022,6,4),toon("#26323d"),-.07,.13,.33),mesh(Sph(.022,6,4),toon("#26323d"),.07,.13,.33));
+    [-1,1].forEach(sd=>{const p=new T.Group();p.name="wing";p.userData.sd=sd;p.position.x=sd*.1;b.add(p);const wg=mesh(Cap(.1,.5,8),w,sd*.35,0,0);wg.rotation.z=Math.PI/2;wg.scale.set(1,1,.25);const tip=mesh(Cap(.08,.16,6),gr,sd*.7,0,0);tip.rotation.z=Math.PI/2;tip.scale.set(1,1,.25);p.add(wg,tip)});
+    shade(g);g.add(blob(.3));return g},
+  vindby:()=>{const g=new T.Group();for(let i=0;i<5;i++){const r=mesh(Tor(.62,.04,Math.PI*1.25),new T.MeshBasicMaterial({color:"#ffffff",transparent:true,opacity:.65,depthWrite:false}),0,1.5+i*.55,0);r.rotation.y=Math.PI/2;r.name="gust";r.userData.i=i;g.add(r)}
+    for(let i=0;i<6;i++){const l=mesh(Sph(.08,6,4),toon(i%2?"#e8a33a":"#c96b2c"),0,1.6+i*.4,0);l.scale.set(1,.3,.6);l.name="leaf";l.userData.i=i;g.add(l)}return g}
 };
-function tee3(z){const g=new T.Group();g.position.z=z;const gd=lam("#e0bb4a");g.add(mesh(Cyl(.05,.03,.72,8),gd,0,.36,0),mesh(Cyl(.11,.05,.09,10),gd,0,.76,0),mesh(Sph(.2,16,12),MAT.ball,0,.98,0));return g}
+function tee3(z){const g=new T.Group();g.position.z=z;g.add(mesh(Lathe("tee",[[0,0],[.025,.02],[.04,.6],[.06,.7],[.12,.79],[.12,.8]],16),toon("#f2c94c"),0,0,0),mesh(Sph(.2,20,14),MAT.ball,0,.98,0));return shade(g)}
 
-/* --- Omgivningen: rangen i rutor om 80 m som återanvänds, startområdet vid Golfcentret, havet och ön långt bort --- */
-function birch3(x,z,s){const g=new T.Group();g.position.set(x,0,z);g.scale.setScalar(s);
-  g.add(mesh(Cyl(.12,.16,5.2,7),MAT.birch||(MAT.birch=new T.MeshLambertMaterial({map:TEX.birch})),0,2.6,0));
-  const br=lam("#5c504a");[[-.7,1.8],[.6,1.7],[-.3,2.2],[.3,2],[-1,1.2],[1.05,1.3],[0,2.4]].forEach(([a,l],i)=>{const b=mesh(Cyl(.02,.05,l,5),br,Math.sin(a)*l*.5,4.4+Math.cos(a)*l*.45-(i%3)*.4,(i%2-.5)*.4);b.rotation.z=-a;g.add(b)});
-  g.add(mesh(Sph(1.5,8,6),lam("#7a6a66",{transparent:true,opacity:.22,depthWrite:false}),0,5.2,0));return g}
-function mast3(x,z){const g=new T.Group();g.position.set(x,0,z);g.add(mesh(Cyl(.08,.12,11,7),lam("#7d868e"),0,5.5,0),mesh(Box(1,.35,.4),lam("#5d666e"),0,11.1,0),mesh(Box(.85,.06,.3),bas("#fffae0"),0,10.9,-.05));return g}
-function flagGreen(x,z,r,c){const g=new T.Group();g.position.set(x,0,z);const d=mesh(Disc(),lam("#4c8d3e"),0,.02,0);d.scale.set(r,1,r*.7);g.add(d,mesh(Cyl(.03,.03,2.4,5),lam("#e6eef7"),0,1.2,0));const f=mesh(Box(.02,.4,.6),lam(c),0,2.2,-.3);g.add(f);return g}
+/* --- Omgivning: rangen i rutor om 80 m, klubbhuset vid start, havet, ön och fyren längst bort --- */
+function tree3(x,z,s,r,autumn){const g=new T.Group();g.position.set(x,0,z);g.scale.setScalar(s);
+  g.add(mesh(Cap(.16,2.4,8),toon("#6b4a32"),0,1.4,0));const cs=autumn?["#e3a33a","#d47f2c","#f0c454"]:["#3f8f3a","#4ea445","#62b84e"];
+  for(let i=0;i<5;i++){const c=mesh(Ico(1.1+r()*.5,1),toon(cs[i%3],{flatShading:true}),(r()-.5)*1.4,3.2+r()*1.2,(r()-.5)*1.2);c.rotation.set(r()*3,r()*3,0);g.add(c)}return shade(g)}
+function birch3(x,z,s,r){const g=new T.Group();g.position.set(x,0,z);g.scale.setScalar(s);
+  g.add(mesh(Cap(.13,4.6,8),MAT.birch||(MAT.birch=new T.MeshToonMaterial({map:TEX.birch,gradientMap:TEX.grad})),0,2.4,0));
+  for(let i=0;i<4;i++){const c=mesh(Ico(.8+r()*.4,1),toon(i%2?"#f0c454":"#c9d65a",{flatShading:true}),(r()-.5)*1.2,4.4+r()*1.4,(r()-.5)*1);g.add(c)}return shade(g)}
+function mast3(x,z){const g=new T.Group();g.position.set(x,0,z);g.add(mesh(Cyl(.08,.13,11,8),toon("#8a939b"),0,5.5,0),mesh(Cap(.18,.7,8),toon("#5d666e"),0,11.15,0),mesh(Cap(.12,.55,8),bas("#fff4d0"),0,11.0,-.08));g.children[1].rotation.z=g.children[2].rotation.z=Math.PI/2;return shade(g)}
+function flagGreen(x,z,r,c){const g=new T.Group();g.position.set(x,0,z);const d=mesh(Disc(),toon("#7fd065"),0,.025,0);d.scale.set(r,1,r*.7);d.userData.flat=1;
+  const f=mesh(gget("pen",()=>new T.PlaneGeometry(.6,.4)),toon(c,{side:T.DoubleSide}),.3,2.2,0);f.name="pen";g.add(d,mesh(Cyl(.03,.03,2.4,6),toon("#f4f6f8"),0,1.2,0),f);return shade(g)}
 function buildTile(i,lv){
-  const g=new T.Group(),r=rng(i*31+lv*7+3);
-  for(let n=0;n<6;n++){const sd=n%2?1:-1;g.add(birch3(sd*(7+r()*20),-r()*TL,.8+r()*.5))}
+  const g=new T.Group(),r=rng(i*31+lv*7+3),club=(x,z)=>i<2&&x<-4&&-i*TL+z<-35&&-i*TL+z>-140;
+  for(let n=0;n<7;n++){const sd=n%2?1:-1,x=sd*(8+r()*22),z=-r()*TL;if(club(x,z))continue;g.add(n%3===2?birch3(x,z,.85+r()*.4,r):tree3(x,z,.8+r()*.5,r,r()<.25))}
+  for(let n=0;n<2;n++){const x=(n?1:-1)*(5.5+r()*8),z=-10-r()*(TL-20);if(club(x,z))continue;const d=(n+i)%3===2?B3.vatten():B3.bunker();d.position.set(x,0,z);d.scale.setScalar(1.1+r()*.6);d.rotation.y=r()*3;g.add(d)}
   g.add(mast3(12,-30-r()*20));
-  // bollnätet till vänster
-  for(let z=0;z<TL;z+=10)g.add(mesh(Cyl(.06,.06,9,5),lam("#3a4046"),-18,4.5,-z));
-  g.add(mesh(gget("net",()=>new T.PlaneGeometry(TL,9).rotateY(Math.PI/2)),bas("#2a3036",{transparent:true,opacity:.07,side:T.DoubleSide,depthWrite:false}),-18,4.5,-TL/2));
-  // slagbås till höger: gröna mattor och svarta spaljéer, nedtonade så att de aldrig ser ut som hinder
-  for(let n=0;n<3;n++){const z=-10-n*25-r()*8;g.add(mesh(Box(1.5,.03,1.3),lam("#2e8b4a"),5.2,.02,z),mesh(Box(.08,1.1,1.6),lam("#1b1e20"),6.2,.55,z))}
+  // kullar på sidorna ger djup
+  for(let n=0;n<2;n++){const h=mesh(Sph(1,20,10),toon("#4c9a3c"),(n?1:-1)*(30+r()*10),-2,-r()*TL);h.scale.set(12+r()*8,5+r()*3,16+r()*10);h.userData.flat=1;g.add(h)}
+  for(let z=0;z<TL;z+=10)if(!club(-18,-z))g.add(mesh(Cyl(.06,.07,9,6),toon("#3a4046"),-18,4.5,-z));
+  const net=mesh(gget("net",()=>new T.PlaneGeometry(TL,9).rotateY(Math.PI/2)),bas("#2a3036",{transparent:true,opacity:.07,side:T.DoubleSide,depthWrite:false}),-18,4.5,-TL/2);net.userData.flat=1;if(i>1)g.add(net);
+  for(let n=0;n<3;n++){const z=-10-n*25-r()*8,m=mesh(RBox(1.5,.06,1.3,.03),toon("#2e9b52"),5.2,.03,z);m.userData.flat=1;g.add(m,shade(mesh(RBox(.12,1.1,1.6,.05),toon("#1b1e20"),6.2,.55,z)))}
   if(lv===1){
-    for(let n=0;n<3;n++){const sd=r()<.5?-1:1;g.add(flagGreen(sd*(9+r()*16),-r()*TL,2+r()*2,n%2?"#c4473c":"#e8c33a"))}
-    const sign=new T.Group();sign.position.set(-3.1,0,-40);sign.add(mesh(Cyl(.03,.03,1.4,5),lam("#e6eef7"),0,.7,0));
-    const num=String(50+(i%6)*25);sign.add(sprite(ctex(128,64,(c,w,h)=>{rrp(c,4,4,w-8,h-8,10);c.fillStyle="#e6eef7";c.fill();c.fillStyle="#132a45";c.font="900 38px "+F3;c.textAlign="center";c.textBaseline="middle";c.fillText(num,w/2,h/2+2)}),.9,.45));sign.children[1].position.y=1.55;g.add(sign);
-    const bm=new T.InstancedMesh(Sph(.06,6,4),lam("#ffffff"),150),m=new T.Matrix4();
-    for(let n=0;n<150;n++){let x=(r()-.5)*56;if(Math.abs(x)<2.4)x+=x<0?-2.4:2.4;m.makeTranslation(x,.06,-r()*TL);bm.setMatrixAt(n,m)}g.add(bm)}
+    for(let n=0;n<3;n++){const sd=r()<.5?-1:1;g.add(flagGreen(sd*(9+r()*16),-r()*TL,2+r()*2,n%2?"#e04a3c":"#f2cf3a"))}
+    const sign=new T.Group();sign.position.set(-3.1,0,-40);sign.add(mesh(Cyl(.035,.035,1.4,6),toon("#f4f6f8"),0,.7,0));
+    const num=String(50+(i%6)*25);const sp=sprite(ctex(128,64,(c,w,h)=>{rrp(c,4,4,w-8,h-8,14);c.fillStyle="#f4f6f8";c.fill();c.fillStyle="#132a45";c.font="900 38px "+F3;c.textAlign="center";c.textBaseline="middle";c.fillText(num,w/2,h/2+2)}),.9,.45);sp.position.y=1.55;sign.add(sp);g.add(shade(sign));
+    // rangebollar i fyra band så att de kan döljas vid strandkanten
+    for(let b=0;b<4;b++){const bm=new T.InstancedMesh(Sph(.06,6,4),toon("#ffffff"),40),m=new T.Matrix4();for(let n=0;n<40;n++){let x=(r()-.5)*56;if(Math.abs(x)<2.4)x+=x<0?-2.4:2.4;m.makeTranslation(x,.06,-b*20-r()*20);bm.setMatrixAt(n,m)}bm.userData.band=-b*20-20;bm.userData.flat=1;g.add(bm)}}
+  g.children.forEach(c=>{if(c.userData.band==null)c.userData.band=c.position.z});
   return g;
 }
-function buildStart(){
-  const g=new T.Group();
-  // Ringenäs Golfcenter i svartbetsat trä till vänster vid start
-  const gc=new T.Group();gc.position.set(-13,0,-24);g.add(gc);
-  gc.add(mesh(Box(7,4.2,20),lam("#22272b"),0,2.1,0));const rf=mesh(gget("roof",()=>new T.CylinderGeometry(.01,4.6,1.4,4,1).rotateY(Math.PI/4)),lam("#3b4045"),0,4.9,0);rf.scale.set(1,1,3.1);gc.add(rf);
-  for(const z of[-7,-2,3,7.5])gc.add(mesh(Box(.05,2,1.1),lam("#f2f4f6"),3.52,1.6,z));
-  const sg=mesh(gget("gcs",()=>new T.PlaneGeometry(8,1).rotateY(Math.PI/2)),new T.MeshBasicMaterial({map:TEX.gc}),3.53,3.55,0);gc.add(sg);
-  // puttinggreen med blå flaggor och flaggstången med svenska flaggan
-  const pg=mesh(Disc(),lam("#62a050"),6.5,.02,-16);pg.scale.set(4,1,6);g.add(pg);
-  for(const z of[-12,-15,-18,-20])g.add(mesh(Cyl(.02,.02,1,5),lam("#e6eef7"),6+(z%3),.5,z),mesh(Box(.02,.18,.28),lam("#2f7fd0"),6+(z%3),.92,z-.14));
-  g.add(mesh(Cyl(.06,.08,10,8),lam("#f2f4f6"),8.5,5,-30));const fl=mesh(gget("flag",()=>new T.PlaneGeometry(2.2,1.4)),new T.MeshLambertMaterial({map:TEX.flag,side:T.DoubleSide}),8.5,9.2,-31.1);fl.rotation.y=Math.PI/2;fl.name="flag";g.add(fl);
+function win(w,h){const m=mesh(gget("wn"+[w,h],()=>new T.PlaneGeometry(w,h)),MAT.win||(MAT.win=new T.MeshBasicMaterial({map:TEX.win})));m.userData.flat=1;return m}
+// Ringenäs klubbhus efter fotot: svart träbyggnad med branta gavlar och vit veranda, hotellet med gröna glasbalkonger, dammen med fontän
+function buildClubhouse(){
+  const g=new T.Group(),dark=toon("#2b3034"),roof=toon("#23272a"),white=toon("#f4f6f8"),glass=new T.MeshStandardMaterial({color:"#5fb39a",roughness:.1,metalness:.2,transparent:true,opacity:.55});
+  // restaurangen
+  const rs=new T.Group();rs.position.set(-17,0,-78);g.add(rs);
+  rs.add(mesh(RBox(9,4.4,13,.12),dark,0,2.2,0));
+  const rf=mesh(gget("gab",()=>{const s=new T.Shape();s.moveTo(-5.4,0);s.lineTo(0,4.2);s.lineTo(5.4,0);s.lineTo(-5.4,0);return new T.ExtrudeGeometry(s,{depth:14,bevelEnabled:false}).translate(0,0,-7)}),roof,0,4.4,0);rs.add(rf);
+  const trim=mesh(gget("gabt",()=>{const s=new T.Shape();s.moveTo(-5.6,-.1);s.lineTo(0,4.35);s.lineTo(5.6,-.1);s.lineTo(5.3,-.1);s.lineTo(0,4.0);s.lineTo(-5.3,-.1);return new T.ExtrudeGeometry(s,{depth:.15,bevelEnabled:false})}),white,0,4.4,7);rs.add(trim);
+  const dm=mesh(gget("dorm",()=>{const s=new T.Shape();s.moveTo(-1.6,0);s.lineTo(0,1.8);s.lineTo(1.6,0);s.lineTo(-1.6,0);return new T.ExtrudeGeometry(s,{depth:3.2,bevelEnabled:false})}),roof,3.2,5.6,-2);dm.rotation.y=Math.PI/2;rs.add(dm,mesh(RBox(.2,1.6,3,.05),dark,4.4,5.4,-.4));
+  rs.add(Object.assign(win(2.4,1.1),{}));rs.children[rs.children.length-1].position.set(4.52,5.4,-.4);rs.children[rs.children.length-1].rotation.y=Math.PI/2;
+  for(const z of[-4.5,-1.5,1.5,4.5]){const w=win(2.2,2.4);w.position.set(4.52,2,z);w.rotation.y=Math.PI/2;rs.add(w)}
+  // vita verandan med pergola och glas
+  const ve=new T.Group();ve.position.set(7.5,0,0);rs.add(ve);ve.add(mesh(RBox(6,.3,15,.08),toon("#8a6a4d"),0,.15,0));
+  for(let z=-7;z<=7;z+=2.33){ve.add(mesh(Cyl(.07,.07,3,8),white,2.8,1.6,z),mesh(Cyl(.07,.07,3,8),white,-2.8,1.6,z))}
+  ve.add(mesh(RBox(6.2,.18,15.2,.06),white,0,3.1,0));for(let x=-2.4;x<=2.4;x+=.8)ve.add(mesh(RBox(.08,.12,15,.03),white,x,3.25,0));
+  const gl=mesh(gget("vgl",()=>new T.PlaneGeometry(15,1).rotateY(Math.PI/2)),glass,2.85,.85,0);gl.userData.flat=1;ve.add(gl);
+  for(let z=-5;z<=5;z+=3.3){ve.add(mesh(Cyl(.5,.5,.06,14),white,0,1.05,z),mesh(Cyl(.05,.05,.75,6),white,0,.65,z));const um=mesh(Cone(1.1,.5,10),white,0,2.5,z);ve.add(um,mesh(Cyl(.03,.03,2,5),white,0,1.5,z))}
+  // hotellet i tre våningar med gröna glasbalkonger, flagga på taket
+  const ht=new T.Group();ht.position.set(-22,0,-112);g.add(ht);
+  ht.add(mesh(RBox(10,9.6,30,.15),toon("#3b4247"),0,4.8,0),mesh(RBox(10.4,.3,30.4,.1),toon("#2a2f33"),0,9.7,0),mesh(RBox(8,2.6,16,.12),toon("#3b4247"),-.5,11.1,4),mesh(RBox(8.4,.25,16.4,.08),toon("#2a2f33"),-.5,12.5,4));
+  for(let f=0;f<3;f++){const y=.6+f*3.1;ht.add(mesh(RBox(1.6,.15,29,.05),toon("#d9dee2"),5.6,y,0));const rl=mesh(gget("bal",()=>new T.PlaneGeometry(29,.9).rotateY(Math.PI/2)),glass,6.38,y+.55,0);rl.userData.flat=1;ht.add(rl);
+    for(let z=-12.5;z<=12.5;z+=3.6){const w=win(2.6,2.2);w.position.set(5.02,y+1.3,z);w.rotation.y=Math.PI/2;ht.add(w)}}
+  for(let z=-1;z<=11;z+=3.6){const w=win(2.6,1.6);w.position.set(3.52,11.1,z);w.rotation.y=Math.PI/2;ht.add(w)}
+  const sg=mesh(gget("sgn",()=>new T.PlaneGeometry(7,1).rotateY(Math.PI/2)),new T.MeshBasicMaterial({map:TEX.sign}),5.04,8.9,2);sg.userData.flat=1;ht.add(sg);
+  ht.add(mesh(Cyl(.06,.08,7,8),white,-2,16,-6));const fl=mesh(gget("flag",()=>new T.PlaneGeometry(2.2,1.4)),new T.MeshToonMaterial({map:TEX.flag,side:T.DoubleSide,gradientMap:TEX.grad}),-2,18.7,-7.1);fl.rotation.y=Math.PI/2;fl.name="flag";ht.add(fl);
+  const hill=mesh(Sph(1,24,12),toon("#4c9a3c"),-36,-3,-112);hill.scale.set(18,11,40);hill.userData.flat=1;g.add(hill);
+  // dammen med fontänen och en green med flagga framför
+  const pond=mesh(Disc(48),MAT.water,-7.5,.04,-58);pond.scale.set(4.2,1,9);g.add(pond);const pl=mesh(Tor(1,.12),toon("#3f8a35"),-7.5,.03,-58);pl.rotation.x=Math.PI/2;pl.scale.set(4.3,9.1,.5);g.add(pl);
+  g.add(mesh(Cyl(.25,.3,.3,10),toon("#9aa3ab"),-7.5,.15,-60));g.userData.fountain=new T.Vector3(-7.5,.4,-60);
+  g.add(flagGreen(-11,-68,3,"#e04a3c"));
+  // Golfcentret i svartbetsat trä till höger vid start
+  const gc=new T.Group();gc.position.set(12,0,-46);g.add(gc);gc.add(mesh(RBox(7,4,16,.1),dark,0,2,0));
+  const gr=mesh(gget("gab2",()=>{const s=new T.Shape();s.moveTo(-4,0);s.lineTo(0,2.2);s.lineTo(4,0);s.lineTo(-4,0);return new T.ExtrudeGeometry(s,{depth:17,bevelEnabled:false}).translate(0,0,-8.5)}),roof,0,4,0);gc.add(gr);
+  const gs=mesh(gget("gcs",()=>new T.PlaneGeometry(8,1).rotateY(-Math.PI/2)),new T.MeshBasicMaterial({map:TEX.gc}),-3.53,3.3,0);gs.userData.flat=1;gc.add(gs);
+  for(const z of[-5,0,5]){const w=win(2,2.2);w.position.set(-3.52,1.6,z);w.rotation.y=-Math.PI/2;gc.add(w)}
   // utslagsmattan där golfaren startar
-  g.add(mesh(Box(2.6,.04,3),lam("#2e8b4a"),0,.02,1.2));
-  return g;
+  const mt=mesh(RBox(2.6,.08,3,.04),toon("#2e9b52"),0,.03,1.2);mt.userData.flat=1;g.add(mt);
+  return shade(g);
 }
+// Havet, stranden, ön med fyren och segelbåtar – följer med längst bort
+function buildSea(){
+  const g=new T.Group();
+  const sand=mesh(gget("bch",()=>new T.PlaneGeometry(700,20).rotateX(-Math.PI/2)),toon("#f0dca8"),0,.01,-SHORE-6);sand.userData.flat=1;g.add(sand);
+  const sea=mesh(gget("sea",()=>new T.PlaneGeometry(3000,1400).rotateX(-Math.PI/2)),new T.MeshBasicMaterial({map:TEX.sea,fog:false,color:"#8dbfe6"}),0,-.02,-SHORE-12-700);TEX.sea.repeat.set(60,28);g.add(sea);
+  const haze=mesh(gget("hz",()=>new T.PlaneGeometry(3000,60)),new T.MeshBasicMaterial({color:"#f7e3cc",transparent:true,opacity:.0,fog:false,depthWrite:false}),0,0,-1300);g.add(haze);
+  const isl=new T.Group();isl.position.set(70,0,-640);g.add(isl);
+  const rock=mesh(Sph(1,20,10),toon("#4b5a52",{fog:false}),0,-2,0);rock.scale.set(70,14,26);isl.add(rock);const gr=mesh(Sph(1,20,10),toon("#5f8a4d",{fog:false}),-10,4,0);gr.scale.set(40,8,18);isl.add(gr);
+  const lh=new T.Group();lh.position.set(18,9,0);isl.add(lh);lh.add(mesh(Cyl(2.2,3.2,22,16),toon("#f4f1ea",{fog:false}),0,11,0),mesh(Cyl(2.6,2.6,3,16),toon("#d8463a",{fog:false}),0,15,0),mesh(Cyl(1.8,1.8,2.4,12),toon("#2a3036",{fog:false}),0,23.2,0),mesh(Cone(2.4,2.2,12),toon("#d8463a",{fog:false}),0,25.5,0));
+  const lamp=mesh(Sph(1.4,12,8),new T.MeshBasicMaterial({color:"#ffe27a",fog:false}),0,23.2,0);lh.add(lamp);
+  const beam=mesh(gget("beam",()=>new T.ConeGeometry(9,120,16,1,true).translate(0,-60,0).rotateZ(Math.PI/2)),new T.MeshBasicMaterial({color:"#ffe9a0",transparent:true,opacity:.09,depthWrite:false,blending:T.AdditiveBlending,fog:false,side:T.DoubleSide}),0,23.2,0);lh.add(beam);
+  const sails=[];for(let i=0;i<3;i++){const b=new T.Group();b.position.set(-200+i*150,0,-420-i*120);const hl=mesh(Cap(1.2,5,8),toon("#f4f6f8",{fog:false}),0,.8,0);hl.rotation.z=Math.PI/2;hl.scale.set(.6,1,.5);
+    const sl=mesh(Cone(3,9,3),toon("#ffffff",{fog:false}),0,6,0);sl.scale.z=.12;b.add(hl,sl);g.add(b);sails.push(b)}
+  return {g,lamp,beam,sails};
+}
+
+/* --- Partiklar: sand, vatten, damm, gnistor och konfetti --- */
+function fxSystem(n,size,add){const geo=new T.BufferGeometry();geo.setAttribute("position",new T.Float32BufferAttribute(new Float32Array(n*3),3));geo.setAttribute("color",new T.Float32BufferAttribute(new Float32Array(n*3),3));
+  const m=new T.PointsMaterial({size,map:TEX.dot,vertexColors:true,transparent:true,depthWrite:false,blending:add?T.AdditiveBlending:T.NormalBlending,alphaTest:.02});const p=new T.Points(geo,m);p.frustumCulled=false;p.renderOrder=5;return {p,n,list:[]}}
+const CC={};function col(c){return CC[c]||(CC[c]=new T.Color(c))}
+function emit(sys,x,y,z,n,o){if(!R)return;const s=R.fx[sys];for(let i=0;i<n&&s.list.length<s.n;i++){const a=Math.random()*Math.PI*2,sp=(o.sp||2)*(.4+Math.random()*.8);
+  s.list.push({x:x+(Math.random()-.5)*(o.r||.3),y,z:z+(Math.random()-.5)*(o.r||.3),vx:Math.cos(a)*sp*(o.spread||1),vy:(o.up||2)*(.6+Math.random()*.8),vz:Math.sin(a)*sp*(o.spread||1)+(o.vz||0),g:o.g==null?9:o.g,life:(o.life||.8)*(.6+Math.random()*.7),c:o.cols[i%o.cols.length]})}}
+function updFx(dt){for(const k in R.fx){const s=R.fx[k],pa=s.p.geometry.attributes.position,ca=s.p.geometry.attributes.color;
+  for(let i=s.list.length-1;i>=0;i--){const q=s.list[i];q.life-=dt;if(q.life<=0){s.list.splice(i,1);continue}q.vy-=q.g*dt;q.x+=q.vx*dt;q.y+=q.vy*dt;q.z+=q.vz*dt;if(q.y<.02&&q.g>0){q.y=.02;q.vy*=-.3;q.vx*=.6;q.vz*=.6}}
+  for(let i=0;i<s.n;i++){if(i<s.list.length){const q=s.list[i],c=col(q.c),f=Math.min(1,q.life*3);pa.setXYZ(i,q.x,q.y,q.z);ca.setXYZ(i,c.r*f,c.g*f,c.b*f)}else pa.setXYZ(i,0,-99,0)}
+  pa.needsUpdate=true;ca.needsUpdate=true}}
+
+/* --- Popups på golfspråk – bara effekt, påverkar inte rundan eller topplistan --- */
+function popup(txt,big){if(!ov||!R)return;const v=new T.Vector3(0,(G?G.py*S:0)+2.3,-(G?G.dist:0)*S).project(R.cam);
+  const e=el("div","rgj-pop"+(big?" big":""),txt);e.style.left=((v.x*.5+.5)*W)+"px";e.style.top=((-v.y*.5+.5)*H)+"px";ov.append(e);setTimeout(()=>e.remove(),1100)}
+function cleared(g,o,V){V.streak++;const D=OBS[o.k],gz=-g.dist*S;
+  emit("spark",0,g.py*S+1.2,gz,14,{sp:2.4,up:2.5,g:3,life:.6,cols:["#fff3c4","#f2c94c","#ffffff"]});
+  if(V.streak%15===0)popup("Hole in one!",1);else if(V.streak%10===0)popup("Albatross!",1);else if(V.streak%5===0)popup("Eagle!",1);
+  else if(o.k==="bunker")popup("Sandräddning!");else if(o.k==="vatten")popup("Carry över vattnet!");else popup(D.act==="ducka"?"Räddning!":"Birdie!")}
+
+/* --- Kvalitet: skuggor och full upplösning på nyare telefoner, sänks automatiskt om bilden hackar --- */
+function tierHigh(){const dm=navigator.deviceMemory||4,hc=navigator.hardwareConcurrency||4,mob=/Mobi|Android|iPhone|iPad/.test(navigator.userAgent);return !mob||(hc>=6&&dm>=4)}
 function init3D(canvas){
-  textures();
+  textures();blob(1);
+  MAT.ball=MAT.ball||new T.MeshToonMaterial({map:TEX.ball,gradientMap:TEX.grad});
+  MAT.water=MAT.water||new T.MeshStandardMaterial({color:"#2a8ad6",roughness:.5,metalness:0,emissive:"#0a3a6a",emissiveIntensity:.3});
+  MAT.sand=MAT.sand||new T.MeshToonMaterial({map:TEX.sand,gradientMap:TEX.grad});
   const rd=new T.WebGLRenderer({canvas,antialias:(devicePixelRatio||1)<2.5,powerPreference:"high-performance",stencil:false});
-  const scene=new T.Scene();scene.fog=new T.Fog("#bcc6cf",34,200);
-  const cam=new T.PerspectiveCamera(60,1,.1,1200);
-  scene.add(new T.HemisphereLight("#eef3f8","#4a6b3c",2.1));const sun=new T.DirectionalLight("#fff6e6",1.5);sun.position.set(-6,12,8);scene.add(sun);
-  // himlen: mörkare upptill där HUD:en ligger, ljus mot horisonten
-  const sg=new T.SphereGeometry(500,24,16),p=sg.attributes.position,col=[],c=new T.Color(),A=new T.Color("#c9d1d8"),B=new T.Color("#8e9aa6"),C=new T.Color("#3c4856");
-  for(let i=0;i<p.count;i++){const y=p.getY(i)/500;if(y<.03)c.copy(A);else if(y<.25)c.copy(A).lerp(B,(y-.03)/.22);else c.copy(B).lerp(C,Math.min(1,(y-.25)/.4));col.push(c.r,c.g,c.b)}
-  sg.setAttribute("color",new T.Float32BufferAttribute(col,3));const sky=new T.Mesh(sg,new T.MeshBasicMaterial({vertexColors:true,side:T.BackSide,fog:false,depthWrite:false}));sky.renderOrder=-10;scene.add(sky);
-  const back=new T.Group();scene.add(back);
-  const sea=mesh(gget("sea",()=>new T.PlaneGeometry(1800,60)),new T.MeshBasicMaterial({map:TEX.sea,transparent:true,fog:false,depthWrite:false}),0,15,-420);sea.renderOrder=-9;back.add(sea);
-  const beam=sprite(TEX.beam,40,10,{fog:false,depthWrite:false});beam.position.set((1360/2048-.5)*1800+20,15+(.5-38/160)*60,-418);beam.renderOrder=-8;back.add(beam);
-  const trees=mesh(gget("trees",()=>new T.PlaneGeometry(900,14)),new T.MeshBasicMaterial({map:TEX.trees,transparent:true,alphaTest:.5,fog:false}),0,.6,-205);back.add(trees);
-  const clouds=[];for(let i=0;i<7;i++){const s=sprite(TEX.cloud,60+i*9,24+i*3,{fog:false,depthWrite:false,opacity:.75});s.position.set(-220+i*75,45+(i*37%30),-300-(i*53%80));s.renderOrder=-9;back.add(s);clouds.push(s)}
-  const ground=mesh(gget("gr",()=>new T.PlaneGeometry(260,280).rotateX(-Math.PI/2)),new T.MeshLambertMaterial({map:TEX.ground}),0,0,0);TEX.ground.repeat.set(1,70);scene.add(ground);
-  const lane=mesh(gget("ln",()=>new T.PlaneGeometry(3.4,280).rotateX(-Math.PI/2)),new T.MeshLambertMaterial({map:TEX.lane}),0,.006,0);TEX.lane.repeat.set(1,70);scene.add(lane);
-  const start=buildStart();scene.add(start);
+  rd.toneMapping=T.ACESFilmicToneMapping;rd.toneMappingExposure=.95;
+  const hi=tierHigh();rd.shadowMap.enabled=true;rd.shadowMap.type=T.PCFSoftShadowMap;
+  const scene=new T.Scene();scene.fog=new T.Fog("#f3dfc9",45,190);
+  const cam=new T.PerspectiveCamera(50,1,.1,2500);
+  scene.add(new T.HemisphereLight("#cfe4ff","#3f7a2a",1.05));
+  // låg kvällssol som på fotot, och ett kantljus framifrån som lyfter konturerna
+  const sun=new T.DirectionalLight("#ffdcae",2.1);sun.castShadow=hi;sun.shadow.mapSize.set(1024,1024);const sc=sun.shadow.camera;sc.left=-14;sc.right=14;sc.top=16;sc.bottom=-12;sc.near=1;sc.far=60;sun.shadow.bias=-.0006;sun.shadow.normalBias=.03;sun.shadow.radius=3;
+  scene.add(sun,sun.target);const rim=new T.DirectionalLight("#ffd9a8",1.3);rim.position.set(0,6,-20);scene.add(rim,rim.target);
+  // himmel i kvällsljus: blå upptill, varm vid horisonten
+  const sg=new T.SphereGeometry(1000,32,16),p=sg.attributes.position,cl=[],c=new T.Color(),A=new T.Color("#ffe1c2"),B=new T.Color("#a9cdef"),C=new T.Color("#4f8ed6");
+  for(let i=0;i<p.count;i++){const y=p.getY(i)/1000;if(y<.02)c.copy(A);else if(y<.22)c.copy(A).lerp(B,(y-.02)/.2);else c.copy(B).lerp(C,Math.min(1,(y-.22)/.5));cl.push(c.r,c.g,c.b)}
+  sg.setAttribute("color",new T.Float32BufferAttribute(cl,3));const sky=new T.Mesh(sg,new T.MeshBasicMaterial({vertexColors:true,side:T.BackSide,fog:false,depthWrite:false}));sky.renderOrder=-10;scene.add(sky);
+  const sunS=sprite(TEX.sun,260,260,{fog:false,depthWrite:false,blending:T.AdditiveBlending});sunS.renderOrder=-9;scene.add(sunS);
+  const clouds=[];for(let i=0;i<8;i++){const s=sprite(TEX.cloud,90+i*12,40+i*5,{fog:false,depthWrite:false,opacity:.85});s.renderOrder=-9;scene.add(s);clouds.push({s,x:-420+i*120,y:55+(i*37%45),z:-600-(i*53%160)})}
+  const ground=mesh(gget("gr",()=>new T.PlaneGeometry(320,SHORE+60).rotateX(-Math.PI/2)),new T.MeshToonMaterial({map:TEX.ground,gradientMap:TEX.grad}),0,0,0);ground.receiveShadow=true;TEX.ground.repeat.set(1,(SHORE+60)/4);scene.add(ground);
+  const lane=mesh(gget("ln",()=>new T.PlaneGeometry(3.4,SHORE+60).rotateX(-Math.PI/2)),new T.MeshToonMaterial({map:TEX.lane,gradientMap:TEX.grad}),0,.008,0);lane.receiveShadow=true;TEX.lane.repeat.set(1,(SHORE+60)/4);scene.add(lane);
+  const sea=buildSea();scene.add(sea.g);
+  const club=buildClubhouse();scene.add(club);
   const obsG=new T.Group();scene.add(obsG);
-  const pg=new T.BufferGeometry();pg.setAttribute("position",new T.Float32BufferAttribute(new Float32Array(600),3));pg.setAttribute("color",new T.Float32BufferAttribute(new Float32Array(600),3));
-  const pts=new T.Points(pg,new T.PointsMaterial({size:.16,vertexColors:true,transparent:true,depthWrite:false}));pts.frustumCulled=false;scene.add(pts);
-  const fin=new T.Group();fin.visible=false;scene.add(fin);const gold=lam("#e0bb4a");
-  fin.add(mesh(Cyl(.09,.09,6.4,8),gold,-2.6,3.2,0),mesh(Cyl(.09,.09,6.4,8),gold,2.6,3.2,0),mesh(Box(5.4,.8,.1),lam("#132a45"),0,6.2,0),mesh(Box(5.5,.05,.05),gold,0,5.78,.06));
-  const ms=sprite(TEX.mal,2.4,.83,{depthWrite:false});ms.position.set(0,6.2,.2);fin.add(ms);const fl=mesh(Disc(),bas("#e0bb4a",{transparent:true,opacity:.4,depthWrite:false}),0,.03,0);fl.scale.set(1.7,1,.25);fin.add(fl);
-  R={rd,scene,cam,sky,back,beam,clouds,ground,lane,start,obsG,pts,fin,tiles:[],tilesLv:0,P:null,pr:Math.min(2,devicePixelRatio||1),fr:0,ft:0,gRef:null,finZ:null};
+  const fx={dust:fxSystem(260,.22),sand:fxSystem(260,.16),water:fxSystem(260,.17),spark:fxSystem(200,.32,true),conf:fxSystem(300,.24)};for(const k in fx)scene.add(fx[k].p);
+  const fin=new T.Group();fin.visible=false;scene.add(fin);const gold=toon("#f2c94c");
+  fin.add(mesh(Cap(.1,6.2,10),gold,-2.6,3.2,0),mesh(Cap(.1,6.2,10),gold,2.6,3.2,0),mesh(RBox(5.6,.85,.16,.08),toon("#132a45"),0,6.2,0),mesh(Cap(.04,5.4,6),gold,0,5.76,.08));fin.children[3].rotation.z=Math.PI/2;
+  const ms=sprite(TEX.mal,2.4,.83,{depthWrite:false});ms.position.set(0,6.2,.2);fin.add(ms);const fl=mesh(Disc(),bas("#f2c94c",{transparent:true,opacity:.45,depthWrite:false}),0,.03,0);fl.scale.set(1.7,1,.25);fin.add(fl);shade(fin);
+  R={rd,scene,cam,sky,sun,rim,sunS,clouds,ground,lane,sea,club,obsG,fx,fin,tiles:[],tilesLv:0,P:null,hi,shadows:hi,pr:Math.min(hi?2:1.5,devicePixelRatio||1),fr:0,ft:0,gRef:null,finZ:null,V:null,fountT:0};
+  MAT.blob.visible=!hi;
   rd.setPixelRatio(R.pr);
 }
 function dispose3D(){if(!R)return;try{R.rd.dispose();R.rd.forceContextLoss()}catch(e){}R=null}
 function draw3(dt){
-  const g=G,r=R;if(!r||!g)return;
-  if(r.gRef!==g){r.gRef=g;r.obsG.clear();r.finZ=null;r.fin.visible=false}
+  const g=G,r=R;if(!r||!g)return;dt=dt||0;
+  if(r.gRef!==g){r.gRef=g;r.obsG.clear();r.finZ=null;r.fin.visible=false;r.V={py0:0,landT:9,streak:0,confT:0};for(const k in r.fx)r.fx[k].list.length=0}
+  const V=r.V;
   if(!r.P||r.P.lv!==g.lv){if(r.P){r.scene.remove(r.P.root,r.P.shadow)}r.P=buildGolfer(g.lv);r.scene.add(r.P.root,r.P.shadow)}
-  if(r.tilesLv!==g.lv){r.tiles.forEach(t=>r.scene.remove(t));r.tiles=[0,1,2,3].map(i=>buildTile(i,g.lv));r.tiles.forEach(t=>r.scene.add(t));r.tilesLv=g.lv}
+  if(r.tilesLv!==g.lv){r.tiles.forEach(t=>r.scene.remove(t));r.tiles=[0,1,2].map(i=>buildTile(i,g.lv));r.tiles.forEach(t=>r.scene.add(t));r.tilesLv=g.lv;r.waves=[];r.scene.traverse(o=>{if(o.name==="flag"||o.name==="pen")r.waves.push(o)})}
   const gz=-g.dist*S,now=performance.now()/1000;
-  // rutor med rangen runt golfaren
-  const k0=Math.floor(g.dist*S/TL);for(let k=k0-1;k<=k0+2;k++){const t=r.tiles[((k%4)+4)%4];t.position.z=-k*TL}
-  const sn=Math.round(gz/4)*4-100;r.ground.position.z=sn;r.lane.position.z=sn;
-  r.start.visible=g.dist*S<90;
-  // golfaren
-  poseGolfer(r.P,g);r.P.root.position.set(0,g.py*S,gz);r.P.shadow.position.set(0,.016,gz);
+  // rutor med rangen runt golfaren; allt bortom strandkanten döljs
+  const k0=Math.floor(g.dist*S/TL);for(let k=k0-1;k<=k0+1;k++){const t=r.tiles[((k%3)+3)%3];t.position.z=-k*TL;const lim=gz-SHORE+2+k*TL;t.children.forEach(c=>{c.visible=c.userData.band>lim})}
+  const sn=Math.round(gz/4)*4,len=SHORE+60;r.ground.position.z=sn-SHORE+len/2;r.lane.position.z=r.ground.position.z;
+  r.club.visible=g.dist*S<175;r.sea.g.position.z=sn;
+  // golfaren, landning och uppstuds
+  const gy=g.py;if(V.py0>0&&gy<=0&&g.state==="run"){V.landT=0;emit("dust",0,.05,gz+.1,12,{sp:1.6,up:1,g:4,life:.5,spread:1,cols:["#e9dcc2","#d8c9a8"]})}
+  if(V.py0<=0&&gy>0)emit("dust",0,.05,gz+.15,8,{sp:1.2,up:.8,g:4,life:.4,cols:["#e9dcc2"]});V.py0=gy;V.landT+=dt;
+  poseGolfer(r.P,g,V,now);r.P.root.position.x=0;r.P.root.position.z=gz;r.P.shadow.position.set(0,.02,gz);
+  if(g.state==="run"&&!(g.py>0)&&Math.random()<dt*10)emit("dust",(Math.random()-.5)*.2,.04,gz+.25,1,{sp:.5,up:.5,g:2,life:.35,cols:["#d8e8c0"]});
   // hinder
   const seen=new Set();
   for(const o of g.obs){let m=o.m;if(!m||m.parent!==r.obsG){m=o.m=B3[o.k]();m.userData.o=o;if(o.lbl){const s=sprite(o.lbl==="ducka"?TEX.ducka:TEX.hoppa,1.5,.52,{depthTest:false});s.position.y=o.lbl==="ducka"?3.15:1.95;s.renderOrder=20;s.name="lbl";m.add(s)}r.obsG.add(m)}
-    seen.add(m);const z=gz-(o.x-PX)*S;m.position.z=z;const gr=Math.min(1,o.age*4);m.scale.setScalar(.3+.7*gr);
+    seen.add(m);const z=gz-(o.x-PX)*S;m.position.z=z;const gr=Math.min(1,o.age*3.5),e=gr<1?1+Math.sin(gr*Math.PI)*.12:1;m.scale.setScalar((.3+.7*gr)*e);
     const lb=m.getObjectByName("lbl");if(lb){lb.visible=o.x>PX+14;lb.position.y=(o.lbl==="ducka"?3.15:1.95)+Math.sin(now*5)*.06}
     if(o.k==="boll")m.getObjectByName("spin").rotation.x=-o.rot*.55;
     else if(o.k==="korg")m.getObjectByName("sway").rotation.z=Math.sin(o.age*3)*.012;
     else if(o.k==="mas")m.traverse(c=>{if(c.name==="wing")c.rotation.z=c.userData.sd*Math.sin(o.age*14)*.6});
-    else if(o.k==="vindby")m.traverse(c=>{if(c.name==="gust"){c.rotation.x=o.age*3+c.userData.i;c.position.x=Math.sin(o.age*6+c.userData.i)*.2}});
-    else if(o.k==="vatten")m.traverse(c=>{if(c.name==="rip"){const t=(o.age*.6+c.userData.ph)%1;c.scale.set(.3+t*1.1,1,.3+t*1.4);c.material.opacity=.5*(1-t)}})}
+    else if(o.k==="vindby")m.traverse(c=>{if(c.name==="gust"){c.rotation.x=o.age*3+c.userData.i;c.position.x=Math.sin(o.age*6+c.userData.i)*.2}else if(c.name==="leaf"){const a=o.age*5+c.userData.i;c.position.x=Math.cos(a)*.6;c.position.z=Math.sin(a)*.6;c.rotation.y=a*2}});
+    else if(o.k==="vatten")m.traverse(c=>{if(c.name==="rip"){const t=(o.age*.5+c.userData.ph)%1;c.scale.set(.25+t*1.15,1,.25+t*1.45);c.material.opacity=.55*(1-t)}});
+    // stänk när golfaren passerar över sand eller vatten
+    const D=OBS[o.k],rel=o.x-PX;
+    if(m.userData.fx&&Math.abs(rel)<D.w/2&&g.state==="run"&&Math.random()<dt*28){if(m.userData.fx==="sand")emit("sand",(Math.random()-.5)*1.4,.08,gz+.3,4,{sp:1.2,up:3.2,g:9,life:.7,cols:["#f1dca4","#e2c27e","#fff1c8"]});else emit("water",(Math.random()-.5)*1.4,.08,gz+.3,5,{sp:1,up:3.6,g:9,life:.7,cols:["#e9f6ff","#9fd3ff","#ffffff"]})}
+    if(!o.cl&&g.state==="run"&&rel+D.w/2<-8){o.cl=1;cleared(g,o,V)}}
   for(let i=r.obsG.children.length-1;i>=0;i--){const m=r.obsG.children[i];if(!seen.has(m))r.obsG.remove(m)}
-  // mållinjen
+  // mållinjen och konfetti
   if(g.t>g.L.d-2.6&&r.finZ==null)r.finZ=gz-(g.L.d-g.t)*g.v*S;
   if(r.finZ!=null){r.fin.visible=true;r.fin.position.z=r.finZ}
-  // damm och konfetti
-  const pa=r.pts.geometry.attributes.position,ca=r.pts.geometry.attributes.color,n=Math.min(200,g.parts.length),cc=new T.Color();
-  for(let i=0;i<200;i++){if(i<n){const q=g.parts[i];if(q.lx==null)q.lx=(Math.random()-.5)*(q.y<-100?7:1.6);pa.setXYZ(i,q.lx,-q.y*S,gz-(q.x-PX)*S);cc.set(q.c);ca.setXYZ(i,cc.r,cc.g,cc.b)}else pa.setXYZ(i,0,-50,0)}
-  pa.needsUpdate=true;ca.needsUpdate=true;
+  if(g.state==="finish"&&!reduced()){V.confT+=dt;if(V.confT<1.6&&Math.random()<dt*30)emit("conf",(Math.random()-.5)*8,7+Math.random()*2,gz-2-Math.random()*6,6,{sp:1.2,up:.2,g:2.2,life:2.6,cols:["#f2c94c","#2f8be6","#ffffff","#e04a3c","#6cc055"]})}
+  if(g.state==="crash"&&g.crashT<dt+.001)emit("dust",0,.4,gz,24,{sp:3,up:3,g:8,life:.7,cols:["#ffffff","#e9dcc2"]});
+  // fontänen i dammen
+  if(r.club.visible){const fp=r.club.userData.fountain;if(Math.random()<dt*40)emit("water",fp.x,fp.y,fp.z,3,{sp:.6,up:6.5,g:9,life:1.2,r:.2,cols:["#ffffff","#d9f0ff"]})}
+  updFx(dt);
   // kameran snett bakifrån – i stående mobil högre upp så att man ser hindren i god tid
   const por=H>=W,c=r.cam,sh=g.state==="crash"&&g.crashT<.3?(Math.random()-.5)*.12:0;
   c.position.set((por?1.7:2.1)+sh,(por?4.3:3.2)+g.py*S*.3+sh,gz+(por?10.5:8.2));c.lookAt(.2,(por?.7:1.0)+g.py*S*.15,gz-(por?12:15));
-  r.sky.position.copy(c.position);r.back.position.set(0,0,gz);
-  r.beam.material.opacity=((now%6)<2.2)?.85*(1-Math.abs((now%6)-1.1)/1.1):0;
-  r.clouds.forEach((s,i)=>{s.position.x=((-220+i*75-g.dist*S*.03)%600+900)%600-300});
-  const fg=r.start.getObjectByName("flag");if(fg&&r.start.visible)fg.rotation.y=Math.PI/2+Math.sin(now*2.2)*.12;
+  r.sun.position.set(-9,13,gz+6);r.sun.target.position.set(0,0,gz-6);r.rim.position.set(2,7,gz-22);r.rim.target.position.set(0,1,gz);
+  r.sky.position.copy(c.position);r.sunS.position.set(c.position.x-260,60,c.position.z-900);
+  r.clouds.forEach(k=>{k.s.position.set(((k.x-g.dist*S*.05)%1100+1650)%1100-550,k.y,c.position.z+k.z)});
+  const se=r.sea;se.lamp.material.color.setScalar(.6+.4*Math.max(0,Math.sin(now*2.2)));se.lamp.material.color.r=1;se.beam.rotation.y=now*.9;TEX.sea.offset.set(now*.004,now*.012);
+  se.sails.forEach((b,i)=>{b.position.x=((-260+i*170+now*1.5)%700+700)%700-350;b.rotation.z=Math.sin(now*.8+i)*.05});
+  r.waves.forEach(o=>{if(o.name==="flag")o.rotation.y=Math.PI/2+Math.sin(now*2.2)*.15;else o.rotation.y=Math.sin(now*3+o.id)*.25});
   r.rd.render(r.scene,c);
-  // sänk upplösningen lite om telefonen inte hinner med
-  if(dt){r.fr++;r.ft+=dt;if(r.fr>=90){const avg=r.ft/r.fr;r.fr=0;r.ft=0;if(avg>1/42&&r.pr>1){r.pr=Math.max(1,r.pr-.35);r.rd.setPixelRatio(r.pr);r.rd.setSize(W,H,false)}}}
+  // sänk kvaliteten om telefonen inte hinner med: först skuggorna, sedan upplösningen
+  if(dt){r.fr++;r.ft+=dt;if(r.fr>=90){const avg=r.ft/r.fr;r.fr=0;r.ft=0;if(avg>1/42){if(r.shadows){r.shadows=false;r.sun.castShadow=false;MAT.blob.visible=true}else if(r.pr>1){r.pr=Math.max(1,r.pr-.35);r.rd.setPixelRatio(r.pr);r.rd.setSize(W,H,false)}}}}
 }
 
 /* === Spelloopen === */
