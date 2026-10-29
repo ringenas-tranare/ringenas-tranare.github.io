@@ -739,8 +739,8 @@ function startLevel(){const h=LEVELS.filter(l=>l.open&&l.n<=unlocked).pop();retu
 function render(){
   const root=document.getElementById("golfRoot");if(!root)return;root.textContent="";
   if(!sel||sel>unlocked||!LEVELS[sel-1].open)sel=startLevel();
-  const tabs=el("div","chips ctabs rgj-tabs");[["play","Spela"],["board","Topplista"],["rules","Regler"]].forEach(([k,t])=>{const b=el("button","chip"+(tab===k?" on":""),t);b.type="button";b.onclick=()=>{tab=k;if(k==="board")boardFor="";render()};tabs.append(b)});root.append(tabs);
-  if(tab==="play")renderPlay(root);else if(tab==="board")renderBoard(root);else renderRules(root);
+  const tabs=el("div","chips ctabs rgj-tabs");[["play","Spela"],["board","Topplista"]].forEach(([k,t])=>{const b=el("button","chip"+(tab===k?" on":""),t);b.type="button";b.onclick=()=>{tab=k;if(k==="board")boardFor="";render()};tabs.append(b)});root.append(tabs);
+  if(tab==="board")renderBoard(root);else{tab="play";renderPlay(root)}
 }
 function renderPlay(root){
   const c=el("div","card rgj-intro");c.append(el("div","eyebrow","Spel"),el("h2",null,"Ringenäs Golf Journey"),el("p",null,"Spring, hoppa och ducka dig genom fem banor – från HCP 99 hela vägen till +8."));
@@ -772,13 +772,6 @@ function renderBoard(root){
   else{const mi=boardRows.findIndex(r=>nick&&r.nick.toLowerCase()===nick.toLowerCase());if(mi>=0)pl.textContent="Du ligger på plats "+(mi+1)+" av "+boardRows.length+" – klättra högre!";
     boardRows.forEach((r,i)=>{const row=el("div","row"+(i===0?" first":"")+(i===mi?" me":""));const nm=el("div","nm",r.nick);nm.append(el("span","sub","Nivå "+r.level+" · "+LEVELS[r.level-1].name+" · "+new Date(r.created_at).toLocaleDateString("sv-SE")));row.append(el("div","rk",String(i+1)),nm,el("div","pts",resTxt(r)));bd.append(row)})}
   const go=el("button","go","Spela");go.type="button";go.onclick=()=>{tab="play";render()};c.append(go);root.append(c);
-}
-function renderRules(root){
-  const c=el("div","card");c.append(el("h2",null,"Så spelar du"));
-  ["Golfaren springer av sig själv. Tryck på ↑-knappen nere till höger för att hoppa (eller tryck var som helst på skärmen).","Håll in ↓-knappen för att ducka – släpp när faran passerat. Trycker du ↓ mitt i ett hopp landar du snabbare.","Krockar du är rundan slut. Ju längre du kommer, desto bättre handicap.","På Driving Range står du kvar på HCP 99 – klarar du hela banan får du Grönt kort och HCP 54.","Därefter sjunker handicapet ett slag i taget, ända till +8.","Klarar du en bana låses nästa upp. Du kan alltid spela en lägre bana igen."].forEach((t,i)=>{const p=el("p");p.append(el("b",null,(i+1)+". "),t);c.append(p)});
-  root.append(c);
-  const l=el("div","card");l.append(el("h2",null,"Banorna"));LEVELS.forEach(L=>{const d=el("div","rl");d.append(el("b",null,L.n+". "+L.name+": "),"HCP "+hcpTxt(L.s)+" → "+hcpTxt(L.e)+" · Belöning: "+L.reward+(L.open?"":" (kommer snart)"));l.append(d)});
-  l.append(el("p","msg","Använd smeknamn eller förnamn – topplistan är publik. Ingen e-post eller annan personinfo sparas."));root.append(l);
 }
 
 // state() läser rundan utan att ändra den (används vid test av banorna)
