@@ -234,7 +234,12 @@ function textures(){if(TEX.ok)return;TEX.ok=1;
   const gd=new Uint8Array([95,150,205,255]);TEX.grad=new T.DataTexture(gd,4,1,T.RedFormat);TEX.grad.minFilter=TEX.grad.magFilter=T.NearestFilter;TEX.grad.needsUpdate=true;
   TEX.blob=ctex(64,64,(c,w)=>{const g=c.createRadialGradient(w/2,w/2,0,w/2,w/2,w/2);g.addColorStop(0,"rgba(20,40,20,.5)");g.addColorStop(1,"rgba(20,40,20,0)");c.fillStyle=g;c.fillRect(0,0,w,w)});
   TEX.dot=ctex(64,64,(c,w)=>{const g=c.createRadialGradient(w/2,w/2,0,w/2,w/2,w/2);g.addColorStop(0,"rgba(255,255,255,1)");g.addColorStop(.45,"rgba(255,255,255,.85)");g.addColorStop(1,"rgba(255,255,255,0)");c.fillStyle=g;c.fillRect(0,0,w,w)});
-  TEX.ball=ctex(128,64,(c,w,h)=>{c.fillStyle="#fbfcfd";c.fillRect(0,0,w,h);c.fillStyle="rgba(140,160,180,.45)";for(let y=5;y<h;y+=9)for(let x=(y/9|0)%2*5;x<w;x+=10){c.beginPath();c.arc(x,y,2,0,7);c.fill()}c.fillStyle="#e0bb4a";c.fillRect(0,h/2-1,w,2)});
+  const dimples=(c,w,h,bump)=>{for(let row=0,y=4;y<h;row++,y+=7.2)for(let x=(row%2)*4.5;x<w+6;x+=9){const r=3.3;if(bump){const g=c.createRadialGradient(x,y,0,x,y,r);g.addColorStop(0,"#000");g.addColorStop(1,"#fff");c.fillStyle=g}else{const g=c.createRadialGradient(x+1,y+1,0,x,y,r);g.addColorStop(0,"rgba(255,255,255,0)");g.addColorStop(.7,"rgba(150,165,185,.18)");g.addColorStop(1,"rgba(120,135,160,.32)");c.fillStyle=g}c.beginPath();c.arc(x,y,r,0,7);c.fill()}};
+  TEX.ball=ctex(512,256,(c,w,h)=>{c.fillStyle="#fbfcfd";c.fillRect(0,0,w,h);dimples(c,w,h,false);for(const u of[.25,.75]){c.fillStyle="rgba(251,252,253,.75)";c.beginPath();c.ellipse(u*w,h/2+2,52,38,0,0,7);c.fill();drawLogo(c,u*w,h/2+2,1.25,"#1d2c4c")}});
+  TEX.ballBump=ctex(512,256,(c,w,h)=>{c.fillStyle="#fff";c.fillRect(0,0,w,h);dimples(c,w,h,true)});
+  TEX.trail=ctex(256,8,(c,w,h)=>{const g=c.createLinearGradient(0,0,w,0);g.addColorStop(0,"rgba(255,255,255,.85)");g.addColorStop(1,"rgba(255,255,255,0)");c.fillStyle=g;c.fillRect(0,0,w,h)});
+  TEX.logoW=ctex(128,100,(c,w,h)=>{c.clearRect(0,0,w,h);drawLogo(c,w/2,h/2-2,1.25,"#eef2f6")});
+  TEX.capLogo=ctex(256,132,(c,w,h)=>{c.clearRect(0,0,w,h);c.save();c.scale(1,1.35);drawLogo(c,w/2,58,1.05,"#1d2c4c");c.restore()});
   const stripes=(a,b)=>ctex(8,64,(c,w,h)=>{c.fillStyle=a;c.fillRect(0,0,w,h/2);c.fillStyle=b;c.fillRect(0,h/2,w,h/2)});
   TEX.ground=stripes("#3f9435","#4aa33d");TEX.lane=stripes("#57b043","#62bd4b");
   [TEX.ground,TEX.lane].forEach(t=>{t.wrapS=t.wrapT=T.RepeatWrapping;t.magFilter=T.NearestFilter});
@@ -262,56 +267,110 @@ function textures(){if(TEX.ok)return;TEX.ok=1;
 }
 function blob(r,y){const m=new T.Mesh(gget("P1",()=>new T.PlaneGeometry(1,1).rotateX(-Math.PI/2)),MAT.blob||(MAT.blob=new T.MeshBasicMaterial({map:TEX.blob,transparent:true,depthWrite:false})));m.scale.set(r*2,1,r*2);m.position.y=y||.02;m.renderOrder=1;m.userData.flat=1;return m}
 
-/* --- Golfaren: rundade kapslar, samma kläder per nivå som förut (GEAR) --- */
+/* --- Golfaren efter karaktärsbladet: vit Ringenäs-keps, marinblå tröja med kort dragkedja och vit krage,
+   beige byxor, vita skor och klocka på vänster handled. Ansiktet byts efter läget: glad, fokuserad, jublande och ledsen. --- */
+// ytsegment av en sfär (för ansikte och kepslogga) – canvasens vänsterkant hamnar på bärarens högra sida, som när man tittar på honom
+function shell(r,phiC,phiL,th0,thL,mat){return new T.Mesh(gget("sh"+[r,phiC,phiL,th0,thL],()=>new T.SphereGeometry(r,24,16,phiC-phiL/2,phiL,th0,thL)),mat)}
+// Ringenäs-loggan: boll över vågor och namnet
+function drawLogo(c,x,y,s,col,text){c.save();c.translate(x,y);c.scale(s,s);c.fillStyle=col;c.strokeStyle=col;
+  c.beginPath();c.arc(0,-18,15,0,7);c.lineWidth=2.6;c.stroke();for(let i=0;i<12;i++){const a=i*2.4,rr=(i%3+1)*4.2;c.beginPath();c.arc(Math.cos(a)*rr*.8,-18+Math.sin(a)*rr*.8,1.9,0,7);c.fill()}
+  c.lineWidth=3.2;c.lineCap="round";c.beginPath();c.moveTo(-34,2);c.bezierCurveTo(-20,-6,-8,8,6,0);c.bezierCurveTo(16,-6,26,4,36,-2);c.stroke();
+  c.beginPath();c.moveTo(-26,7);c.bezierCurveTo(-12,1,0,12,14,6);c.stroke();
+  if(text!==false){c.font="600 15px Montserrat,Georgia,serif";c.textAlign="center";c.textBaseline="middle";c.fillText("RINGENÄS",0,24)}c.restore()}
+// ansiktsuttryck ritas på en canvas (bredare än hög, eftersom segmentet är bredare än högt)
+function faceTex(kind){return ctex(368,256,(c,w,h)=>{c.clearRect(0,0,w,h);
+  const ex=[124,244],ey=100,open=kind==="jubel"?.8:kind==="ledsen"?.9:1;
+  // kinder
+  if(kind!=="ledsen")for(const x of[84,284]){const g=c.createRadialGradient(x,168,0,x,168,34);g.addColorStop(0,"rgba(240,130,120,.42)");g.addColorStop(1,"rgba(240,130,120,0)");c.fillStyle=g;c.fillRect(x-40,128,80,80)}
+  // ögon: vitt, blå iris, pupill och glans
+  for(const x of ex){c.fillStyle="#fff";c.beginPath();c.ellipse(x,ey,36,42*open,0,0,7);c.fill();c.strokeStyle="rgba(60,40,30,.55)";c.lineWidth=3;c.stroke();
+    const lx=kind==="ledsen"?0:0,ly=kind==="ledsen"?8:kind==="fokus"?-2:2;
+    c.fillStyle="#3f86d1";c.beginPath();c.arc(x+lx,ey+ly,23,0,7);c.fill();c.fillStyle="#2a5f9e";c.beginPath();c.arc(x+lx,ey+ly,23,0,7);c.lineWidth=3;c.strokeStyle="#2a5f9e";c.stroke();
+    c.fillStyle="#141414";c.beginPath();c.arc(x+lx,ey+ly,11.5,0,7);c.fill();c.fillStyle="#fff";c.beginPath();c.arc(x+lx-7,ey+ly-8,5.5,0,7);c.fill();c.beginPath();c.arc(x+lx+6,ey+ly+6,2.5,0,7);c.fill();
+    if(kind==="jubel"){c.fillStyle="#e7b892";c.beginPath();c.ellipse(x,ey+40,34,16,0,0,Math.PI,true);c.fill()}}
+  // ögonbryn
+  c.strokeStyle="#5a3a24";c.lineWidth=10;c.lineCap="round";
+  const brow=(x,inner,outer,dir)=>{c.beginPath();c.moveTo(x-26*dir,inner);c.quadraticCurveTo(x,Math.min(inner,outer)-8,x+26*dir,outer);c.stroke()};
+  if(kind==="glad"){brow(ex[0],50,48,-1);brow(ex[1],50,48,1)}else if(kind==="jubel"){brow(ex[0],34,38,-1);brow(ex[1],34,38,1)}
+  else if(kind==="fokus"){brow(ex[0],60,44,-1);brow(ex[1],60,44,1)}else{brow(ex[0],40,56,-1);brow(ex[1],40,56,1)}
+  // mun
+  c.lineCap="round";c.lineWidth=7;c.strokeStyle="#7a3326";
+  if(kind==="glad"){c.fillStyle="#fff";c.beginPath();c.moveTo(144,190);c.quadraticCurveTo(184,236,224,190);c.quadraticCurveTo(184,206,144,190);c.fill();c.beginPath();c.moveTo(140,188);c.quadraticCurveTo(184,240,228,188);c.stroke()}
+  else if(kind==="jubel"){c.fillStyle="#6b1f1a";c.beginPath();c.moveTo(132,180);c.quadraticCurveTo(184,256,236,180);c.closePath();c.fill();c.fillStyle="#fff";c.fillRect(140,180,88,14);c.fillStyle="#e0606a";c.beginPath();c.ellipse(184,222,24,12,0,0,7);c.fill()}
+  else if(kind==="fokus"){c.fillStyle="#fff";c.beginPath();c.roundRect?c.roundRect(150,190,68,18,8):c.rect(150,190,68,18);c.fill();c.lineWidth=5;c.stroke();c.beginPath();c.moveTo(152,199);c.lineTo(216,199);c.lineWidth=3;c.stroke()}
+  else{c.beginPath();c.moveTo(150,214);c.quadraticCurveTo(184,186,218,214);c.stroke();c.fillStyle="rgba(140,200,255,.85)";c.beginPath();c.ellipse(104,150,7,11,0,0,7);c.fill()}})}
 function buildGolfer(lv){
-  const k=GEAR[lv]||GEAR[1],root=new T.Group(),body=new T.Group(),hips=new T.Group();root.add(body);body.add(hips);
-  const pants=toon(k.pants),skin=toon("#f0c39c"),jk=toon(k.jacket),pn=toon(k.panel),shoe=toon(k.shoe),legs=[],arms=[];
-  hips.add(mesh(Sph(.17,16,10),pants,0,.02,0));hips.children[0].scale.set(1.25,.7,.95);
-  [-.11,.11].forEach(x=>{const th=new T.Group();th.position.x=x;hips.add(th);th.add(mesh(Cap(.1,.3),pants,0,-.24,0));
-    const kn=new T.Group();kn.position.y=-.48;th.add(kn);kn.add(mesh(Cap(.088,.3),pants,0,-.23,0));const sh=mesh(Cap(.08,.16),shoe,0,-.47,-.07);sh.rotation.x=Math.PI/2;sh.scale.set(1.05,1,.8);kn.add(sh);legs.push({th,kn})});
+  const root=new T.Group(),body=new T.Group(),hips=new T.Group();root.add(body);body.add(hips);
+  const navy=toon("#1d2c4c"),navy2=toon("#16233e"),beige=toon("#d4bf98"),skin=toon("#e3a982"),white=toon("#f6f6f3"),cream=toon("#efece4"),hair=toon("#6b4630"),sole=toon("#c9ccd0"),legs=[],arms=[];
+  const hp=mesh(Sph(.16,16,10),beige,0,.03,0);hp.scale.set(1.2,.62,.9);hips.add(hp);
+  [-.11,.11].forEach(x=>{const th=new T.Group();th.position.x=x;hips.add(th);th.add(mesh(Cap(.105,.3),beige,0,-.24,0));
+    const kn=new T.Group();kn.position.y=-.48;th.add(kn);kn.add(mesh(Cap(.092,.3),beige,0,-.23,0));
+    const sh=mesh(Cap(.085,.17),white,0,-.47,-.07);sh.rotation.x=Math.PI/2;sh.scale.set(1.1,1,.82);const so=mesh(Cap(.088,.18),sole,0,-.51,-.07);so.rotation.x=Math.PI/2;so.scale.set(1.12,1,.25);kn.add(sh,so);legs.push({th,kn})});
   const torso=new T.Group();hips.add(torso);
-  const tr=mesh(Cap(.2,.24,16),jk,0,.32,0);tr.scale.set(1.12,1,.74);const yk=mesh(Sph(.2,16,10,),pn,0,.49,0);yk.scale.set(1.26,.55,.84);const bl=mesh(Tor(.2,.035),pn,0,.08,0);bl.rotation.x=Math.PI/2;bl.scale.set(1.12,.74,1);
-  torso.add(tr,yk,bl,mesh(Cyl(.06,.065,.1,10),skin,0,.64,0));
-  const head=new T.Group();head.position.y=.79;torso.add(head);
-  head.add(mesh(Sph(.145),skin),mesh(Sph(.03,8,6),skin,0,-.01,-.145),mesh(Sph(.035,8,6),skin,-.14,0,0),mesh(Sph(.035,8,6),skin,.14,0,0));
-  const cap=toon(k.cap);const cp=mesh(gget("cap",()=>new T.SphereGeometry(.155,18,10,0,Math.PI*2,0,Math.PI/2)),cap,0,.025,0);const br=mesh(Cyl(.13,.13,.025,18),cap,0,.03,-.13);br.scale.z=.85;
-  head.add(cp,br,mesh(Sph(.028,8,6),toon("#ffffff"),0,.13,-.1));
-  [-1,1].forEach(sd=>{const s=new T.Group();s.position.set(sd*.27,.5,0);torso.add(s);s.add(mesh(Sph(.085,12,8),pn),mesh(Cap(.068,.2),jk,0,-.15,0));
-    const elb=new T.Group();elb.position.y=-.3;s.add(elb);elb.add(mesh(Cap(.06,.18),jk,0,-.13,0),mesh(Sph(.066,10,8),k.glove&&sd<0?toon("#ffffff"):skin,0,-.29,0));
-    if(sd>0){const club=new T.Group();club.position.y=-.29;club.rotation.x=-.5;elb.add(club);club.add(mesh(Cyl(.014,.012,.95,6),toon("#2a2e33"),0,-.47,0),mesh(Cap(.045,.07,8),toon("#d4ad55"),.0,-.95,-.05));club.children[1].rotation.x=Math.PI/2}
+  const tr=mesh(Cap(.21,.22,18),navy,0,.33,0);tr.scale.set(1.1,1,.76);torso.add(tr);
+  const hem=mesh(Tor(.2,.04),navy2,0,.1,0);hem.rotation.x=Math.PI/2;hem.scale.set(1.1,.76,1);torso.add(hem);
+  // krage: marinblå ståkrage med kort dragkedja och vit pikékrage innanför
+  const col=mesh(gget("collar",()=>new T.CylinderGeometry(.1,.115,.09,18,1,true)),toon("#1d2c4c",{side:T.DoubleSide}),0,.62,0);torso.add(col);
+  const pk=mesh(Tor(.093,.022),white,0,.665,0);pk.rotation.x=Math.PI/2;torso.add(pk);
+  const zp=mesh(gget("zip",()=>new T.BoxGeometry(.016,.2,.012)),toon("#cfd5dc"),0,.55,-.158);zp.rotation.x=-.18;torso.add(zp);
+  const lg=mesh(gget("chest",()=>new T.PlaneGeometry(.13,.1)),MAT.logoW,.085,.47,-.162);lg.rotation.y=Math.PI;lg.rotation.x=.12;lg.userData.flat=1;torso.add(lg);
+  torso.add(mesh(Cyl(.065,.07,.08,10),skin,0,.69,0));
+  // huvudet: stort och tecknat, med hår under kepsen
+  const head=new T.Group();head.position.y=.86;torso.add(head);const R=.19;
+  const sk=mesh(Sph(R,24,18),skin);sk.scale.set(1,1.05,1);head.add(sk);
+  const hr=mesh(Sph(R*.92,20,14),hair,0,-.045,.055);hr.scale.set(.98,.9,1);head.add(hr);
+  const faces={};for(const k of["glad","fokus","jubel","ledsen"])faces[k]=MAT["face"+k]||(MAT["face"+k]=new T.MeshToonMaterial({map:TEX["face"+k]||(TEX["face"+k]=faceTex(k)),transparent:true,gradientMap:TEX.grad,depthWrite:false}));
+  const face=shell(R*1.012,Math.PI*1.5,1.35,1.08,1.0,faces.glad);face.scale.y=1.05;face.renderOrder=2;face.userData.flat=1;head.add(face);
+  const ns=mesh(Sph(.034,10,8),skin,0,-.005,-R*1.0);ns.scale.set(1,.85,.9);head.add(ns);
+  for(const sd of[-1,1]){const e=mesh(Sph(.045,10,8),skin,sd*R*.98,-.01,.01);e.scale.set(.55,1,.8);head.add(e)}
+  // kepsen: vit krona, skärm framåt, knapp och Ringenäs-logga
+  // kepsen lutar: högt fram, lågt bak
+  const capG=new T.Group();capG.rotation.x=.42;head.add(capG);
+  capG.add(mesh(gget("cap3",()=>new T.SphereGeometry(R*1.07,24,12,0,Math.PI*2,0,Math.PI*.52)),cream,0,0,0),mesh(Sph(.022,8,6),cream,0,R*1.07+.005,0));
+  const cl=shell(R*1.08,Math.PI*1.5,1.2,.42,.62,MAT.capLogo);cl.userData.flat=1;cl.renderOrder=2;capG.add(cl);
+  const strap=mesh(Tor(.05,.012,Math.PI),toon("#d8d4ca"),0,-.02,R*1.065);strap.rotation.z=Math.PI;capG.add(strap);
+  const br=mesh(gget("brim3",()=>new T.CylinderGeometry(R*.95,R*.95,.024,22,1,false,Math.PI*.5,Math.PI)),cream,0,.075,-.06);br.scale.set(1,1,1.05);br.rotation.x=-.06;head.add(br);
+  [-1,1].forEach(sd=>{const s=new T.Group();s.position.set(sd*.29,.53,0);torso.add(s);s.add(mesh(Sph(.09,12,8),navy),mesh(Cap(.075,.2),navy,0,-.15,0));
+    const elb=new T.Group();elb.position.y=-.3;s.add(elb);elb.add(mesh(Cap(.068,.17),navy,0,-.12,0));const cf=mesh(Tor(.06,.018),navy2,0,-.22,0);cf.rotation.x=Math.PI/2;elb.add(cf);
+    const fist=mesh(Sph(.072,12,10),skin,0,-.29,0);fist.scale.set(.95,.9,1.1);elb.add(fist);
+    if(sd<0){const w=mesh(Tor(.058,.02),toon("#1b1b1d"),0,-.235,0);w.rotation.x=Math.PI/2;elb.add(w)}
     arms.push({sh:s,elb})});
-  const stars=new T.Group();stars.position.y=2.15;for(let i=0;i<3;i++)stars.add(mesh(Ico(.08,0),bas("#f2c94c"),0,0,0));stars.visible=false;root.add(stars);
-  shade(root);const sh=blob(.42);return {root,body,hips,legs,arms,torso,head,stars,shadow:sh,lv};
+  const stars=new T.Group();stars.position.y=2.25;for(let i=0;i<3;i++)stars.add(mesh(Ico(.08,0),bas("#f2c94c"),0,0,0));stars.visible=false;root.add(stars);
+  shade(root);const sh=blob(.42);return {root,body,hips,legs,arms,torso,head,face,faces,stars,shadow:sh,lv,turn:0};
 }
 function poseGolfer(P,g,V,now){
-  const st=g.state,air=g.py>.5,duck=(g.duck>0||g.held)&&st==="run",ph=g.dist/11;
+  const st=g.state,air=g.py>.5,duck=(g.duck>0||g.held)&&st==="run",ph=g.dist/11,dt=V.dt||0;
   const run=i=>{const p=ph+i*Math.PI,a=Math.sin(p)*.8;return[a,a-(Math.max(0,Math.cos(p))*1.25+.15)]};
-  // hoppet: knän upp på väg upp, sträck ut inför landningen
-  const up=g.vy>0,L=st==="finish"?[[.05,0],[-.05,0]]:st==="crash"?[[.3,-.2],[-.2,0]]:air?(up?[[1.25,-.75],[.35,-1.3]]:[[.55,-.2],[.05,-.35]]):duck?[[1.35,-.6],[.95,-1.0]]:[run(1),run(0)];
+  const up=g.vy>0;
+  // ben: springa, glädjeskutt med knäna högt, djup duck och sittande när han krockat
+  const L=st==="finish"?[[.08,0],[-.08,0]]:st==="crash"?[[1.5,1.45],[1.4,1.5]]:air?(up?[[1.45,-.55],[.25,-1.35]]:[[.7,-.15],[.1,-.45]]):duck?[[1.5,-.25],[1.5,-.25]]:[run(1),run(0)];
   L.forEach((l,i)=>{P.legs[i].th.rotation.x=l[0];P.legs[i].kn.rotation.x=l[1]-l[0]});
-  const hip=air?1.0:Math.max(...L.map(l=>.48*Math.cos(l[0])+.47*Math.cos(l[1])))+.07;
-  // fjädring i landningen och sträckning i uppstuds
+  const hip=st==="crash"?.2:air?1.0:Math.max(...L.map(l=>.48*Math.cos(l[0])+.47*Math.cos(l[1])))+.07;
   const lt=V.landT,sq=lt<.16?Math.sin(lt/.16*Math.PI)*.16:0,st2=air&&up?Math.min(.1,g.vy/5400):0;
   P.body.scale.set(1+sq*.6-st2*.4,1-sq+st2,1+sq*.6-st2*.4);
-  const bob=st==="run"&&!air&&!duck?Math.abs(Math.sin(ph))*.04:0;
-  P.hips.position.y=hip+bob;P.torso.rotation.x=st==="finish"?0:duck?-1.05:air?(up?-.35:-.1):st==="crash"?.2:-.26;
-  P.head.rotation.x=duck?.5:air?.15:0;
-  const sw=Math.sin(ph)*.95;
+  const bob=st==="run"&&!air&&!duck?Math.abs(Math.sin(ph))*.045:0;
+  P.hips.position.y=hip+bob;
+  P.torso.rotation.x=st==="finish"?.05:st==="crash"?-.25:duck?-.9:air?(up?-.2:-.05):-.22;
+  P.head.rotation.x=st==="crash"?.3:st==="finish"?.25:duck?.5:air?.1:-.05;P.head.rotation.z=st==="crash"?Math.sin(now*3)*.12:0;
+  const sw=Math.sin(ph)*1.0;
   P.arms.forEach((a,i)=>{const sd=i?1:-1;a.sh.rotation.z=0;
-    if(st==="finish"){a.sh.rotation.x=Math.PI-.25+Math.sin(now*9+i)*.12;a.sh.rotation.z=sd*.4;a.elb.rotation.x=.25}
-    else if(st==="crash"){a.sh.rotation.x=Math.sin(g.crashT*18+i*2)*1.3;a.elb.rotation.x=.8}
-    else if(duck){a.sh.rotation.x=.95;a.elb.rotation.x=1.35}
-    else if(air){a.sh.rotation.x=up?-1.1*sd-.2:-.4;a.sh.rotation.z=sd*(up?.55:.8);a.elb.rotation.x=.8}
-    else{a.sh.rotation.x=sd*sw;a.elb.rotation.x=.7}});
-  P.body.rotation.x=st==="crash"?Math.min(1.25,g.crashT*4):0;
-  P.root.position.y=g.py*S+(st==="finish"?Math.abs(Math.sin(g.endT*7))*.25:0);
-  P.stars.visible=st==="crash";if(st==="crash")P.stars.children.forEach((s,i)=>{const a=g.crashT*6+i*2.1;s.position.set(Math.cos(a)*.45,Math.sin(a*1.3)*.08,Math.sin(a)*.45);s.rotation.y=a*2});
+    if(st==="finish"){a.sh.rotation.x=Math.PI-.15+Math.sin(now*10+i*1.7)*.18;a.sh.rotation.z=sd*.45;a.elb.rotation.x=.35}
+    else if(st==="crash"){a.sh.rotation.x=.25;a.sh.rotation.z=sd*.25;a.elb.rotation.x=.3}
+    else if(duck){a.sh.rotation.x=.75;a.sh.rotation.z=-sd*.12;a.elb.rotation.x=.15}
+    else if(air){if(sd>0){a.sh.rotation.x=up?2.95:2.6;a.sh.rotation.z=.15;a.elb.rotation.x=.25}else{a.sh.rotation.x=.5;a.sh.rotation.z=-.85;a.elb.rotation.x=1.1}}
+    else{a.sh.rotation.x=sd*sw*.85;a.elb.rotation.x=1.35}});
+  // ansiktet följer läget
+  const fk=st==="crash"?"ledsen":st==="finish"||(air&&up)?"jubel":duck?"fokus":"glad";if(P.face.material!==P.faces[fk])P.face.material=P.faces[fk];
+  // vid mål och krock vänder han sig mot kameran så att man ser glädjen eller besvikelsen
+  const tgt=st==="finish"||st==="crash"?Math.PI:0;P.turn+=(tgt-P.turn)*Math.min(1,dt*5);P.body.rotation.y=P.turn;P.body.rotation.x=0;
+  P.root.position.y=g.py*S*1.15+(st==="finish"?Math.abs(Math.sin(g.endT*7))*.25:0);
+  P.stars.visible=st==="crash";if(st==="crash")P.stars.children.forEach((s,i)=>{const a=g.crashT*6+i*2.1;s.position.set(Math.cos(a)*.45,Math.sin(a*1.3)*.08-.9,Math.sin(a)*.45);s.rotation.y=a*2});
   P.shadow.scale.setScalar(Math.max(.3,.84-g.py*S*.25));
 }
-
 /* --- Hindren: samma namn och krockytor som OBS (w = längd längs banan, y0–y1 = höjd) --- */
 const B3={
-  boll:()=>{const g=new T.Group(),b=mesh(Sph(.275,24,16),MAT.ball||(MAT.ball=new T.MeshToonMaterial({map:TEX.ball,gradientMap:TEX.grad})),0,.275,0);b.name="spin";g.add(b,blob(.3));return g},
+  boll:()=>{const g=new T.Group(),b=mesh(Sph(.275,32,20),MAT.ball,0,.275,0);b.name="spin";g.add(b,blob(.3));
+    [[-.34,.3],[-.66,.14]].forEach(([z,o])=>{const gh=mesh(Sph(.27,16,10),new T.MeshBasicMaterial({color:"#ffffff",transparent:true,opacity:o,depthWrite:false}),0,.275,z);gh.userData.flat=1;g.add(gh)});g.userData.trail=1;return g},
   pegg:()=>{const g=new T.Group();g.add(tee3(0),blob(.25));return g},
   peggpar:()=>{const g=new T.Group();g.add(tee3(-.55),tee3(.55));const a=blob(.25),b=blob(.25);a.position.z=-.55;b.position.z=.55;g.add(a,b);return g},
   korg:()=>{const g=new T.Group(),p=new T.Group();p.name="sway";p.position.y=10;g.add(p);
@@ -329,8 +388,10 @@ const B3={
     b.children[1].rotation.x=b.children[2].rotation.x=Math.PI/2;
     [[-.07,1.22,.02,"#d4ad55"],[.07,1.18,-.05,"#c9d2dc"],[0,1.26,.08,"#1c1f23"]].forEach(p=>{b.add(mesh(Cyl(.014,.014,.3,6),toon("#cfd8e2"),p[0],p[1]-.1,p[2]),mesh(Cap(.05,.06,8),toon(p[3]),p[0],p[1]+.06,p[2]-.02))});
     shade(g);g.add(blob(.42));return g},
-  flygboll:()=>{const g=new T.Group(),t=mesh(Cone(.13,1.8,12),new T.MeshBasicMaterial({color:"#fff7d6",transparent:true,opacity:.55,depthWrite:false,blending:T.AdditiveBlending}),0,1.75,-1.0);t.rotation.x=Math.PI/2;t.userData.flat=1;
-    g.add(shade(mesh(Sph(.17,16,12),MAT.ball,0,1.75,0)),t,blob(.15));return g},
+  flygboll:()=>{const g=new T.Group(),b=mesh(Sph(.17,24,16),MAT.ball,0,1.75,0);b.name="fly";
+    const tm=MAT.trail||(MAT.trail=new T.MeshBasicMaterial({map:TEX.trail,transparent:true,depthWrite:false,side:T.DoubleSide}));
+    for(const [o,rad] of[[0,.07],[.08,.035]]){const pts=[];for(let i=0;i<=8;i++)pts.push(new T.Vector3(.02*i*i+o,1.75+.025*i-o,-i*.42));const t=mesh(gget("slice"+o,()=>new T.TubeGeometry(new T.CatmullRomCurve3(pts),32,rad,6)),tm);t.userData.flat=1;g.add(t)}
+    g.add(shade(b),blob(.15));return g},
   ruff:()=>{const g=new T.Group(),r=rng(7);for(let i=0;i<26;i++){const c=mesh(Cone(.07,.5+r()*.35,5),toon(["#2f6b2a","#3d8a34","#4e9c3c"][i%3]),(r()-.5)*2.6,.3,(r()-.5)*1.6);c.rotation.set((r()-.5)*.6,r()*3,(r()-.5)*.6);g.add(c)}
     for(let i=0;i<5;i++)g.add(mesh(Sph(.05,8,6),toon(i%2?"#ffffff":"#f2c94c"),(r()-.5)*2.2,.62,(r()-.5)*1.3));shade(g);return g},
   bunker:()=>{const g=new T.Group(),lip=mesh(Tor(1,.16),toon("#4f9c3d"),0,.02,0);lip.rotation.x=Math.PI/2;lip.scale.set(1.45,1.55,.6);
@@ -580,7 +641,8 @@ function cleared(g,o,V){V.streak++;const D=OBS[o.k],gz=-g.dist*S;
 function tierHigh(){const dm=navigator.deviceMemory||4,hc=navigator.hardwareConcurrency||4,mob=/Mobi|Android|iPhone|iPad/.test(navigator.userAgent);return !mob||(hc>=6&&dm>=4)}
 function init3D(canvas){
   textures();blob(1);
-  MAT.ball=MAT.ball||new T.MeshToonMaterial({map:TEX.ball,gradientMap:TEX.grad});
+  MAT.ball=MAT.ball||new T.MeshToonMaterial({map:TEX.ball,bumpMap:TEX.ballBump,bumpScale:2,gradientMap:TEX.grad});
+  MAT.logoW=MAT.logoW||new T.MeshBasicMaterial({map:TEX.logoW,transparent:true,depthWrite:false});MAT.capLogo=MAT.capLogo||new T.MeshToonMaterial({map:TEX.capLogo,transparent:true,depthWrite:false,gradientMap:TEX.grad});
   MAT.water=MAT.water||new T.MeshStandardMaterial({color:"#2a8ad6",roughness:.92,metalness:0,emissive:"#0a3a6a",emissiveIntensity:.35});
   MAT.sand=MAT.sand||new T.MeshToonMaterial({map:TEX.sand,gradientMap:TEX.grad});
   MAT.seaS=MAT.seaS||new T.MeshStandardMaterial({color:"#3b93d8",roughness:.9,metalness:0,emissive:"#0b3f72",emissiveIntensity:.35});
@@ -639,14 +701,15 @@ function draw3(dt){
   // golfaren, landning och uppstuds
   const gy=g.py;if(V.py0>0&&gy<=0&&g.state==="run"){V.landT=0;emit("dust",0,.05,gz+.1,12,{sp:1.6,up:1,g:4,life:.5,spread:1,cols:["#e9dcc2","#d8c9a8"]})}
   if(V.py0<=0&&gy>0)emit("dust",0,.05,gz+.15,8,{sp:1.2,up:.8,g:4,life:.4,cols:["#e9dcc2"]});V.py0=gy;V.landT+=dt;
-  poseGolfer(r.P,g,V,now);r.P.root.position.x=0;r.P.root.position.z=gz;r.P.shadow.position.set(0,.02,gz);
+  V.dt=dt;poseGolfer(r.P,g,V,now);r.P.root.position.x=0;r.P.root.position.z=gz;r.P.shadow.position.set(0,.02,gz);
   if(g.state==="run"&&!(g.py>0)&&Math.random()<dt*10)emit("dust",(Math.random()-.5)*.2,.04,gz+.25,1,{sp:.5,up:.5,g:2,life:.35,cols:["#d8e8c0"]});
   // hinder
   const seen=new Set();
   for(const o of g.obs){let m=o.m;if(!m||m.parent!==r.obsG){m=o.m=B3[o.k]();m.userData.o=o;if(o.lbl){const s=sprite(o.lbl==="ducka"?TEX.ducka:TEX.hoppa,1.5,.52,{depthTest:false});s.position.y=o.lbl==="ducka"?3.15:1.95;s.renderOrder=20;s.name="lbl";m.add(s)}r.obsG.add(m)}
     seen.add(m);const z=gz-(o.x-PX)*S;m.position.z=z;const gr=Math.min(1,o.age*3.5),e=gr<1?1+Math.sin(gr*Math.PI)*.12:1;m.scale.setScalar((.3+.7*gr)*e);
     const lb=m.getObjectByName("lbl");if(lb){lb.visible=o.x>PX+14;lb.position.y=(o.lbl==="ducka"?3.15:1.95)+Math.sin(now*5)*.06}
-    if(o.k==="boll")m.getObjectByName("spin").rotation.x=-o.rot*.55;
+    if(o.k==="boll"){m.getObjectByName("spin").rotation.x=-o.rot*.55;if(g.state==="run"&&Math.random()<dt*30)emit("dust",(Math.random()-.5)*.3,.05,z-.35,2,{sp:.6,up:1.2,g:5,life:.45,cols:["#8fc25a","#b9a27a","#6fa648"]})}
+    else if(o.k==="flygboll")m.getObjectByName("fly").rotation.x=-o.age*14;
     else if(o.k==="korg")m.getObjectByName("sway").rotation.z=Math.sin(o.age*3)*.012;
     else if(o.k==="mas")m.traverse(c=>{if(c.name==="wing")c.rotation.z=c.userData.sd*Math.sin(o.age*14)*.6});
     else if(o.k==="vindby")m.traverse(c=>{if(c.name==="gust"){c.rotation.x=o.age*3+c.userData.i;c.position.x=Math.sin(o.age*6+c.userData.i)*.2}else if(c.name==="leaf"){const a=o.age*5+c.userData.i;c.position.x=Math.cos(a)*.6;c.position.z=Math.sin(a)*.6;c.rotation.y=a*2}});

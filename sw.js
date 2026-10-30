@@ -3,7 +3,7 @@
 // Är nätet segt eller borta (vanligt ute på rangen) visas den sparade kopian direkt,
 // och den nya versionen hämtas i bakgrunden till nästa gång.
 // Resultat och topplistor (Supabase) sparas ALDRIG här – de hämtas alltid live.
-const CACHE = "ringenas-v6";
+const CACHE = "ringenas-v7";
 const TIMEOUT_MS = 3500;
 const SHELL = ["./", "manifest.webmanifest", "icon-192.png", "apple-touch-icon.png"];
 // Filer som aldrig ändras (versionsnummer i adressen) – får användas direkt från cachen.
