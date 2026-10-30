@@ -12,7 +12,7 @@ const DT=1/120,LH=240,GY=196; // fast tidssteg, logisk höjd, marknivå
 /* === Nivåer: hcp-spann, banans längd (s), fart, avstånd mellan hinder (s), hinderpool [typ, vikt, från andel av banan] ===
    Samma s/e/d finns i Edge Function golf-submit – ändras de här måste de ändras där också. */
 const LEVELS=[
-  {n:1,name:"Driving Range",s:99,e:54,d:75,reward:"Grönt kort",open:true,v0:240,v1:315,g0:1.6,g1:1.0,pool:[["boll",3,0],["pegg",3,0],["korg",2,.1],["pinnar",2,.2],["flygboll",2,.3],["peggpar",1,.4],["bag",2,.5]]},
+  {n:1,name:"Resan genom Ringenäs",s:99,e:54,d:75,reward:"Grönt kort",open:true,v0:240,v1:315,g0:1.6,g1:1.0,pool:[["boll",3,0],["pegg",3,0],["korg",2,.1],["pinnar",2,.2],["flygboll",2,.3],["peggpar",1,.4],["bag",2,.5]]},
   {n:2,name:"Första rundorna",s:54,e:20,d:80,reward:"Klubbgolfare",open:false,v0:280,v1:345,g0:1.35,g1:.88,pool:[["ruff",3,0],["bunker",2,0],["vatten",2,.2],["boll",1,0]]},
   {n:3,name:"Kusthål",s:20,e:10,d:80,reward:"Avancerad spelare",open:false,v0:310,v1:375,g0:1.15,g1:.8,pool:[["mas",3,0],["kratta",2,0],["vindby",2,.15],["bunker",1,0]]},
   {n:4,name:"Tävlingsgolf",s:10,e:0,d:85,reward:"Singelhandicap",open:false,v0:350,v1:420,g0:1.0,g1:.72,pool:[["bunker",2,0],["vatten",2,0],["mas",2,0],["vindby",2,0],["peggpar",1,0]]},
@@ -248,6 +248,17 @@ function textures(){if(TEX.ok)return;TEX.ok=1;
   TEX.sun=ctex(128,128,(c,w)=>{const g=c.createRadialGradient(w/2,w/2,0,w/2,w/2,w/2);g.addColorStop(0,"rgba(255,250,225,1)");g.addColorStop(.18,"rgba(255,226,160,.9)");g.addColorStop(1,"rgba(255,190,120,0)");c.fillStyle=g;c.fillRect(0,0,w,w)});
   TEX.sea=ctex(256,256,(c,w,h)=>{c.fillStyle="#2f86c9";c.fillRect(0,0,w,h);for(let i=0;i<140;i++){c.fillStyle=i%3?"rgba(255,255,255,.18)":"rgba(15,60,110,.25)";c.fillRect(Math.random()*w,Math.random()*h,10+Math.random()*24,2)}});TEX.sea.wrapS=TEX.sea.wrapT=T.RepeatWrapping;
   TEX.win=ctex(64,64,(c,w,h)=>{const g=c.createLinearGradient(0,0,0,h);g.addColorStop(0,"#ffe6b0");g.addColorStop(1,"#f4b968");c.fillStyle=g;c.fillRect(0,0,w,h);c.fillStyle="rgba(255,255,255,.35)";c.fillRect(0,0,w,6)});
+  // Ringenäs flagga: marinblå med guldkant, boll över vågor och namnet
+  TEX.pin=ctex(192,128,(c,w,h)=>{c.fillStyle="#132a45";c.fillRect(0,0,w,h);c.strokeStyle="#e0bb4a";c.lineWidth=8;c.strokeRect(4,4,w-8,h-8);
+    c.fillStyle="#f4f6f8";c.beginPath();c.arc(w/2,44,20,0,7);c.fill();c.fillStyle="rgba(19,42,69,.35)";for(let i=0;i<9;i++){c.beginPath();c.arc(w/2-10+(i%3)*10,34+((i/3)|0)*10,2.2,0,7);c.fill()}
+    c.strokeStyle="#f4f6f8";c.lineWidth=4;c.beginPath();c.moveTo(w/2-40,70);c.bezierCurveTo(w/2-20,58,w/2+4,80,w/2+40,64);c.stroke();
+    c.fillStyle="#f4f6f8";c.font="800 22px "+F3;c.textAlign="center";c.textBaseline="middle";c.fillText("RINGENÄS",w/2,98)});
+  TEX.plank=ctex(64,256,(c,w,h)=>{for(let i=0;i<32;i++){c.fillStyle=["#9c7650","#8d6a46","#a67f58","#94704b"][i%4];c.fillRect(0,i*8,w,7);c.fillStyle="#4a3424";c.fillRect(0,i*8+7,w,1)}});TEX.plank.wrapS=TEX.plank.wrapT=T.RepeatWrapping;TEX.plank.repeat.set(1,4);
+  TEX.stone=TEX.stoneT=ctex(128,128,(c,w,h)=>{c.fillStyle="#6f685e";c.fillRect(0,0,w,h);let y=0;while(y<h){const rh=14+((y*7)%10);let x=-((y*13)%20);while(x<w){const rw=18+((x*y+7)%22);c.fillStyle=["#b0a89b","#9d9588","#bdb5a8","#a59c8e"][((x+y)/7|0)%4];rrp(c,x+1.5,y+1.5,rw-3,rh-3,4);c.fill();x+=rw}y+=rh}});TEX.stone.wrapS=TEX.stone.wrapT=T.RepeatWrapping;
+  TEX.net=ctex(64,64,(c,w,h)=>{c.clearRect(0,0,w,h);c.strokeStyle="#e2d2ad";c.lineWidth=3;c.beginPath();c.moveTo(0,0);c.lineTo(w,h);c.moveTo(w,0);c.lineTo(0,h);c.stroke()});TEX.net.wrapS=TEX.net.wrapT=T.RepeatWrapping;TEX.net.repeat.set(48,1.4);
+  TEX.chk=ctex(512,140,(c,w,h)=>{for(let x=0;x<w;x+=16)for(let y=0;y<2;y++){c.fillStyle=((x/16+y)%2)?"#111":"#fff";c.fillRect(x,y*16,16,16);c.fillStyle=((x/16+y+1)%2)?"#111":"#fff";c.fillRect(x,h-32+y*16,16,16)}
+    c.fillStyle="#132a45";c.fillRect(0,32,w,h-64);c.fillStyle="#f6f8fa";c.font="900 54px "+F3;c.textAlign="center";c.textBaseline="middle";c.fillText("R I N G E N Ä S",w/2,h/2+2)});
+  TEX.chkG=ctex(128,32,(c,w,h)=>{for(let x=0;x<w;x+=16)for(let y=0;y<h;y+=16){c.fillStyle=((x+y)/16%2)?"#111":"#fff";c.fillRect(x,y,16,16)}});
 }
 function blob(r,y){const m=new T.Mesh(gget("P1",()=>new T.PlaneGeometry(1,1).rotateX(-Math.PI/2)),MAT.blob||(MAT.blob=new T.MeshBasicMaterial({map:TEX.blob,transparent:true,depthWrite:false})));m.scale.set(r*2,1,r*2);m.position.y=y||.02;m.renderOrder=1;m.userData.flat=1;return m}
 
@@ -341,38 +352,162 @@ const B3={
 };
 function tee3(z){const g=new T.Group();g.position.z=z;g.add(mesh(Lathe("tee",[[0,0],[.025,.02],[.04,.6],[.06,.7],[.12,.79],[.12,.8]],16),toon("#f2c94c"),0,0,0),mesh(Sph(.2,20,14),MAT.ball,0,.98,0));return shade(g)}
 
-/* --- Omgivning: rangen i rutor om 80 m, klubbhuset vid start, havet, ön och fyren längst bort --- */
+/* --- Omgivning: träd, flaggor och skyltar som modulerna byggs av --- */
 function tree3(x,z,s,r,autumn){const g=new T.Group();g.position.set(x,0,z);g.scale.setScalar(s);
   g.add(mesh(Cap(.16,2.4,8),toon("#6b4a32"),0,1.4,0));const cs=autumn?["#e3a33a","#d47f2c","#f0c454"]:["#3f8f3a","#4ea445","#62b84e"];
   for(let i=0;i<5;i++){const c=mesh(Ico(1.1+r()*.5,1),toon(cs[i%3],{flatShading:true}),(r()-.5)*1.4,3.2+r()*1.2,(r()-.5)*1.2);c.rotation.set(r()*3,r()*3,0);g.add(c)}return shade(g)}
 function birch3(x,z,s,r){const g=new T.Group();g.position.set(x,0,z);g.scale.setScalar(s);
   g.add(mesh(Cap(.13,4.6,8),MAT.birch||(MAT.birch=new T.MeshToonMaterial({map:TEX.birch,gradientMap:TEX.grad})),0,2.4,0));
   for(let i=0;i<4;i++){const c=mesh(Ico(.8+r()*.4,1),toon(i%2?"#f0c454":"#c9d65a",{flatShading:true}),(r()-.5)*1.2,4.4+r()*1.4,(r()-.5)*1);g.add(c)}return shade(g)}
-function mast3(x,z){const g=new T.Group();g.position.set(x,0,z);g.add(mesh(Cyl(.08,.13,11,8),toon("#8a939b"),0,5.5,0),mesh(Cap(.18,.7,8),toon("#5d666e"),0,11.15,0),mesh(Cap(.12,.55,8),bas("#fff4d0"),0,11.0,-.08));g.children[1].rotation.z=g.children[2].rotation.z=Math.PI/2;return shade(g)}
-function flagGreen(x,z,r,c){const g=new T.Group();g.position.set(x,0,z);const d=mesh(Disc(),toon("#7fd065"),0,.025,0);d.scale.set(r,1,r*.7);d.userData.flat=1;
-  const f=mesh(gget("pen",()=>new T.PlaneGeometry(.6,.4)),toon(c,{side:T.DoubleSide}),.3,2.2,0);f.name="pen";g.add(d,mesh(Cyl(.03,.03,2.4,6),toon("#f4f6f8"),0,1.2,0),f);return shade(g)}
-function buildTile(i,lv){
-  const g=new T.Group(),r=rng(i*31+lv*7+3),club=(x,z)=>i<2&&x<-4&&-i*TL+z<-35&&-i*TL+z>-140;
-  for(let n=0;n<7;n++){const sd=n%2?1:-1,x=sd*(8+r()*22),z=-r()*TL;if(club(x,z))continue;g.add(n%3===2?birch3(x,z,.85+r()*.4,r):tree3(x,z,.8+r()*.5,r,r()<.25))}
-  for(let n=0;n<2;n++){const x=(n?1:-1)*(5.5+r()*8),z=-10-r()*(TL-20);if(club(x,z))continue;const d=(n+i)%3===2?B3.vatten():B3.bunker();d.position.set(x,0,z);d.scale.setScalar(1.1+r()*.6);d.rotation.y=r()*3;g.add(d)}
-  g.add(mast3(12,-30-r()*20));
-  // kullar på sidorna ger djup
-  for(let n=0;n<2;n++){const h=mesh(Sph(1,20,10),toon("#4c9a3c"),(n?1:-1)*(30+r()*10),-2,-r()*TL);h.scale.set(12+r()*8,5+r()*3,16+r()*10);h.userData.flat=1;g.add(h)}
-  for(let z=0;z<TL;z+=10)if(!club(-18,-z))g.add(mesh(Cyl(.06,.07,9,6),toon("#3a4046"),-18,4.5,-z));
-  const net=mesh(gget("net",()=>new T.PlaneGeometry(TL,9).rotateY(Math.PI/2)),bas("#2a3036",{transparent:true,opacity:.07,side:T.DoubleSide,depthWrite:false}),-18,4.5,-TL/2);net.userData.flat=1;if(i>1)g.add(net);
-  for(let n=0;n<3;n++){const z=-10-n*25-r()*8,m=mesh(RBox(1.5,.06,1.3,.03),toon("#2e9b52"),5.2,.03,z);m.userData.flat=1;g.add(m,shade(mesh(RBox(.12,1.1,1.6,.05),toon("#1b1e20"),6.2,.55,z)))}
-  if(lv===1){
-    for(let n=0;n<3;n++){const sd=r()<.5?-1:1;g.add(flagGreen(sd*(9+r()*16),-r()*TL,2+r()*2,n%2?"#e04a3c":"#f2cf3a"))}
-    const sign=new T.Group();sign.position.set(-3.1,0,-40);sign.add(mesh(Cyl(.035,.035,1.4,6),toon("#f4f6f8"),0,.7,0));
-    const num=String(50+(i%6)*25);const sp=sprite(ctex(128,64,(c,w,h)=>{rrp(c,4,4,w-8,h-8,14);c.fillStyle="#f4f6f8";c.fill();c.fillStyle="#132a45";c.font="900 38px "+F3;c.textAlign="center";c.textBaseline="middle";c.fillText(num,w/2,h/2+2)}),.9,.45);sp.position.y=1.55;sign.add(sp);g.add(shade(sign));
-    // rangebollar i fyra band så att de kan döljas vid strandkanten
-    for(let b=0;b<4;b++){const bm=new T.InstancedMesh(Sph(.06,6,4),toon("#ffffff"),40),m=new T.Matrix4();for(let n=0;n<40;n++){let x=(r()-.5)*56;if(Math.abs(x)<2.4)x+=x<0?-2.4:2.4;m.makeTranslation(x,.06,-b*20-r()*20);bm.setMatrixAt(n,m)}bm.userData.band=-b*20-20;bm.userData.flat=1;g.add(bm)}}
+// green med Ringenäs marinblå flagga (guldkant)
+function flagGreen(x,z,r){const g=new T.Group();g.position.set(x,0,z);const d=mesh(Disc(),toon("#7fd065"),0,.025,0);d.scale.set(r,1,r*.7);d.userData.flat=1;
+  const f=mesh(gget("pen",()=>new T.PlaneGeometry(.9,.6).translate(.45,0,0)),MAT.pin||(MAT.pin=new T.MeshToonMaterial({map:TEX.pin,side:T.DoubleSide,gradientMap:TEX.grad})),0,2.15,0);f.name="pen";
+  g.add(d,mesh(Cyl(.03,.03,2.5,6),toon("#f4f6f8"),0,1.25,0),mesh(Sph(.05,8,6),toon("#f4f6f8"),0,2.52,0),f);return shade(g)}
+// träskylt med text, vänd mot spelaren
+function woodSign(lines,w,x,z){const k="ws"+lines.join("|");const tex=TEX[k]||(TEX[k]=ctex(512,lines.length>1?200:120,(c,W,H)=>{const gr=c.createLinearGradient(0,0,0,H);gr.addColorStop(0,"#80573a");gr.addColorStop(1,"#5c3c26");rrp(c,4,4,W-8,H-8,18);c.fillStyle=gr;c.fill();c.lineWidth=8;c.strokeStyle="#3f2817";c.stroke();
+    c.strokeStyle="rgba(0,0,0,.12)";c.lineWidth=3;for(let y=30;y<H;y+=34){c.beginPath();c.moveTo(16,y);c.lineTo(W-16,y+((y/34)%2?3:-3));c.stroke()}
+    c.fillStyle="#f6ead2";c.textAlign="center";c.textBaseline="middle";lines.forEach((t,i)=>{c.font=(i?"700 44px ":"900 58px ")+F3;c.fillText(t,W/2,lines.length>1?(i?140:70):H/2+3)})}));
+  const h=w*(lines.length>1?200:120)/512,g=new T.Group();g.position.set(x,0,z);
+  g.add(mesh(Cyl(.06,.07,1+h,6),toon("#5c3c26"),-w*.4,(1+h)/2,-.03),mesh(Cyl(.06,.07,1+h,6),toon("#5c3c26"),w*.4,(1+h)/2,-.03));
+  const b=mesh(gget("sgP"+w+"_"+h,()=>new T.PlaneGeometry(w,h)),new T.MeshToonMaterial({map:tex,gradientMap:TEX.grad,side:T.DoubleSide}),0,1+h/2-.05,0);b.rotation.y=x<0?.35:-.35;g.add(b);return shade(g)}
+function rope(a,b,rad,mat){const d=new T.Vector3().subVectors(b,a),L=d.length(),m=new T.Mesh(Cyl(rad,rad,1,5),mat);m.scale.y=L;m.position.copy(a).addScaledVector(d,.5);m.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),d.normalize());return m}
+// Många likadana saker (gräs, blommor, granar) ritas som en enda instans-mesh. Sorteras närmast först så att de bortom strandkanten kan döljas.
+function inst(geo,mat,list,cast){list.sort((a,b)=>b.z-a.z);const m=new T.InstancedMesh(geo,mat,Math.max(1,list.length)),M=new T.Matrix4(),Q=new T.Quaternion(),E=new T.Euler(),P=new T.Vector3(),Sc=new T.Vector3(),C=new T.Color();
+  list.forEach((o,i)=>{E.set(o.rx||0,o.ry||0,o.rz||0);Q.setFromEuler(E);P.set(o.x,o.y||0,o.z);const s=o.s||1;Sc.set(o.sx||s,o.sy||s,o.sz||s);M.compose(P,Q,Sc);m.setMatrixAt(i,M);if(o.c)m.setColorAt(i,C.set(o.c))});
+  m.count=list.length;m.computeBoundingSphere();m.userData.zs=list.map(o=>o.z);m.userData.flat=1;m.castShadow=cast!==false;m.receiveShadow=true;return m}
+const pick=(r,a)=>a[Math.floor(r()*a.length)%a.length];
+const sm=x=>{x=Math.max(0,Math.min(1,x));return x*x*(3-2*x)};
+
+/* --- Världarna i nivå 1, i meter längs banan:
+   Ringenäs Links (hål 1–3) → hängbron → Parkbana (hål 4–6) → hängbron → Skogsbana (hål 7–9) → upploppet till klubbhuset.
+   Världen byggs i moduler om 40 m som skapas framför golfaren och tas bort bakom honom. --- */
+const CH=40,BR1=320,BR2=640,SKOG_END=960;
+const MEND=(LEVELS[0].v0*LEVELS[0].d+(LEVELS[0].v1-LEVELS[0].v0)*LEVELS[0].d/2)*S; // målet (ca 1041 m)
+const GREENS=[104,211,312,452,545,632,772,865,952],TEES=[[110,2],[217,3],[364,4],[457,5],[550,6],[684,7],[777,8],[870,9]];
+function zoneAt(m){return m<BR1?"links":m<BR1+40?"bro1":m<BR2?"park":m<BR2+40?"bro2":m<SKOG_END?"skog":"mal"}
+function holeLabel(m){
+  if(m<BR1)return "Hål "+(1+Math.min(2,Math.floor(m/(BR1/3))))+" · Ringenäs Links";
+  if(m<BR1+40)return "Hängbron · mot Parkbanan";
+  if(m<BR2)return "Hål "+(4+Math.min(2,Math.floor((m-BR1-40)/((BR2-BR1-40)/3))))+" · Parkbana";
+  if(m<BR2+40)return "Hängbron · mot Skogsbanan";
+  if(m<SKOG_END)return "Hål "+(7+Math.min(2,Math.floor((m-BR2-40)/((SKOG_END-BR2-40)/3))))+" · Skogsbana";
+  return "Upploppet · mot klubbhuset"}
+const ZONE_TXT={links:["Välkommen till din resa genom Ringenäs!","Hål 1 · Ringenäs Links"],bro1:["Links klar! ✓","Över hängbron till Parkbanan"],park:["Ringenäs Parkbana","Hål 4–6"],
+  bro2:["Parkbanan klar! ✓","Över hängbron till Skogsbanan"],skog:["Ringenäs Skogsbana","Hål 7–9"],mal:["Skogsbanan klar! ✓","Upploppet mot klubbhuset"]};
+// inga hinder på broarna
+const onBridge=m=>(m>BR1-6&&m<BR1+44)||(m>BR2-6&&m<BR2+44);
+// här står klubbhusen – ingen annan dekor
+function blocked(m,x){return (m<140&&x<-5)||(m>MEND-82&&x<-5)}
+
+function chunkLinks(g,k,r,m0,fin){
+  const L=[],Gr=[],Fl=[];
+  // dyner med gyllene strandgräs till vänster, strand och hav till höger (banan följer kusten)
+  for(let n=0;n<5;n++){const x=-(9+r()*28),z=-r()*CH;if(blocked(m0-z,x))continue;const d=mesh(Sph(1,16,8),toon(n%2?"#d8c27c":"#c9b067"),x,-.7,z);d.scale.set(4+r()*5,1.8+r()*1.6,5+r()*6);d.userData.flat=1;d.receiveShadow=true;g.add(d)}
+  for(let n=0;n<80;n++){const sd=r()<.7?-1:1,x=sd*(3.6+r()*(sd<0?30:2.6)),z=-r()*CH;if(blocked(m0-z,x))continue;L.push({x,y:.2,z,sx:1.4,sy:.6+r()*.6,sz:1.4,rx:(r()-.5)*.5,rz:(r()-.5)*.5,c:pick(r,["#dcc77c","#c8b062","#a7b45c","#e9d993","#93a84f"])})}
+  g.add(inst(Cone(.13,.75,5),toon("#ffffff"),L,false));
+  for(let n=0;n<14;n++){const x=(r()<.7?-(2.6+r()*6):(2.4+r()*2.8)),z=-r()*CH;Gr.push({x,y:.06,z,s:.9+r()*.4})}
+  g.add(inst(Sph(.07,8,6),toon("#fbfcfd"),Gr,false));
+  if(r()<.8){const sd=-1,x=sd*(6+r()*7),z=-8-r()*24;if(!blocked(m0-z,x)){const b=B3.bunker();b.position.set(x,0,z);b.scale.setScalar(1+r()*.5);b.rotation.y=r()*3;g.add(b)}}
+  for(let n=0;n<2;n++){const x=-(14+r()*18),z=-r()*CH;if(!blocked(m0-z,x))g.add(tree3(x,z,.65+r()*.3,r,false))}
+  const bch=mesh(gget("bchS",()=>new T.PlaneGeometry(7,CH).rotateX(-Math.PI/2)),toon("#efd9a2"),10,.012,-CH/2),sea=mesh(gget("seaS",()=>new T.PlaneGeometry(400,CH).rotateX(-Math.PI/2)),MAT.seaS,213.5,.02,-CH/2),
+    foam=mesh(gget("foam",()=>new T.PlaneGeometry(.8,CH).rotateX(-Math.PI/2)),bas("#ffffff",{transparent:true,opacity:.75}),13.6,.03,-CH/2);
+  [bch,sea,foam].forEach(o=>{o.userData.band=0;o.userData.flat=1;o.receiveShadow=true;g.add(o)});
+  if(k===0&&!fin)g.add(woodSign(["START","RINGENÄS LINKS"],1.9,-3.4,-3));
+}
+function chunkPark(g,k,r,m0){
+  const F=[],Lv=[],Bed=[],P=[];
+  for(let n=0;n<4;n++){const sd=n%2?1:-1;g.add(tree3(sd*(10+r()*20),-r()*CH,.85+r()*.45,r,false))}
+  // rabatter med hortensior och blommor
+  for(let b=0;b<2;b++){const sd=(b+k)%2?1:-1,bx=sd*(6.5+r()*2.5),bz=-6-b*18-r()*6;Bed.push({x:bx,y:.02,z:bz,sx:2.2,sy:1,sz:4.2});
+    const pal=pick(r,[["#ef8fc0","#f6b8d6","#fbe1ee"],["#8fb1ee","#6f8ce0","#b9cdf5"],["#f6f2f8","#e9a7d0","#b48be0"],["#f2c94c","#ef8fc0","#ffffff"]]);
+    for(let n=0;n<38;n++){const a=r()*Math.PI*2,rr=Math.sqrt(r()),x=bx+Math.cos(a)*1.9*rr,z=bz+Math.sin(a)*3.9*rr;Lv.push({x,y:.22,z,s:.55+r()*.25,c:pick(r,["#2f7a35","#3b8a3f","#2a6a30"])});F.push({x:x+(r()-.5)*.2,y:.55+r()*.15,z:z+(r()-.5)*.2,s:1.05+r()*.55,c:pick(r,pal)})}}
+  g.add(inst(Disc(20),toon("#5b3e2c"),Bed,false),inst(Sph(.5,8,6),toon("#ffffff",{flatShading:true}),Lv),inst(Sph(.3,10,8),toon("#ffffff"),F));
+  // klippta buxbom
+  for(let n=0;n<2;n++){const sd=r()<.5?-1:1,x=sd*(10+r()*4),z=-r()*CH,t=new T.Group();t.position.set(x,0,z);t.add(mesh(Cyl(.08,.1,.6,6),toon("#6b4a32"),0,.3,0));
+    t.add(r()<.5?mesh(Sph(.9,14,10),toon("#2f7a3a"),0,1.4,0):mesh(Cone(.9,2.2,10),toon("#2f7a3a"),0,1.6,0));g.add(shade(t))}
+  // stenstig som slingrar sig vid sidan av banan
+  for(let n=0;n<20;n++){const z=-n*2-r(),x=-4.6+Math.sin((m0-z)/7)*1.1;P.push({x,y:.02,z,sx:.55+r()*.15,sy:1,sz:.45+r()*.1,ry:r()*3,c:pick(r,["#d6cdbf","#c7bdae","#e2dacd"])})}
+  g.add(inst(Cyl(1,1,.05,9),toon("#ffffff"),P,false));
+  // en fontän mitt i parken
+  if(m0===480){const pd=mesh(Disc(40),MAT.water,-11,.04,-20);pd.scale.set(4.5,1,6.5);const rim=mesh(Tor(1,.18),toon("#cfc6b8"),-11,.08,-20);rim.rotation.x=Math.PI/2;rim.scale.set(4.6,6.6,.6);
+    g.add(pd,shade(rim),shade(mesh(Cyl(.55,.7,.5,12),toon("#cfc6b8"),-11,.25,-20)),shade(mesh(Cyl(.12,.12,1.2,8),toon("#cfc6b8"),-11,.8,-20)),shade(mesh(Cyl(.6,.3,.25,12),toon("#cfc6b8"),-11,1.4,-20)));
+    g.userData.founts=[new T.Vector3(-11,1.55,-20)]}
+  const h=mesh(Sph(1,20,10),toon("#4c9a3c"),(k%2?1:-1)*(36+r()*10),-2,-r()*CH);h.scale.set(14+r()*8,5+r()*3,18);h.userData.flat=1;h.receiveShadow=true;g.add(h);
+}
+function chunkSkog(g,k,r,m0){
+  const Tr=[],T1=[],T2=[],T3=[],Rk=[],Ms=[],Fe=[],Pc=[];
+  // tät granskog som blir tätare längre från banan
+  for(let n=0;n<72;n++){const sd=n%2?1:-1,x=sd*(6+Math.pow(r(),2.2)*48),z=-r()*CH,H=7+r()*6,R=1.5+r()*1.1,c=pick(r,["#2c5a2c","#336a33","#24502a","#3c7438"]);
+    Tr.push({x,y:H*.17,z,sx:1,sy:H*.34,sz:1});[T1,T2,T3].forEach((L,i)=>L.push({x,y:H*.34+i*H*.19+H*.19,z,sx:R*(1-.24*i),sy:H*.38,sz:R*(1-.24*i),ry:r()*3,c}))}
+  g.add(inst(Cyl(.16,.26,1,7),toon("#6b4a32"),Tr),inst(Cone(1,1,8),toon("#ffffff"),T1),inst(Cone(1,1,8),toon("#ffffff"),T2),inst(Cone(1,1,8),toon("#ffffff"),T3));
+  for(let n=0;n<2;n++)g.add(birch3((n?1:-1)*(5.5+r()*4),-r()*CH,.9+r()*.3,r));
+  // mossiga stenar, ormbunkar och kottar
+  for(let n=0;n<5;n++){const x=(r()<.5?-1:1)*(3.4+r()*10),z=-r()*CH,s=.4+r()*.8;Rk.push({x,y:s*.3,z,sx:s*1.3,sy:s*.8,sz:s,ry:r()*3});Ms.push({x,y:s*.62,z,sx:s*1.1,sy:s*.35,sz:s*.85,ry:r()*3})}
+  g.add(inst(Ico(1,0),toon("#8d918a",{flatShading:true}),Rk),inst(Sph(1,10,6),toon("#6f9a43"),Ms,false));
+  for(let n=0;n<34;n++){const x=(r()<.5?-1:1)*(2.4+r()*12),z=-r()*CH;Fe.push({x,y:.12,z,sx:.6+r()*.5,sy:.35+r()*.2,sz:.6+r()*.5,ry:r()*3,c:pick(r,["#4f9a37","#5fae40","#3f8530"])})}
+  g.add(inst(Cone(1,.5,7),toon("#ffffff",{flatShading:true}),Fe,false));
+  for(let n=0;n<16;n++)Pc.push({x:(r()<.5?-1:1)*(1.9+r()*2.5),y:.05,z:-r()*CH,sx:.06,sy:.09,sz:.06,rx:Math.PI/2*r()});
+  g.add(inst(Sph(1,6,5),toon("#7a5232"),Pc,false));
+  // en stock vid sidan och ibland en ekorre på den
+  const sd=k%2?1:-1,lx=sd*(4.6+r()*2),lz=-8-r()*24,lg=mesh(Cap(.26,2.6,10),toon("#7a5638"),lx,.26,lz);lg.rotation.set(0,r()*.8-.4,Math.PI/2);g.add(shade(lg));
+  if(k%2===0){const q=new T.Group();q.position.set(lx,.5,lz);q.rotation.y=sd>0?-1.2:1.2;q.name="sq";const o=toon("#c4682c");
+    const b=mesh(Sph(.14,12,8),o,0,.12,0);b.scale.set(1,1.15,.9);const hd=mesh(Sph(.09,10,8),o,0,.3,.06),ea=mesh(Cone(.03,.07,5),o,-.045,.39,.05),eb=mesh(Cone(.03,.07,5),o,.045,.39,.05),
+      be=mesh(Sph(.07,8,6),toon("#f1d9b8"),0,.11,.08),ey=mesh(Sph(.018,6,4),toon("#151515"),.04,.33,.13),ey2=mesh(Sph(.018,6,4),toon("#151515"),-.04,.33,.13);
+    const tl=mesh(Tor(.14,.06,Math.PI*1.3),o,0,.24,-.16);tl.rotation.y=Math.PI/2;tl.name="tail";q.add(b,hd,ea,eb,be,ey,ey2,tl);g.add(shade(q));g.userData.sq=q}
+}
+// hängbron med stentorn över den långa dammen med allén (som på Ringenäs), ingen hinder här
+function chunkBridge(g,k,r,to){
+  const ropeM=toon("#d9c7a0"),wood=toon("#7a5a3c");
+  const w=mesh(gget("pondL",()=>new T.PlaneGeometry(400,30).rotateX(-Math.PI/2)),MAT.water,0,.02,-20);w.userData.band=-5;w.receiveShadow=true;g.add(w);
+  for(const z of[-4.6,-35.4]){const b=mesh(gget("bank",()=>new T.BoxGeometry(400,.24,1.4)),toon("#3f8a35"),0,.0,z);b.userData.flat=1;b.receiveShadow=true;g.add(b)}
+  const Li=[];for(let n=0;n<26;n++){const x=(r()-.5)*120,z=-7-r()*26;if(Math.abs(x)<3)continue;Li.push({x,y:.035,z,sx:.4+r()*.3,sy:1,sz:.4+r()*.3,c:pick(r,["#4f9a3c","#5fae48"])})}
+  g.add(inst(Cyl(1,1,.02,10),toon("#ffffff"),Li,false));
+  const Re=[];for(let n=0;n<40;n++){const x=(r()-.5)*90,z=(r()<.5?-5.4:-34.6)+(r()-.5)*.6;if(Math.abs(x)<3.5)continue;Re.push({x,y:.5,z,sy:.8+r()*.6,s:1,rz:(r()-.5)*.3,c:pick(r,["#7c9a3e","#6b8a35","#9fb05a"])})}
+  g.add(inst(Cap(.025,1,4),toon("#ffffff"),Re,false));
+  // brodäck med plankor
+  const top=mesh(gget("deckT",()=>new T.PlaneGeometry(2.6,32).rotateX(-Math.PI/2)),MAT.plank,0,.06,-20);top.receiveShadow=true;top.userData.flat=1;
+  const und=mesh(gget("deckU",()=>new T.BoxGeometry(2.8,.22,32.4)),toon("#5e4430"),0,-.06,-20);g.add(top,shade(und));
+  // stentorn i båda ändar med träbjälke och välkomstskylt
+  for(const tz of[-3,-37]){for(const sd of[-1,1])g.add(shade(mesh(gget("tower",()=>{const b=new T.BoxGeometry(.9,6.3,.9),uv=b.attributes.uv;for(let i=0;i<uv.count;i++)uv.setY(i,uv.getY(i)*5);return b}),MAT.stone,sd*2.85,3.15,tz)));
+    g.add(shade(mesh(gget("beam",()=>new T.BoxGeometry(6.6,.45,.55)),wood,0,6.05,tz)));
+    for(const sd of[-1,1])g.add(shade(rope(new T.Vector3(sd*2.85,4.6,tz),new T.Vector3(sd*1.45,6.05,tz),.05,wood)))}
+  const t=TEX["bs"+to]||(TEX["bs"+to]=ctex(512,96,(c,W,H)=>{rrp(c,4,4,W-8,H-8,14);c.fillStyle="#132a45";c.fill();c.lineWidth=5;c.strokeStyle="#f2c94c";c.stroke();c.fillStyle="#f6ead2";c.font="900 31px "+F3;c.textAlign="center";c.textBaseline="middle";c.fillText(to==="park"?"VÄLKOMMEN TILL PARKBANAN":"VÄLKOMMEN TILL SKOGSBANAN",W/2,H/2+2)}));
+  const sg=mesh(gget("bsgn",()=>new T.PlaneGeometry(4.6,.86)),new T.MeshBasicMaterial({map:t}),0,6.75,-3);g.add(sg);
+  // bärlinor som hänger ner mot mitten, hängare och räcke med nät
+  const yc=z=>1.45+4.6*Math.pow((z+20)/17,2);
+  for(const sd of[-1,1]){const pts=[];for(let i=0;i<=12;i++){const z=-3-i*34/12;pts.push(new T.Vector3(sd*1.45,yc(z),z))}
+    g.add(shade(mesh(gget("cab"+sd,()=>new T.TubeGeometry(new T.CatmullRomCurve3(pts),40,.05,6)),ropeM)));
+    const rl=mesh(Cyl(.035,.035,34,6),ropeM,sd*1.4,1.08,-20);rl.rotation.x=Math.PI/2;g.add(shade(rl));
+    const net=mesh(gget("net"+sd,()=>new T.PlaneGeometry(34,.95).rotateY(Math.PI/2)),MAT.net,sd*1.41,.58,-20);net.userData.flat=1;g.add(net);
+    g.add(shade(rope(new T.Vector3(sd*2.85,6,-3),new T.Vector3(sd*4.4,0,2),.045,ropeM)),shade(rope(new T.Vector3(sd*2.85,6,-37),new T.Vector3(sd*4.4,0,-42),.045,ropeM)))}
+  const Hg=[],Po=[];for(let z=-5;z>=-35;z-=2){const y=yc(z);for(const sd of[-1,1]){Hg.push({x:sd*1.43,y:(y+1.08)/2,z,sx:1,sy:Math.max(.05,y-1.08),sz:1});Po.push({x:sd*1.4,y:.58,z})}}
+  g.add(inst(Cyl(.014,.014,1,4),ropeM,Hg,false),inst(Cyl(.045,.045,1.1,6),wood,Po));
+  // allén på andra sidan dammen och vägen bakom
+  const At=[],Ac=[];for(let x=-66;x<=66;x+=6){if(Math.abs(x)<7)continue;const z=-38.6+(r()-.5)*.4,s=.85+r()*.3;At.push({x,y:1.5*s,z,sx:1,sy:3*s,sz:1});Ac.push({x,y:4.2*s,z,s:2.1*s,ry:r()*3,c:pick(r,["#3f7a35","#4a8a3c","#386f30"])})}
+  g.add(inst(Cyl(.13,.19,1,6),toon("#6b5a48"),At),inst(Ico(1,1),toon("#ffffff",{flatShading:true}),Ac));
+  const road=mesh(gget("road",()=>new T.PlaneGeometry(400,4).rotateX(-Math.PI/2)),toon("#9a948a"),0,.012,-42.5);road.userData.flat=1;road.receiveShadow=true;g.add(road);
+  g.add(woodSign([to==="park"?"RINGENÄS":"RINGENÄS",to==="park"?"PARKBANA":"SKOGSBANA"],1.9,3.5,-39.5));
+}
+function buildChunk(k){
+  const g=new T.Group(),m0=k*CH,z=zoneAt(m0+.1),r=rng(k*131+17);g.position.z=-m0;
+  if(z==="links"||z==="mal")chunkLinks(g,k,r,m0,z==="mal");else if(z==="park")chunkPark(g,k,r,m0);else if(z==="skog")chunkSkog(g,k,r,m0);else chunkBridge(g,k,r,z==="bro1"?"park":"skog");
+  // greener med flagga där hålen tar slut, och tee-skylt där nästa hål börjar
+  for(const gm of GREENS)if(gm>=m0&&gm<m0+CH&&zoneAt(gm)!=="bro1"&&zoneAt(gm)!=="bro2"){const x=(gm%2?1:-1)*(6.5+((gm*7)%3));g.add(flagGreen(x,-(gm-m0),3.2))}
+  for(const [tm,n] of TEES)if(tm>=m0&&tm<m0+CH)g.add(woodSign(["HÅL "+n],1,-3.3,-(tm-m0)));
+  g.userData.waves=[];g.traverse(o=>{if(o.name==="pen")g.userData.waves.push(o)});
   g.children.forEach(c=>{if(c.userData.band==null)c.userData.band=c.position.z});
   return g;
 }
+function dropChunk(g){g.traverse(o=>{if(o.isInstancedMesh)o.dispose()});g.removeFromParent()}
+// utseendet glider mellan världarna över broarna: gräsets färg, ljus och dis
+const LOOK={links:{g:[1,.98,.9],l:[1,1,.97],hemi:1.05,sun:2.1,fn:45,ff:190,fc:[.953,.875,.788]},park:{g:[.9,1,.86],l:[.96,1,.95],hemi:1.08,sun:2.1,fn:45,ff:190,fc:[.953,.875,.788]},
+  skog:{g:[.55,.66,.47],l:[.78,.86,.7],hemi:.66,sun:1.25,fn:16,ff:105,fc:[.62,.7,.58]}};
+function lookAt(m){const wp=sm((m-BR1)/40),wf=sm((m-BR2)/40),wm=sm((m-SKOG_END+10)/40),fs=wf*(1-wm),fp=wp*(1-wf),fl=1-fs-fp,o={};
+  for(const k of["g","l","fc"])o[k]=[0,1,2].map(i=>LOOK.links[k][i]*fl+LOOK.park[k][i]*fp+LOOK.skog[k][i]*fs);
+  for(const k of["hemi","sun","fn","ff"])o[k]=LOOK.links[k]*fl+LOOK.park[k]*fp+LOOK.skog[k]*fs;return o}
 function win(w,h){const m=mesh(gget("wn"+[w,h],()=>new T.PlaneGeometry(w,h)),MAT.win||(MAT.win=new T.MeshBasicMaterial({map:TEX.win})));m.userData.flat=1;return m}
 // Ringenäs klubbhus efter fotot: svart träbyggnad med branta gavlar och vit veranda, hotellet med gröna glasbalkonger, dammen med fontän
-function buildClubhouse(){
+function buildClubhouse(fin){
   const g=new T.Group(),dark=toon("#2b3034"),roof=toon("#23272a"),white=toon("#f4f6f8"),glass=new T.MeshStandardMaterial({color:"#5fb39a",roughness:.1,metalness:.2,transparent:true,opacity:.55});
   // restaurangen
   const rs=new T.Group();rs.position.set(-17,0,-78);g.add(rs);
@@ -399,15 +534,11 @@ function buildClubhouse(){
   const hill=mesh(Sph(1,24,12),toon("#4c9a3c"),-36,-3,-112);hill.scale.set(18,11,40);hill.userData.flat=1;g.add(hill);
   // dammen med fontänen och en green med flagga framför
   const pond=mesh(Disc(48),MAT.water,-7.5,.04,-58);pond.scale.set(4.2,1,9);g.add(pond);const pl=mesh(Tor(1,.12),toon("#3f8a35"),-7.5,.03,-58);pl.rotation.x=Math.PI/2;pl.scale.set(4.3,9.1,.5);g.add(pl);
-  g.add(mesh(Cyl(.25,.3,.3,10),toon("#9aa3ab"),-7.5,.15,-60));g.userData.fountain=new T.Vector3(-7.5,.4,-60);
-  g.add(flagGreen(-11,-68,3,"#e04a3c"));
-  // Golfcentret i svartbetsat trä till höger vid start
-  const gc=new T.Group();gc.position.set(12,0,-46);g.add(gc);gc.add(mesh(RBox(7,4,16,.1),dark,0,2,0));
-  const gr=mesh(gget("gab2",()=>{const s=new T.Shape();s.moveTo(-4,0);s.lineTo(0,2.2);s.lineTo(4,0);s.lineTo(-4,0);return new T.ExtrudeGeometry(s,{depth:17,bevelEnabled:false}).translate(0,0,-8.5)}),roof,0,4,0);gc.add(gr);
-  const gs=mesh(gget("gcs",()=>new T.PlaneGeometry(8,1).rotateY(-Math.PI/2)),new T.MeshBasicMaterial({map:TEX.gc}),-3.53,3.3,0);gs.userData.flat=1;gc.add(gs);
-  for(const z of[-5,0,5]){const w=win(2,2.2);w.position.set(-3.52,1.6,z);w.rotation.y=-Math.PI/2;gc.add(w)}
+  g.add(mesh(Cyl(.25,.3,.3,10),toon("#9aa3ab"),-7.5,.15,-60));g.userData.founts=[new T.Vector3(-7.5,.4,-60)];
+  g.add(flagGreen(-11,-68,3));
   // utslagsmattan där golfaren startar
-  const mt=mesh(RBox(2.6,.08,3,.04),toon("#2e9b52"),0,.03,1.2);mt.userData.flat=1;g.add(mt);
+  if(!fin){const mt=mesh(RBox(2.6,.08,3,.04),toon("#2e9b52"),0,.03,1.2);mt.userData.flat=1;g.add(mt)}
+  g.userData.waves=[];g.traverse(o=>{if(o.name==="flag"||o.name==="pen")g.userData.waves.push(o)});
   return shade(g);
 }
 // Havet, stranden, ön med fyren och segelbåtar – följer med längst bort
@@ -450,14 +581,17 @@ function tierHigh(){const dm=navigator.deviceMemory||4,hc=navigator.hardwareConc
 function init3D(canvas){
   textures();blob(1);
   MAT.ball=MAT.ball||new T.MeshToonMaterial({map:TEX.ball,gradientMap:TEX.grad});
-  MAT.water=MAT.water||new T.MeshStandardMaterial({color:"#2a8ad6",roughness:.5,metalness:0,emissive:"#0a3a6a",emissiveIntensity:.3});
+  MAT.water=MAT.water||new T.MeshStandardMaterial({color:"#2a8ad6",roughness:.92,metalness:0,emissive:"#0a3a6a",emissiveIntensity:.35});
   MAT.sand=MAT.sand||new T.MeshToonMaterial({map:TEX.sand,gradientMap:TEX.grad});
+  MAT.seaS=MAT.seaS||new T.MeshStandardMaterial({color:"#3b93d8",roughness:.9,metalness:0,emissive:"#0b3f72",emissiveIntensity:.35});
+  MAT.plank=MAT.plank||new T.MeshToonMaterial({map:TEX.plank,gradientMap:TEX.grad});MAT.stone=MAT.stone||new T.MeshToonMaterial({map:TEX.stone,gradientMap:TEX.grad});
+  MAT.net=MAT.net||new T.MeshBasicMaterial({map:TEX.net,transparent:true,alphaTest:.3,side:T.DoubleSide});
   const rd=new T.WebGLRenderer({canvas,antialias:(devicePixelRatio||1)<2.5,powerPreference:"high-performance",stencil:false});
   rd.toneMapping=T.ACESFilmicToneMapping;rd.toneMappingExposure=.95;
   const hi=tierHigh();rd.shadowMap.enabled=true;rd.shadowMap.type=T.PCFSoftShadowMap;
   const scene=new T.Scene();scene.fog=new T.Fog("#f3dfc9",45,190);
   const cam=new T.PerspectiveCamera(50,1,.1,2500);
-  scene.add(new T.HemisphereLight("#cfe4ff","#3f7a2a",1.05));
+  const hemi=new T.HemisphereLight("#cfe4ff","#3f7a2a",1.05);scene.add(hemi);
   // låg kvällssol som på fotot, och ett kantljus framifrån som lyfter konturerna
   const sun=new T.DirectionalLight("#ffdcae",2.1);sun.castShadow=hi;sun.shadow.mapSize.set(1024,1024);const sc=sun.shadow.camera;sc.left=-14;sc.right=14;sc.top=16;sc.bottom=-12;sc.near=1;sc.far=60;sun.shadow.bias=-.0006;sun.shadow.normalBias=.03;sun.shadow.radius=3;
   scene.add(sun,sun.target);const rim=new T.DirectionalLight("#ffd9a8",1.3);rim.position.set(0,6,-20);scene.add(rim,rim.target);
@@ -470,13 +604,18 @@ function init3D(canvas){
   const ground=mesh(gget("gr",()=>new T.PlaneGeometry(320,SHORE+60).rotateX(-Math.PI/2)),new T.MeshToonMaterial({map:TEX.ground,gradientMap:TEX.grad}),0,0,0);ground.receiveShadow=true;TEX.ground.repeat.set(1,(SHORE+60)/4);scene.add(ground);
   const lane=mesh(gget("ln",()=>new T.PlaneGeometry(3.4,SHORE+60).rotateX(-Math.PI/2)),new T.MeshToonMaterial({map:TEX.lane,gradientMap:TEX.grad}),0,.008,0);lane.receiveShadow=true;TEX.lane.repeat.set(1,(SHORE+60)/4);scene.add(lane);
   const sea=buildSea();scene.add(sea.g);
-  const club=buildClubhouse();scene.add(club);
+  const club=buildClubhouse();scene.add(club);const club2=buildClubhouse(true);club2.position.z=-MEND+70;scene.add(club2);
+  const chunks=new T.Group();scene.add(chunks);
   const obsG=new T.Group();scene.add(obsG);
   const fx={dust:fxSystem(260,.22),sand:fxSystem(260,.16),water:fxSystem(260,.17),spark:fxSystem(200,.32,true),conf:fxSystem(300,.24)};for(const k in fx)scene.add(fx[k].p);
-  const fin=new T.Group();fin.visible=false;scene.add(fin);const gold=toon("#f2c94c");
-  fin.add(mesh(Cap(.1,6.2,10),gold,-2.6,3.2,0),mesh(Cap(.1,6.2,10),gold,2.6,3.2,0),mesh(RBox(5.6,.85,.16,.08),toon("#132a45"),0,6.2,0),mesh(Cap(.04,5.4,6),gold,0,5.76,.08));fin.children[3].rotation.z=Math.PI/2;
-  const ms=sprite(TEX.mal,2.4,.83,{depthWrite:false});ms.position.set(0,6.2,.2);fin.add(ms);const fl=mesh(Disc(),bas("#f2c94c",{transparent:true,opacity:.45,depthWrite:false}),0,.03,0);fl.scale.set(1.7,1,.25);fin.add(fl);shade(fin);
-  R={rd,scene,cam,sky,sun,rim,sunS,clouds,ground,lane,sea,club,obsG,fx,fin,tiles:[],tilesLv:0,P:null,hi,shadows:hi,pr:Math.min(hi?2:1.5,devicePixelRatio||1),fr:0,ft:0,gRef:null,finZ:null,V:null,fountT:0};
+  // målportal vid klubbhuset: rutig banderoll med RINGENÄS och rutig mållinje
+  const fin=new T.Group();fin.visible=false;scene.add(fin);const gold=toon("#f2c94c"),wh=toon("#f4f6f8");
+  fin.add(mesh(Cap(.11,5.6,10),wh,-3,2.9,0),mesh(Cap(.11,5.6,10),wh,3,2.9,0),mesh(Sph(.18,10,8),gold,-3,5.85,0),mesh(Sph(.18,10,8),gold,3,5.85,0));
+  const bn=mesh(gget("finB",()=>new T.PlaneGeometry(6,1.64)),new T.MeshBasicMaterial({map:TEX.chk,side:T.DoubleSide}),0,5,0);fin.add(bn);
+  const gl=mesh(gget("finG",()=>new T.PlaneGeometry(3.4,.8).rotateX(-Math.PI/2)),new T.MeshBasicMaterial({map:TEX.chkG}),0,.03,0);gl.userData.flat=1;fin.add(gl);
+  for(const sd of[-1,1]){const f=mesh(gget("flag",()=>new T.PlaneGeometry(2.2,1.4)),MAT.pin||(MAT.pin=new T.MeshToonMaterial({map:TEX.pin,side:T.DoubleSide,gradientMap:TEX.grad})),sd*4.6,4.4,0);f.scale.setScalar(.7);f.name="flag";fin.add(f,mesh(Cyl(.04,.04,5,6),wh,sd*(4.6-.78),2.5,0))}
+  shade(fin);fin.userData.waves=fin.children.filter(o=>o.name==="flag");
+  R={rd,scene,cam,sky,sun,rim,hemi,sunS,clouds,ground,lane,sea,club,club2,chunks,cmap:new Map(),obsG,fx,fin,P:null,hi,shadows:hi,pr:Math.min(hi?2:1.5,devicePixelRatio||1),fr:0,ft:0,gRef:null,finZ:null,V:null,fountT:0};
   MAT.blob.visible=!hi;
   rd.setPixelRatio(R.pr);
 }
@@ -486,12 +625,17 @@ function draw3(dt){
   if(r.gRef!==g){r.gRef=g;r.obsG.clear();r.finZ=null;r.fin.visible=false;r.V={py0:0,landT:9,streak:0,confT:0};for(const k in r.fx)r.fx[k].list.length=0}
   const V=r.V;
   if(!r.P||r.P.lv!==g.lv){if(r.P){r.scene.remove(r.P.root,r.P.shadow)}r.P=buildGolfer(g.lv);r.scene.add(r.P.root,r.P.shadow)}
-  if(r.tilesLv!==g.lv){r.tiles.forEach(t=>r.scene.remove(t));r.tiles=[0,1,2].map(i=>buildTile(i,g.lv));r.tiles.forEach(t=>r.scene.add(t));r.tilesLv=g.lv;r.waves=[];r.scene.traverse(o=>{if(o.name==="flag"||o.name==="pen")r.waves.push(o)})}
   const gz=-g.dist*S,now=performance.now()/1000;
-  // rutor med rangen runt golfaren; allt bortom strandkanten döljs
-  const k0=Math.floor(g.dist*S/TL);for(let k=k0-1;k<=k0+1;k++){const t=r.tiles[((k%3)+3)%3];t.position.z=-k*TL;const lim=gz-SHORE+2+k*TL;t.children.forEach(c=>{c.visible=c.userData.band>lim})}
-  const sn=Math.round(gz/4)*4,len=SHORE+60;r.ground.position.z=sn-SHORE+len/2;r.lane.position.z=r.ground.position.z;
-  r.club.visible=g.dist*S<175;r.sea.g.position.z=sn;
+  const sn=Math.round(gz/4)*4,len=SHORE+60,mNow=g.dist*S;r.ground.position.z=sn-SHORE+len/2;r.lane.position.z=r.ground.position.z;r.sea.g.position.z=sn;
+  r.club.visible=mNow<175;r.club2.visible=mNow>MEND-210;
+  // världens moduler: bygg framför, ta bort bakom; allt bortom strandkanten döljs
+  const k0=Math.floor(mNow/CH),kMax=Math.floor((mNow+SHORE-1)/CH),shoreZ=sn-SHORE+1;let built=0;
+  for(const [k,c] of r.cmap)if(k<k0-1||k>kMax){dropChunk(c);r.cmap.delete(k)}
+  for(let k=Math.max(-1,k0-1);k<=kMax;k++)if(!r.cmap.has(k)&&(built<1||r.cmap.size<3)){const c=buildChunk(k);r.chunks.add(c);r.cmap.set(k,c);built++}
+  for(const [k,c] of r.cmap){const lim=shoreZ-c.position.z;for(const o of c.children){const zs=o.userData.zs;if(zs){let n=0;while(n<zs.length&&zs[n]>lim)n++;o.count=n;o.visible=n>0}else o.visible=o.userData.band>lim}}
+  // färg, ljus och dis följer världen
+  const lk=lookAt(mNow);r.ground.material.color.setRGB(...lk.g);r.lane.material.color.setRGB(...lk.l);r.hemi.intensity=lk.hemi;r.sun.intensity=lk.sun;r.scene.fog.near=lk.fn;r.scene.fog.far=lk.ff;r.scene.fog.color.setRGB(...lk.fc);
+  const zn=zoneAt(mNow);if(V.zone!==zn&&g.state==="run"&&(V.zone||g.t>.25)){V.zone=zn;if(g.lv===1)zoneShow(...ZONE_TXT[zn])}
   // golfaren, landning och uppstuds
   const gy=g.py;if(V.py0>0&&gy<=0&&g.state==="run"){V.landT=0;emit("dust",0,.05,gz+.1,12,{sp:1.6,up:1,g:4,life:.5,spread:1,cols:["#e9dcc2","#d8c9a8"]})}
   if(V.py0<=0&&gy>0)emit("dust",0,.05,gz+.15,8,{sp:1.2,up:.8,g:4,life:.4,cols:["#e9dcc2"]});V.py0=gy;V.landT+=dt;
@@ -513,12 +657,13 @@ function draw3(dt){
     if(!o.cl&&g.state==="run"&&rel+D.w/2<-8){o.cl=1;cleared(g,o,V)}}
   for(let i=r.obsG.children.length-1;i>=0;i--){const m=r.obsG.children[i];if(!seen.has(m))r.obsG.remove(m)}
   // mållinjen och konfetti
-  if(g.t>g.L.d-2.6&&r.finZ==null)r.finZ=gz-(g.L.d-g.t)*g.v*S;
-  if(r.finZ!=null){r.fin.visible=true;r.fin.position.z=r.finZ}
+  if(r.finZ==null)r.finZ=-(g.L.v0*g.L.d+(g.L.v1-g.L.v0)*g.L.d/2)*S-.9;
+  r.fin.visible=Math.abs(gz-r.finZ)<170;r.fin.position.z=r.finZ;
   if(g.state==="finish"&&!reduced()){V.confT+=dt;if(V.confT<1.6&&Math.random()<dt*30)emit("conf",(Math.random()-.5)*8,7+Math.random()*2,gz-2-Math.random()*6,6,{sp:1.2,up:.2,g:2.2,life:2.6,cols:["#f2c94c","#2f8be6","#ffffff","#e04a3c","#6cc055"]})}
   if(g.state==="crash"&&g.crashT<dt+.001)emit("dust",0,.4,gz,24,{sp:3,up:3,g:8,life:.7,cols:["#ffffff","#e9dcc2"]});
   // fontänen i dammen
-  if(r.club.visible){const fp=r.club.userData.fountain;if(Math.random()<dt*40)emit("water",fp.x,fp.y,fp.z,3,{sp:.6,up:6.5,g:9,life:1.2,r:.2,cols:["#ffffff","#d9f0ff"]})}
+  for(const c of [r.club,r.club2,...r.cmap.values()]){const fs=c.userData.founts;if(!fs||!c.visible)continue;for(const fp of fs){const wz=fp.z+c.position.z;if(Math.abs(wz-gz)<90&&Math.random()<dt*40)emit("water",fp.x,fp.y,wz,3,{sp:.6,up:6.5,g:9,life:1.2,r:.2,cols:["#ffffff","#d9f0ff"]})}}
+  for(const c of r.cmap.values()){const q=c.userData.sq;if(q){const t=q.getObjectByName("tail");t.rotation.z=Math.sin(now*4)*.25;q.position.y=.5+Math.max(0,Math.sin(now*3+c.id))*.12}}
   updFx(dt);
   // kameran snett bakifrån – i stående mobil högre upp så att man ser hindren i god tid
   const por=H>=W,c=r.cam,sh=g.state==="crash"&&g.crashT<.3?(Math.random()-.5)*.12:0;
@@ -528,7 +673,7 @@ function draw3(dt){
   r.clouds.forEach(k=>{k.s.position.set(((k.x-g.dist*S*.05)%1100+1650)%1100-550,k.y,c.position.z+k.z)});
   const se=r.sea;se.lamp.material.color.setScalar(.6+.4*Math.max(0,Math.sin(now*2.2)));se.lamp.material.color.r=1;se.beam.rotation.y=now*.9;TEX.sea.offset.set(now*.004,now*.012);
   se.sails.forEach((b,i)=>{b.position.x=((-260+i*170+now*1.5)%700+700)%700-350;b.rotation.z=Math.sin(now*.8+i)*.05});
-  r.waves.forEach(o=>{if(o.name==="flag")o.rotation.y=Math.PI/2+Math.sin(now*2.2)*.15;else o.rotation.y=Math.sin(now*3+o.id)*.25});
+  for(const c of [r.club,r.club2,r.fin,...r.cmap.values()]){if(!c.visible||!c.userData.waves)continue;for(const o of c.userData.waves){if(o.name==="flag")o.rotation.y=(c===r.fin?0:Math.PI/2)+Math.sin(now*2.2+o.id)*.15;else o.rotation.y=Math.sin(now*3+o.id)*.3}}
   r.rd.render(r.scene,c);
   // sänk kvaliteten om telefonen inte hinner med: först skuggorna, sedan upplösningen
   if(dt){r.fr++;r.ft+=dt;if(r.fr>=90){const avg=r.ft/r.fr;r.fr=0;r.ft=0;if(avg>1/42){if(r.shadows){r.shadows=false;r.sun.castShadow=false;MAT.blob.visible=true}else if(r.pr>1){r.pr=Math.max(1,r.pr-.35);r.rd.setPixelRatio(r.pr);r.rd.setSize(W,H,false)}}}}
@@ -569,6 +714,7 @@ function spawn(g){
   // Rättvis takt: räkna ut när hindret når golfaren och se till att man hinner landa/resa sig från förra hindret
   const D=OBS[k],sp=g.v+(D.vx||0),need=g.lastAct?MINT[g.lastAct+D.act]:0;
   let x=LW+40;const arr=Math.max(g.t+(x-PX)/sp,g.lastArr+need);x=PX+(arr-g.t)*sp;
+  if(g.lv===1&&onBridge((g.dist+(x-PX)*g.v/sp)*S)){g.nextAt=g.v*.25;return}
   g.lastArr=arr;g.lastAct=D.act;
   const o={k,x,age:0,rot:0};if(!g.seen[k]){g.seen[k]=1;if(g.lv===1)o.lbl=D.act}g.obs.push(o);
   const gap=(L.g0+(L.g1-L.g0)*p)*(g.lv===1&&g.t<10?1.35:1);g.nextAt=g.v*gap*(.92+Math.random()*.4)+D.w;
@@ -608,13 +754,15 @@ function buildHud(){
   const bar=el("div","rgj-bar");bar.append(hud.bar);const r2=el("div","rgj-hrow rgj-hsub");r2.append(hud.lvl,hud.pct);
   h.append(top,bar,r2);
   hud.hint.innerHTML='<b>↑</b> Tryck för att hoppa &nbsp;·&nbsp; <b>↓</b> Håll för att ducka';
-  ov.append(h,hud.msg,hud.hint);
+  hud.zone=el("div","rgj-zone");ov.append(h,hud.msg,hud.hint,hud.zone);
 }
+// banderoll under siffrorna när man kommer in i en ny värld
+function zoneShow(a,b){if(!hud)return;const z=hud.zone;z.textContent="";z.append(el("b",null,a),el("span",null,b));z.classList.remove("on");void z.offsetWidth;z.classList.add("on")}
 function setTxt(k,node,v){if(hud.c[k]!==v){hud.c[k]=v;node.textContent=v}}
 function updHud(){
   const g=G;if(!hud||!g)return;
   setTxt("n",hud.name,(nick||"Spelare").toUpperCase());setTxt("h",hud.hcp,"HCP "+hcpTxt(g.hcp));setTxt("b",hud.best,resTxt(best));
-  setTxt("l",hud.lvl,"Nivå "+g.lv+" · "+g.L.name);setTxt("p",hud.pct,g.prog+" %");
+  setTxt("l",hud.lvl,mode3d&&g.lv===1?holeLabel(g.dist*S):"Nivå "+g.lv+" · "+g.L.name);setTxt("p",hud.pct,g.prog+" %");
   const w=Math.max(2,g.prog)+"%";if(hud.c.w!==w){hud.c.w=w;hud.bar.style.width=w}
   hud.hcp.classList.toggle("on",g.blink>0&&Math.floor(g.blink*10)%2===0);
   const m=g.msg?g.msg.t:"";setTxt("m",hud.msg,m);hud.msg.style.opacity=g.msg?Math.min(1,g.msg.left*2.5):0;
