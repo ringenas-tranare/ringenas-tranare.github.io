@@ -82,3 +82,11 @@ html.rgj-lock,html.rgj-lock body{overflow:hidden!important;overscroll-behavior:n
 .rgj-zone.on{animation:rgjZone 3s ease both}
 @keyframes rgjZone{0%{opacity:0;transform:translate(-50%,-12px) scale(.94)}10%{opacity:1;transform:translate(-50%,0) scale(1)}82%{opacity:1;transform:translate(-50%,0)}100%{opacity:0;transform:translate(-50%,-8px)}}
 @media (max-height:520px){.rgj-zone{top:calc(env(safe-area-inset-top) + 112px)}}
+
+/* --- Glaset under spelet: samma utseende men utan suddning av den rörliga bilden, som tar mycket kraft på telefonen --- */
+.rgj-btn,.rgj-hud,.rgj-hint,.rgj-pad,.rgj-pop,.rgj-zone{-webkit-backdrop-filter:none;backdrop-filter:none}
+.rgj-btn{background:linear-gradient(180deg,rgba(14,32,56,.84),rgba(6,16,30,.92))}
+.rgj-hud{background:linear-gradient(180deg,rgba(14,32,56,.80),rgba(6,16,30,.90))}
+.rgj-hint{background:rgba(6,16,30,.78)}
+.rgj-pad{background:radial-gradient(120% 90% at 50% 0%,rgba(255,255,255,.30),rgba(255,255,255,.05) 55%),linear-gradient(180deg,rgba(16,36,62,.78),rgba(6,16,30,.88))}
+.rgj-pop,.rgj-zone{background:linear-gradient(180deg,rgba(16,36,62,.84),rgba(6,16,30,.92))}

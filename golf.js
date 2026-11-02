@@ -638,7 +638,11 @@ function cleared(g,o,V){V.streak++;const D=OBS[o.k],gz=-g.dist*S;
   else if(o.k==="bunker")popup("Sandräddning!");else if(o.k==="vatten")popup("Carry över vattnet!");else popup(D.act==="ducka"?"Räddning!":"Birdie!")}
 
 /* --- Kvalitet: skuggor och full upplösning på nyare telefoner, sänks automatiskt om bilden hackar --- */
-function tierHigh(){const dm=navigator.deviceMemory||4,hc=navigator.hardwareConcurrency||4,mob=/Mobi|Android|iPhone|iPad/.test(navigator.userAgent);return !mob||(hc>=6&&dm>=4)}
+// iPhone uppger inte sin riktiga kraft i webbläsaren, så där avgör skärmen (3x = iPhone X eller nyare). Klarar telefonen det ändå inte sänks kvaliteten av kvalitetsstegen nedan.
+function tierHigh(){const ua=navigator.userAgent;if(/iPhone|iPad|iPod/.test(ua))return (devicePixelRatio||1)>=3;const dm=navigator.deviceMemory||4,hc=navigator.hardwareConcurrency||4;return !/Mobi|Android/.test(ua)||(hc>=6&&dm>=4)}
+/* Kvalitetssteg: [upplösning, riktiga skuggor]. Spelet börjar överst, går ner ett steg om telefonen inte hinner med och upp igen när det flyter. */
+function qLadder(hi){const d=devicePixelRatio||1;return (hi?[[2,1],[1.75,1],[1.75,0],[1.5,0],[1.25,0]]:[[1.5,0],[1.25,0],[1,0]]).map(([p,s])=>[Math.min(p,d),s])}
+function setQ(r,i){const[p,s]=r.ladder[i];r.q=i;r.sun.castShadow=!!s;MAT.blob.visible=!s;if(p!==r.pr){r.pr=p;r.rd.setPixelRatio(p);if(W&&H)r.rd.setSize(W,H,false)}}
 function init3D(canvas){
   textures();blob(1);
   MAT.ball=MAT.ball||new T.MeshToonMaterial({map:TEX.ball,bumpMap:TEX.ballBump,bumpScale:2,gradientMap:TEX.grad});
@@ -648,9 +652,9 @@ function init3D(canvas){
   MAT.seaS=MAT.seaS||new T.MeshStandardMaterial({color:"#3b93d8",roughness:.9,metalness:0,emissive:"#0b3f72",emissiveIntensity:.35});
   MAT.plank=MAT.plank||new T.MeshToonMaterial({map:TEX.plank,gradientMap:TEX.grad});MAT.stone=MAT.stone||new T.MeshToonMaterial({map:TEX.stone,gradientMap:TEX.grad});
   MAT.net=MAT.net||new T.MeshBasicMaterial({map:TEX.net,transparent:true,alphaTest:.3,side:T.DoubleSide});
-  const rd=new T.WebGLRenderer({canvas,antialias:(devicePixelRatio||1)<2.5,powerPreference:"high-performance",stencil:false});
+  const hi=tierHigh(),rd=new T.WebGLRenderer({canvas,antialias:hi||(devicePixelRatio||1)<2.5,powerPreference:"high-performance",stencil:false});
   rd.toneMapping=T.ACESFilmicToneMapping;rd.toneMappingExposure=.95;
-  const hi=tierHigh();rd.shadowMap.enabled=true;rd.shadowMap.type=T.PCFSoftShadowMap;
+  rd.shadowMap.enabled=true;rd.shadowMap.type=T.PCFSoftShadowMap;
   const scene=new T.Scene();scene.fog=new T.Fog("#f3dfc9",45,190);
   const cam=new T.PerspectiveCamera(50,1,.1,2500);
   const hemi=new T.HemisphereLight("#cfe4ff","#3f7a2a",1.05);scene.add(hemi);
@@ -677,14 +681,13 @@ function init3D(canvas){
   const gl=mesh(gget("finG",()=>new T.PlaneGeometry(3.4,.8).rotateX(-Math.PI/2)),new T.MeshBasicMaterial({map:TEX.chkG}),0,.03,0);gl.userData.flat=1;fin.add(gl);
   for(const sd of[-1,1]){const f=mesh(gget("flag",()=>new T.PlaneGeometry(2.2,1.4)),MAT.pin||(MAT.pin=new T.MeshToonMaterial({map:TEX.pin,side:T.DoubleSide,gradientMap:TEX.grad})),sd*4.6,4.4,0);f.scale.setScalar(.7);f.name="flag";fin.add(f,mesh(Cyl(.04,.04,5,6),wh,sd*(4.6-.78),2.5,0))}
   shade(fin);fin.userData.waves=fin.children.filter(o=>o.name==="flag");
-  R={rd,scene,cam,sky,sun,rim,hemi,sunS,clouds,ground,lane,sea,club,club2,chunks,cmap:new Map(),obsG,fx,fin,P:null,hi,shadows:hi,pr:Math.min(hi?2:1.5,devicePixelRatio||1),fr:0,ft:0,gRef:null,finZ:null,V:null,fountT:0};
-  MAT.blob.visible=!hi;
-  rd.setPixelRatio(R.pr);
+  R={rd,scene,cam,sky,sun,rim,hemi,sunS,clouds,ground,lane,sea,club,club2,chunks,cmap:new Map(),obsG,fx,fin,P:null,ladder:qLadder(hi),q:0,qMin:0,pr:0,fr:0,ft:0,f2:0,skip:120,calm:0,sinceUp:1e9,gRef:null,finZ:null,V:null,fountT:0};
+  setQ(R,0);
 }
 function dispose3D(){if(!R)return;try{R.rd.dispose();R.rd.forceContextLoss()}catch(e){}R=null}
 function draw3(dt){
   const g=G,r=R;if(!r||!g)return;dt=dt||0;
-  if(r.gRef!==g){r.gRef=g;r.obsG.clear();r.finZ=null;r.fin.visible=false;r.V={py0:0,landT:9,streak:0,confT:0};for(const k in r.fx)r.fx[k].list.length=0}
+  if(r.gRef!==g){if(r.gRef&&r.q>r.qMin){setQ(r,r.q-1);r.sinceUp=0}r.skip=120;r.calm=0;r.gRef=g;r.obsG.clear();r.finZ=null;r.fin.visible=false;r.V={py0:0,landT:9,streak:0,confT:0};for(const k in r.fx)r.fx[k].list.length=0}
   const V=r.V;
   if(!r.P||r.P.lv!==g.lv){if(r.P){r.scene.remove(r.P.root,r.P.shadow)}r.P=buildGolfer(g.lv);r.scene.add(r.P.root,r.P.shadow)}
   const gz=-g.dist*S,now=performance.now()/1000;
@@ -738,8 +741,14 @@ function draw3(dt){
   se.sails.forEach((b,i)=>{b.position.x=((-260+i*170+now*1.5)%700+700)%700-350;b.rotation.z=Math.sin(now*.8+i)*.05});
   for(const c of [r.club,r.club2,r.fin,...r.cmap.values()]){if(!c.visible||!c.userData.waves)continue;for(const o of c.userData.waves){if(o.name==="flag")o.rotation.y=(c===r.fin?0:Math.PI/2)+Math.sin(now*2.2+o.id)*.15;else o.rotation.y=Math.sin(now*3+o.id)*.3}}
   r.rd.render(r.scene,c);
-  // sänk kvaliteten om telefonen inte hinner med: först skuggorna, sedan upplösningen
-  if(dt){r.fr++;r.ft+=dt;if(r.fr>=90){const avg=r.ft/r.fr;r.fr=0;r.ft=0;if(avg>1/42){if(r.shadows){r.shadows=false;r.sun.castShadow=false;MAT.blob.visible=true}else if(r.pr>1){r.pr=Math.max(1,r.pr-.35);r.rd.setPixelRatio(r.pr);r.rd.setSize(W,H,false)}}}}
+  // kvalitetsstegen: mät utan starten och pauser. Ett låst tempo på 30 bilder/s (strömsparläge) är inte ett kraftproblem och sänker inget.
+  if(!dt){r.fr=r.ft=r.f2=0;r.skip=60}
+  else if(r.skip>0)r.skip--;
+  else{r.fr++;r.ft+=dt;r.f2+=dt*dt;if(r.fr>=90){
+    const avg=r.ft/r.fr,sd=Math.sqrt(Math.max(0,r.f2/r.fr-avg*avg)),locked=avg>.03&&avg<.036&&sd<.003,last=r.ladder.length-1;r.fr=r.ft=r.f2=0;r.sinceUp++;
+    if(avg>1/38&&!locked){r.calm=0;if(r.q<last){if(r.sinceUp<8)r.qMin=r.q+1;setQ(r,r.q+1);r.sinceUp=1e9;r.skip=45}}
+    else if(avg<1/54){if(++r.calm>=4&&r.q>r.qMin&&(g.state!=="run"||r.ladder[r.q-1][1]===r.ladder[r.q][1])){setQ(r,r.q-1);r.calm=0;r.sinceUp=0;r.skip=45}}
+    else r.calm=0}}
 }
 
 /* === Spelloopen === */
