@@ -269,71 +269,101 @@ function blob(r,y){const m=new T.Mesh(gget("P1",()=>new T.PlaneGeometry(1,1).rot
 
 /* --- Golfaren efter karaktärsbladet: vit Ringenäs-keps, marinblå tröja med kort dragkedja och vit krage,
    beige byxor, vita skor och klocka på vänster handled. Ansiktet byts efter läget: glad, fokuserad, jublande och ledsen. --- */
-// ytsegment av en sfär (för ansikte och kepslogga) – canvasens vänsterkant hamnar på bärarens högra sida, som när man tittar på honom
-function shell(r,phiC,phiL,th0,thL,mat){return new T.Mesh(gget("sh"+[r,phiC,phiL,th0,thL],()=>new T.SphereGeometry(r,24,16,phiC-phiL/2,phiL,th0,thL)),mat)}
 // Ringenäs-loggan: boll över vågor och namnet
 function drawLogo(c,x,y,s,col,text){c.save();c.translate(x,y);c.scale(s,s);c.fillStyle=col;c.strokeStyle=col;
   c.beginPath();c.arc(0,-18,15,0,7);c.lineWidth=2.6;c.stroke();for(let i=0;i<12;i++){const a=i*2.4,rr=(i%3+1)*4.2;c.beginPath();c.arc(Math.cos(a)*rr*.8,-18+Math.sin(a)*rr*.8,1.9,0,7);c.fill()}
   c.lineWidth=3.2;c.lineCap="round";c.beginPath();c.moveTo(-34,2);c.bezierCurveTo(-20,-6,-8,8,6,0);c.bezierCurveTo(16,-6,26,4,36,-2);c.stroke();
   c.beginPath();c.moveTo(-26,7);c.bezierCurveTo(-12,1,0,12,14,6);c.stroke();
   if(text!==false){c.font="600 15px Montserrat,Georgia,serif";c.textAlign="center";c.textBaseline="middle";c.fillText("RINGENÄS",0,24)}c.restore()}
-// ansiktsuttryck ritas på en canvas (bredare än hög, eftersom segmentet är bredare än högt)
-function faceTex(kind){return ctex(368,256,(c,w,h)=>{c.clearRect(0,0,w,h);
-  const ex=[124,244],ey=100,open=kind==="jubel"?.8:kind==="ledsen"?.9:1;
-  // kinder
-  if(kind!=="ledsen")for(const x of[84,284]){const g=c.createRadialGradient(x,168,0,x,168,34);g.addColorStop(0,"rgba(240,130,120,.42)");g.addColorStop(1,"rgba(240,130,120,0)");c.fillStyle=g;c.fillRect(x-40,128,80,80)}
-  // ögon: vitt, blå iris, pupill och glans
-  for(const x of ex){c.fillStyle="#fff";c.beginPath();c.ellipse(x,ey,36,42*open,0,0,7);c.fill();c.strokeStyle="rgba(60,40,30,.55)";c.lineWidth=3;c.stroke();
-    const lx=kind==="ledsen"?0:0,ly=kind==="ledsen"?8:kind==="fokus"?-2:2;
-    c.fillStyle="#3f86d1";c.beginPath();c.arc(x+lx,ey+ly,23,0,7);c.fill();c.fillStyle="#2a5f9e";c.beginPath();c.arc(x+lx,ey+ly,23,0,7);c.lineWidth=3;c.strokeStyle="#2a5f9e";c.stroke();
-    c.fillStyle="#141414";c.beginPath();c.arc(x+lx,ey+ly,11.5,0,7);c.fill();c.fillStyle="#fff";c.beginPath();c.arc(x+lx-7,ey+ly-8,5.5,0,7);c.fill();c.beginPath();c.arc(x+lx+6,ey+ly+6,2.5,0,7);c.fill();
-    if(kind==="jubel"){c.fillStyle="#e7b892";c.beginPath();c.ellipse(x,ey+40,34,16,0,0,Math.PI,true);c.fill()}}
-  // ögonbryn
-  c.strokeStyle="#5a3a24";c.lineWidth=10;c.lineCap="round";
-  const brow=(x,inner,outer,dir)=>{c.beginPath();c.moveTo(x-26*dir,inner);c.quadraticCurveTo(x,Math.min(inner,outer)-8,x+26*dir,outer);c.stroke()};
-  if(kind==="glad"){brow(ex[0],50,48,-1);brow(ex[1],50,48,1)}else if(kind==="jubel"){brow(ex[0],34,38,-1);brow(ex[1],34,38,1)}
-  else if(kind==="fokus"){brow(ex[0],60,44,-1);brow(ex[1],60,44,1)}else{brow(ex[0],40,56,-1);brow(ex[1],40,56,1)}
-  // mun
-  c.lineCap="round";c.lineWidth=7;c.strokeStyle="#7a3326";
-  if(kind==="glad"){c.fillStyle="#fff";c.beginPath();c.moveTo(144,190);c.quadraticCurveTo(184,236,224,190);c.quadraticCurveTo(184,206,144,190);c.fill();c.beginPath();c.moveTo(140,188);c.quadraticCurveTo(184,240,228,188);c.stroke()}
-  else if(kind==="jubel"){c.fillStyle="#6b1f1a";c.beginPath();c.moveTo(132,180);c.quadraticCurveTo(184,256,236,180);c.closePath();c.fill();c.fillStyle="#fff";c.fillRect(140,180,88,14);c.fillStyle="#e0606a";c.beginPath();c.ellipse(184,222,24,12,0,0,7);c.fill()}
-  else if(kind==="fokus"){c.fillStyle="#fff";c.beginPath();c.roundRect?c.roundRect(150,190,68,18,8):c.rect(150,190,68,18);c.fill();c.lineWidth=5;c.stroke();c.beginPath();c.moveTo(152,199);c.lineTo(216,199);c.lineWidth=3;c.stroke()}
-  else{c.beginPath();c.moveTo(150,214);c.quadraticCurveTo(184,186,218,214);c.stroke();c.fillStyle="rgba(140,200,255,.85)";c.beginPath();c.ellipse(104,150,7,11,0,0,7);c.fill()}})}
+/* Mjuka former: en yta lyfts genom elliptiska ringar {y,rx,rz,x,z}. Ger organiska kroppsdelar i stället för kapslar. u=0 höger sida, .25 fram, .5 vänster, .75 bak. */
+function loft(key,rings,seg,sub){return gget("lf"+key,()=>{seg=seg||24;sub=sub||3;const R0=[];const ks=["y","rx","rz","x","z"],get=(i,k)=>{const q=rings[Math.max(0,Math.min(rings.length-1,i))];return q[k]||0};
+  for(let i=0;i<rings.length-1;i++)for(let j=0;j<sub;j++){const t=j/sub,o={};for(const k of ks){const a=get(i-1,k),b=get(i,k),c=get(i+1,k),d=get(i+2,k);o[k]=.5*(2*b+(c-a)*t+(2*a-5*b+4*c-d)*t*t+(3*b-a-3*c+d)*t*t*t)}R0.push(o)}R0.push(Object.assign({},rings[rings.length-1]));
+  const n=R0.length,P=[],U=[],I=[];for(let i=0;i<n;i++){const q=R0[i];for(let j=0;j<=seg;j++){const u=j/seg,a=u*Math.PI*2;P.push((q.x||0)+Math.cos(a)*q.rx,q.y,(q.z||0)-Math.sin(a)*q.rz);U.push(u,i/(n-1))}}
+  for(let i=0;i<n-1;i++)for(let j=0;j<seg;j++){const A=i*(seg+1)+j,B=A+1,C=A+seg+2,D=A+seg+1;I.push(A,B,C,A,C,D)}
+  const a0=P.length/3;P.push(R0[0].x||0,R0[0].y,R0[0].z||0);U.push(.5,0);for(let j=0;j<seg;j++)I.push(a0,j+1,j);const a1=P.length/3,top=(n-1)*(seg+1);P.push(R0[n-1].x||0,R0[n-1].y,R0[n-1].z||0);U.push(.5,1);for(let j=0;j<seg;j++)I.push(a1,top+j,top+j+1);
+  const G=new T.BufferGeometry();G.setAttribute("position",new T.Float32BufferAttribute(P,3));G.setAttribute("uv",new T.Float32BufferAttribute(U,2));G.setIndex(I);G.computeVertexNormals();
+  const N=G.attributes.normal;for(let i=0;i<n;i++){const a=i*(seg+1),b=a+seg,x=N.getX(a)+N.getX(b),y=N.getY(a)+N.getY(b),z=N.getZ(a)+N.getZ(b),l=Math.hypot(x,y,z)||1;N.setXYZ(a,x/l,y/l,z/l);N.setXYZ(b,x/l,y/l,z/l)}return G})}
+// en sammanhängande arm eller ett ben som böjer sig mjukt vid leden (två ben i skelettet), utan synliga skarvar
+function skinned(key,rings,seg,mat,A,B,y0,y1,parent){const G=gget("sk"+key,()=>{const g=loft(key,rings,seg,3).clone(),P=g.attributes.position,I=[],W=[];for(let i=0;i<P.count;i++){const q=sm((y0-P.getY(i))/(y0-y1));I.push(0,1,0,0);W.push(1-q,q,0,0)}g.setAttribute("skinIndex",new T.Uint16BufferAttribute(I,4));g.setAttribute("skinWeight",new T.Float32BufferAttribute(W,4));return g});
+  const m=new T.SkinnedMesh(G,mat);m.position.copy(A.position);m.frustumCulled=false;parent.add(m);parent.updateMatrixWorld(true);m.bind(new T.Skeleton([A,B]));return m}
+const r3=(y,rx,rz,x,z)=>({y,rx,rz:rz==null?rx:rz,x:x||0,z:z||0});
+function std(k,o){return MAT["st"+k]||(MAT["st"+k]=new T.MeshStandardMaterial(Object.assign({roughness:.85,metalness:0},o)))}
+// tygerna ritas en gång: stickad tröja, ribbstickning, byxtyg med fickor, hår, keps och sko
+function clothTex(){if(TEX.knit)return;const rep=(t,a,b)=>{t.wrapS=t.wrapT=T.RepeatWrapping;t.repeat.set(a,b);t.anisotropy=4;return t};
+  TEX.knit=rep(ctex(256,256,(c,w,h)=>{c.fillStyle="#2b3f6e";c.fillRect(0,0,w,h);for(let x=0;x<w;x+=4){c.fillStyle=x%8?"rgba(255,255,255,.035)":"rgba(0,0,0,.14)";c.fillRect(x,0,2,h)}for(let y=0;y<h;y+=3){c.fillStyle="rgba(0,0,0,.07)";c.fillRect(0,y,w,1)}}),5,4);
+  TEX.knitB=rep(ctex(128,128,(c,w,h)=>{c.fillStyle="#808080";c.fillRect(0,0,w,h);for(let x=0;x<w;x+=8){c.fillStyle="#e4e4e4";c.fillRect(x,0,3,h);c.fillStyle="#3a3a3a";c.fillRect(x+5,0,2,h)}}),10,6);
+  TEX.rib=rep(ctex(128,32,(c,w,h)=>{c.fillStyle="#22335c";c.fillRect(0,0,w,h);for(let x=0;x<w;x+=8){c.fillStyle="#34497a";c.fillRect(x,0,4,h)}}),4,1);
+  TEX.twill=rep(ctex(256,256,(c,w,h)=>{c.fillStyle="#d3bf9b";c.fillRect(0,0,w,h);c.lineWidth=1;for(let i=-h;i<w;i+=5){c.strokeStyle=i%10?"rgba(120,96,60,.1)":"rgba(255,246,226,.14)";c.beginPath();c.moveTo(i,0);c.lineTo(i+h,h);c.stroke()}}),3,4);
+  // bäcken med sidosöm och bakfickor (u=.75 är bak)
+  TEX.seat=ctex(1024,512,(c,w,h)=>{c.drawImage(TEX.twill.image,0,0,w,h);c.fillStyle="#d3bf9b";c.fillRect(0,0,w,h);c.globalAlpha=.8;for(let x=0;x<w;x+=256)for(let y=0;y<h;y+=256)c.drawImage(TEX.twill.image,x,y);c.globalAlpha=1;
+    const pk=x=>{c.fillStyle="rgba(120,96,62,.2)";rrp(c,x-54,262,108,132,12);c.fill();c.strokeStyle="rgba(92,70,42,.8)";c.lineWidth=3;c.setLineDash([9,5]);rrp(c,x-48,268,96,120,10);c.stroke();c.setLineDash([]);c.fillStyle="rgba(92,70,42,.55)";c.fillRect(x-56,258,112,8)};pk(w*.75-96);pk(w*.75+96);
+    c.strokeStyle="rgba(92,70,42,.55)";c.lineWidth=3;c.beginPath();c.moveTo(w*.75,0);c.bezierCurveTo(w*.75,220,w*.75,300,w*.75,h);c.stroke();c.beginPath();c.moveTo(w*.25,300);c.lineTo(w*.25,0);c.stroke()});
+  TEX.hair=ctex(512,256,(c,w,h)=>{c.clearRect(0,0,w,h);const edge=x=>{const d=Math.abs(x/w-.75),q=Math.min(d,1-d),e=q<.26?.64:.64-(q-.26)*2.2;return h*(e+Math.sin(x*.11)*.012)},gap=x=>Math.abs(x/w-.25)<.17||Math.abs(x/w-1.25)<.17;
+    c.fillStyle="#5e3d26";c.beginPath();c.moveTo(0,0);for(let x=0;x<=w;x+=2){c.lineTo(x,gap(x)?0:edge(x))}c.lineTo(w,0);c.closePath();c.fill();
+    c.globalCompositeOperation="source-atop";for(let i=0;i<1800;i++){const x=Math.random()*w,y=Math.random()*h,t=Math.random();c.strokeStyle="rgba("+(58+t*60)+","+(36+t*38)+","+(22+t*20)+",.8)";c.lineWidth=1.6;c.beginPath();c.moveTo(x,y);c.lineTo(x+(Math.random()-.5)*6,y+10+Math.random()*16);c.stroke()}c.globalCompositeOperation="source-over"});
+  TEX.cap=ctex(1024,512,(c,w,h)=>{c.fillStyle="#efebe3";c.fillRect(0,0,w,h);for(let i=0;i<9000;i++){c.fillStyle=i%2?"rgba(255,255,255,.1)":"rgba(90,80,60,.05)";c.fillRect(Math.random()*w,Math.random()*h,2,2)}
+    c.strokeStyle="rgba(120,108,90,.5)";c.lineWidth=3;for(const u of[.083,.417,.583,.75,.917]){c.beginPath();c.moveTo(w*u,h);c.lineTo(w*u,0);c.stroke();c.setLineDash([6,5]);c.lineWidth=1.5;c.beginPath();c.moveTo(w*u+8,h);c.lineTo(w*u+8,0);c.stroke();c.setLineDash([]);c.lineWidth=3}
+    c.fillStyle="rgba(120,108,90,.65)";for(const u of[.17,.33,.5,.67,.84,1]){c.beginPath();c.arc(w*(u-.083),h*.58,5,0,7);c.fill()}
+    c.save();c.translate(w*.25,h*.56);c.scale(2.3,2.3);drawLogo(c,0,0,1.25,"#1b2a4a");c.restore();
+    // bakre öppningen med spännet
+    c.globalCompositeOperation="destination-out";c.beginPath();c.moveTo(w*.75-64,h);c.lineTo(w*.75-60,h*.86);c.quadraticCurveTo(w*.75,h*.5,w*.75+60,h*.86);c.lineTo(w*.75+64,h);c.closePath();c.fill();c.globalCompositeOperation="source-over"});
+  TEX.shoe=ctex(512,256,(c,w,h)=>{c.fillStyle="#f6f5f1";c.fillRect(0,0,w,h);c.fillStyle="rgba(120,124,130,.16)";for(let i=0;i<40;i++)c.fillRect(Math.random()*w,Math.random()*h,8,2);c.strokeStyle="rgba(120,124,130,.55)";c.lineWidth=3;for(const u of[.02,.48]){c.beginPath();c.moveTo(w*u,h*.2);c.quadraticCurveTo(w*(u+.04),h*.5,w*u,h*.85);c.stroke()}});
+}
 function buildGolfer(lv){
+  clothTex();
   const root=new T.Group(),body=new T.Group(),hips=new T.Group();root.add(body);body.add(hips);
-  const navy=toon("#1d2c4c"),navy2=toon("#16233e"),beige=toon("#d4bf98"),skin=toon("#e3a982"),white=toon("#f6f6f3"),cream=toon("#efece4"),hair=toon("#6b4630"),sole=toon("#c9ccd0"),legs=[],arms=[];
-  const hp=mesh(Sph(.16,16,10),beige,0,.03,0);hp.scale.set(1.2,.62,.9);hips.add(hp);
-  [-.11,.11].forEach(x=>{const th=new T.Group();th.position.x=x;hips.add(th);th.add(mesh(Cap(.105,.3),beige,0,-.24,0));
-    const kn=new T.Group();kn.position.y=-.48;th.add(kn);kn.add(mesh(Cap(.092,.3),beige,0,-.23,0));
-    const sh=mesh(Cap(.085,.17),white,0,-.47,-.07);sh.rotation.x=Math.PI/2;sh.scale.set(1.1,1,.82);const so=mesh(Cap(.088,.18),sole,0,-.51,-.07);so.rotation.x=Math.PI/2;so.scale.set(1.12,1,.25);kn.add(sh,so);legs.push({th,kn})});
+  const navy=std("navy",{map:TEX.knit,bumpMap:TEX.knitB,bumpScale:.5,emissive:"#0b1220"}),rib=std("rib",{map:TEX.rib,emissive:"#0b1220"}),beige=std("beige",{map:TEX.twill,roughness:.92,emissive:"#2a2418"}),seat=std("seat",{map:TEX.seat,roughness:.92,emissive:"#2a2418"}),
+    skin=std("skin",{color:"#dfa684",roughness:.6}),white=std("white",{color:"#f7f6f2",roughness:.7}),shoeM=std("shoe",{map:TEX.shoe,roughness:.55}),sole=std("sole",{color:"#6f737a",roughness:.9}),soleW=std("soleW",{color:"#f0efea",roughness:.8}),
+    hairM=std("hair",{map:TEX.hair,alphaTest:.5,side:T.DoubleSide,roughness:.75}),capM=std("cap",{map:TEX.cap,alphaTest:.5,side:T.DoubleSide,roughness:.9,emissive:"#3a3834"}),capP=std("capP",{color:"#f4f1ea",roughness:.9,side:T.DoubleSide,emissive:"#3a3834"}),dark=std("dark",{color:"#17181b",roughness:.45}),legs=[],arms=[];
+  // bäcken och rumpa
+  hips.add(mesh(loft("pelvis",[r3(-.15,.1,.09),r3(-.11,.172,.122,0,.004),r3(-.04,.197,.132,0,.01),r3(.04,.197,.128,0,.006),r3(.11,.185,.118),r3(.17,.17,.11)],32,3),seat,0,.03,0));
+  [-.105,.105].forEach(x=>{const th=new T.Bone();th.position.x=x;hips.add(th);const kn=new T.Bone();kn.position.y=-.48;th.add(kn);
+    skinned("leg",[r3(.1,.06),r3(.05,.105,.11),r3(-.06,.114,.12,0,.004),r3(-.22,.103,.11,0,-.004),r3(-.38,.09,.095),r3(-.48,.087,.09),r3(-.58,.082,.088,0,.005),r3(-.72,.076,.08,0,.005),r3(-.86,.073),r3(-.93,.08,.084),r3(-.942,.08,.084)],22,beige,th,kn,-.42,-.54,hips);
+    // skon: vit sneaker med grå sula, snören och hälkappa
+    const f=new T.Group();f.position.set(0,-.5,-.06);kn.add(f);const upper=loft("upper",[r3(-.135,.03,.03,0,-.005),r3(-.12,.068,.066,0,.012),r3(-.04,.08,.078,0,.022),r3(.06,.082,.066,0,.006),r3(.16,.086,.05,0,-.01),r3(.235,.07,.034,0,-.022),r3(.255,.03,.016,0,-.03)],22,3);
+    const fu=mesh(gget("fu2",()=>upper.clone().rotateX(-Math.PI/2)),shoeM,0,.0,0);f.add(fu);
+    const fs=mesh(gget("fsW",()=>loft("soleW",[r3(-.145,.03,.02),r3(-.13,.074,.024),r3(.06,.086,.024),r3(.22,.08,.024),r3(.265,.03,.014)],20,3).clone().rotateX(-Math.PI/2)),soleW,0,-.052,0);f.add(fs);
+    const fg=mesh(gget("fsG",()=>loft("soleG",[r3(-.142,.03,.008),r3(-.128,.07,.011),r3(.06,.082,.011),r3(.22,.076,.011),r3(.26,.03,.008)],20,3).clone().rotateX(-Math.PI/2)),sole,0,-.08,0);f.add(fg);
+    for(let i=0;i<4;i++){const l=mesh(Cap(.007,.075,6),soleW,0,.045-i*.012,-.03-i*.038);l.rotation.z=Math.PI/2;l.rotation.x=-.3;f.add(l)}
+    legs.push({th,kn})});
+  // bålen: stickad quarter-zip med ribbad nederkant
   const torso=new T.Group();hips.add(torso);
-  const tr=mesh(Cap(.21,.22,18),navy,0,.33,0);tr.scale.set(1.1,1,.76);torso.add(tr);
-  const hem=mesh(Tor(.2,.04),navy2,0,.1,0);hem.rotation.x=Math.PI/2;hem.scale.set(1.1,.76,1);torso.add(hem);
-  // krage: marinblå ståkrage med kort dragkedja och vit pikékrage innanför
-  const col=mesh(gget("collar",()=>new T.CylinderGeometry(.1,.115,.09,18,1,true)),toon("#1d2c4c",{side:T.DoubleSide}),0,.62,0);torso.add(col);
-  const pk=mesh(Tor(.093,.022),white,0,.665,0);pk.rotation.x=Math.PI/2;torso.add(pk);
-  const zp=mesh(gget("zip",()=>new T.BoxGeometry(.016,.2,.012)),toon("#cfd5dc"),0,.55,-.158);zp.rotation.x=-.18;torso.add(zp);
-  const lg=mesh(gget("chest",()=>new T.PlaneGeometry(.13,.1)),MAT.logoW,.085,.47,-.162);lg.rotation.y=Math.PI;lg.rotation.x=.12;lg.userData.flat=1;torso.add(lg);
-  torso.add(mesh(Cyl(.065,.07,.08,10),skin,0,.69,0));
-  // huvudet: stort och tecknat, med hår under kepsen
-  const head=new T.Group();head.position.y=.86;torso.add(head);const R=.19;
-  const sk=mesh(Sph(R,24,18),skin);sk.scale.set(1,1.05,1);head.add(sk);
-  const hr=mesh(Sph(R*.92,20,14),hair,0,-.045,.055);hr.scale.set(.98,.9,1);head.add(hr);
-  const faces={};for(const k of["glad","fokus","jubel","ledsen"])faces[k]=MAT["face"+k]||(MAT["face"+k]=new T.MeshToonMaterial({map:TEX["face"+k]||(TEX["face"+k]=faceTex(k)),transparent:true,gradientMap:TEX.grad,depthWrite:false}));
-  const face=shell(R*1.012,Math.PI*1.5,1.35,1.08,1.0,faces.glad);face.scale.y=1.05;face.renderOrder=2;face.userData.flat=1;head.add(face);
-  const ns=mesh(Sph(.034,10,8),skin,0,-.005,-R*1.0);ns.scale.set(1,.85,.9);head.add(ns);
-  for(const sd of[-1,1]){const e=mesh(Sph(.045,10,8),skin,sd*R*.98,-.01,.01);e.scale.set(.55,1,.8);head.add(e)}
-  // kepsen: vit krona, skärm framåt, knapp och Ringenäs-logga
-  // kepsen lutar: högt fram, lågt bak
-  const capG=new T.Group();capG.rotation.x=.42;head.add(capG);
-  capG.add(mesh(gget("cap3",()=>new T.SphereGeometry(R*1.07,24,12,0,Math.PI*2,0,Math.PI*.52)),cream,0,0,0),mesh(Sph(.022,8,6),cream,0,R*1.07+.005,0));
-  const cl=shell(R*1.08,Math.PI*1.5,1.2,.42,.62,MAT.capLogo);cl.userData.flat=1;cl.renderOrder=2;capG.add(cl);
-  const strap=mesh(Tor(.05,.012,Math.PI),toon("#d8d4ca"),0,-.02,R*1.065);strap.rotation.z=Math.PI;capG.add(strap);
-  const br=mesh(gget("brim3",()=>new T.CylinderGeometry(R*.95,R*.95,.024,22,1,false,Math.PI*.5,Math.PI)),cream,0,.075,-.06);br.scale.set(1,1,1.05);br.rotation.x=-.06;head.add(br);
-  [-1,1].forEach(sd=>{const s=new T.Group();s.position.set(sd*.29,.53,0);torso.add(s);s.add(mesh(Sph(.09,12,8),navy),mesh(Cap(.075,.2),navy,0,-.15,0));
-    const elb=new T.Group();elb.position.y=-.3;s.add(elb);elb.add(mesh(Cap(.068,.17),navy,0,-.12,0));const cf=mesh(Tor(.06,.018),navy2,0,-.22,0);cf.rotation.x=Math.PI/2;elb.add(cf);
-    const fist=mesh(Sph(.072,12,10),skin,0,-.29,0);fist.scale.set(.95,.9,1.1);elb.add(fist);
-    if(sd<0){const w=mesh(Tor(.058,.02),toon("#1b1b1d"),0,-.235,0);w.rotation.x=Math.PI/2;elb.add(w)}
+  torso.add(mesh(loft("torso",[r3(.1,.21,.158,0,.006),r3(.14,.212,.16,0,.006),r3(.27,.21,.156,0,.006),r3(.4,.228,.162,0,.006),r3(.49,.238,.162,0,.008),r3(.55,.205,.142,0,.012),r3(.61,.14,.11,0,.012),r3(.65,.09,.09,0,.008)],34,3),navy));
+  torso.add(mesh(loft("hemr",[r3(.04,.205,.155,0,.006),r3(.055,.214,.164,0,.006),r3(.125,.216,.166,0,.006),r3(.14,.21,.16,0,.006)],34,2),rib));
+  // krage: ståkrage, vit piké innanför och dragkedja med vita kanter
+  torso.add(mesh(loft("coll",[r3(.61,.118,.11,0,.008),r3(.65,.112,.104,0,.012),r3(.71,.104,.096,0,.016),r3(.725,.1,.092,0,.016)],26,2),std("collar",{map:TEX.rib,side:T.DoubleSide})));
+  const pk=mesh(Tor(.094,.018),white,0,.735,.016);pk.rotation.x=Math.PI/2;pk.scale.set(1.04,.96,1);torso.add(pk);
+  const zp=mesh(gget("zip",()=>new T.BoxGeometry(.012,.2,.006)),std("zip",{color:"#cfd5dc",roughness:.4}),0,.61,-.15);zp.rotation.x=-.24;torso.add(zp);
+  const lg=mesh(gget("chest",()=>new T.PlaneGeometry(.13,.1)),MAT.logoW,.105,.47,-.169);lg.rotation.y=Math.PI;lg.rotation.x=.08;lg.userData.flat=1;torso.add(lg);
+  const pg=mesh(gget("pgaP",()=>new T.PlaneGeometry(.1,.1)),MAT.pga,-.105,.47,-.169);pg.rotation.y=Math.PI;pg.rotation.x=.08;pg.userData.flat=1;torso.add(pg);
+  const tag=mesh(gget("btag",()=>new T.PlaneGeometry(.035,.03)),std("tag",{color:"#f4f4f0"}),0,.665,.112);tag.rotation.x=-.25;tag.userData.flat=1;torso.add(tag);
+  torso.add(mesh(loft("neck",[r3(.68,.075,.078,0,.01),r3(.76,.07,.072,0,.008),r3(.84,.074,.076,0,.004)],16,2),skin));
+  // huvudet: formen efter karaktärsbladet, ansiktet målat rakt framifrån
+  const head=new T.Group();head.position.y=.93;torso.add(head);
+  const hr=[r3(-.262,.03,.03,0,-.012),r3(-.245,.08,.08,0,-.012),r3(-.2,.128,.13,0,-.008),r3(-.11,.168,.172),r3(-.01,.186,.188),r3(.08,.19,.194),r3(.15,.176,.18),r3(.2,.135,.14),r3(.228,.05,.052)];
+  const hg=gget("headP",()=>{const g=loft("head",hr,34,3).clone(),P=g.attributes.position,U=g.attributes.uv;for(let i=0;i<P.count;i++)U.setXY(i,.5-P.getX(i)/.56,.5+(P.getY(i)+.026)/.56);return g});
+  const face=mesh(hg,MAT.faceglad,0,0,0);head.add(face);
+  const faces={glad:MAT.faceglad,fokus:MAT.facefokus,jubel:MAT.facejubel,ledsen:MAT.faceledsen};
+  head.add(mesh(loft("hairL",hr.map(q=>r3(q.y,q.rx*1.022,q.rz*1.028,0,q.z)),34,3),hairM));
+  for(const sd of[-1,1]){const e=mesh(Sph(.05,12,10),skin,sd*.192,-.05,.015);e.scale.set(.42,1.15,.8);e.rotation.z=sd*-.12;head.add(e);const ei=mesh(Sph(.026,8,6),std("earI",{color:"#c98d6c"}),sd*.205,-.05,.01);ei.scale.set(.3,1,.7);head.add(ei)}
+  // kepsen: panelerad krona med söm, öljetter, knapp, bakre öppning med spänne och böjd skärm
+  const capG=new T.Group();capG.rotation.x=.13;capG.position.y=.012;head.add(capG);
+  capG.add(mesh(loft("cap",[r3(.095,.206,.215),r3(.145,.205,.214),r3(.205,.18,.19),r3(.255,.13,.14),r3(.285,.06,.066),r3(.295,.012,.012)],36,3),capM));
+  capG.add(mesh(Sph(.016,10,8),capP,0,.297,0));
+  const strap=mesh(gget("strap",()=>new T.BoxGeometry(.13,.02,.012)),capP,0,.112,.212);capG.add(strap);capG.add(mesh(gget("buck",()=>new T.BoxGeometry(.028,.024,.014)),std("buck",{color:"#d9d5cc",roughness:.5}),.018,.112,.219));
+  const brim=gget("brimC",()=>{const nS=20,nT=5,P=[],I=[],U=[];for(let l=0;l<2;l++)for(let i=0;i<=nS;i++)for(let j=0;j<=nT;j++){const s=i/nS*2-1,t=j/nT,a=s*1.08,x0=Math.sin(a)*.206,z0=-Math.cos(a)*.215,len=.19*Math.sqrt(1-s*s*.92)*t,dir=[Math.sin(a*.35),-Math.cos(a*.35)];P.push(x0+dir[0]*len,-.03*t-s*s*.06*t-l*.012,z0+dir[1]*len);U.push(i/nS,t)}
+    const W=nT+1;for(let l=0;l<2;l++){const o=l*(nS+1)*W;for(let i=0;i<nS;i++)for(let j=0;j<nT;j++){const a=o+i*W+j,b=a+W,c=b+1,d=a+1;if(l)I.push(a,b,c,a,c,d);else I.push(a,c,b,a,d,c)}}
+    const m=(nS+1)*W;for(let i=0;i<nS;i++){const a=i*W+nT,b=a+W;I.push(a,a+m,b+m,a,b+m,b)}const G=new T.BufferGeometry();G.setAttribute("position",new T.Float32BufferAttribute(P,3));G.setAttribute("uv",new T.Float32BufferAttribute(U,2));G.setIndex(I);G.computeVertexNormals();return G});
+  capG.add(mesh(brim,capP,0,.098,0));
+  // armar med tröjärm, ribbad mudd, klocka och knutna händer med fingrar
+  [-1,1].forEach(sd=>{const s=new T.Bone();s.position.set(sd*.232,.505,.006);torso.add(s);const elb=new T.Bone();elb.position.y=-.3;s.add(elb);
+    skinned("arm",[r3(.085,.02),r3(.07,.058,.062),r3(.03,.08,.086),r3(-.12,.078,.083),r3(-.25,.071,.075),r3(-.34,.066,.07),r3(-.44,.062,.066),r3(-.49,.056,.058),r3(-.515,.054)],20,navy,s,elb,-.24,-.36,torso);
+    elb.add(mesh(loft("cuff",[r3(-.18,.05),r3(-.19,.06,.062),r3(-.235,.056,.058),r3(-.24,.05)],18,2),rib));
+    const hand=new T.Group();hand.position.y=-.3;elb.add(hand);
+    hand.add(mesh(loft("palm",[r3(.06,.03),r3(.035,.05,.04),r3(-.02,.062,.05),r3(-.055,.055,.046),r3(-.075,.025)],14,2),skin));
+    for(let i=0;i<4;i++){const fg=mesh(Cap(.0145,.03,6),skin,(i-1.5)*.0245,-.052,-.05);fg.rotation.x=Math.PI/2+.25;hand.add(fg)}
+    const th=mesh(Cap(.017,.05,6),skin,-sd*.052,-.015,-.03);th.rotation.z=sd*.5;th.rotation.x=.5;hand.add(th);
+    if(sd<0){const w=mesh(gget("wband",()=>new T.TorusGeometry(.056,.007,6,20).rotateX(Math.PI/2)),dark,0,-.18,0);elb.add(w);const wf=mesh(Cyl(.024,.024,.012,16),dark,sd*.054,-.18,0);wf.rotation.z=Math.PI/2;elb.add(wf)}
     arms.push({sh:s,elb})});
   const stars=new T.Group();stars.position.y=2.25;for(let i=0;i<3;i++)stars.add(mesh(Ico(.08,0),bas("#f2c94c"),0,0,0));stars.visible=false;root.add(stars);
   shade(root);const sh=blob(.42);return {root,body,hips,legs,arms,torso,head,face,faces,stars,shadow:sh,lv,turn:0};
@@ -588,7 +618,7 @@ function tierHigh(){const ua=navigator.userAgent;if(/iPhone|iPad|iPod/.test(ua))
 function qLadder(hi){const d=devicePixelRatio||1;return (hi?[[2,1],[1.75,1],[1.75,0],[1.5,0],[1.25,0]]:[[1.5,0],[1.25,0],[1,0]]).map(([p,s])=>[Math.min(p,d),s])}
 function setQ(r,i){const[p,s]=r.ladder[i];r.q=i;r.sun.castShadow=!!s;MAT.blob.visible=!s;if(p!==r.pr){r.pr=p;r.rd.setPixelRatio(p);if(W&&H)r.rd.setSize(W,H,false)}}
 /* --- Målade ytor och himmel (jpg-filer i repot). Tills de laddat visas enkla färger, så spelet startar direkt även på segt nät. --- */
-const ART_V="1";
+const ART_V="2";
 function surfaces(){
   if(MAT.tuft)return;
   TEX.tuft=ctex(256,256,(c,w,h)=>{c.clearRect(0,0,w,h);c.lineCap="round";for(let i=0;i<150;i++){const x=w*(.08+Math.random()*.84),b=x+(x-w/2)*(.3+Math.random()*.6),l=h*(.45+Math.random()*.5),t=Math.random();c.strokeStyle="rgb("+(235-t*40)+","+(235-t*30)+","+(210-t*30)+")";c.lineWidth=2+Math.random()*2.4;c.beginPath();c.moveTo(x,h);c.quadraticCurveTo(x+(b-x)*.3,h-l*.7,b,h-l);c.stroke()}});
@@ -597,6 +627,8 @@ function surfaces(){
   TEX.foam=ctex(128,512,(c,w,h)=>{c.clearRect(0,0,w,h);const g=c.createLinearGradient(0,0,w,0);g.addColorStop(0,"rgba(255,255,255,0)");g.addColorStop(.55,"rgba(255,255,255,.25)");g.addColorStop(.72,"rgba(255,255,255,.95)");g.addColorStop(1,"rgba(255,255,255,0)");c.fillStyle=g;c.fillRect(0,0,w,h);c.fillStyle="#fff";for(let i=0;i<70;i++)c.fillRect(w*(.3+Math.random()*.5),Math.random()*h,2+Math.random()*6,6+Math.random()*30)});TEX.foam.wrapT=T.RepeatWrapping;TEX.foam.repeat.set(1,2);
   TEX.finBanner=ctex(1024,76,(c,w,h)=>{c.fillStyle="#132a45";c.fillRect(0,0,w,h);c.fillStyle="#e0bb4a";c.fillRect(0,0,w,4);c.fillRect(0,h-4,w,4);c.font="900 44px "+F3;c.textAlign="center";c.textBaseline="middle";c.fillStyle="#fff";c.fillText("RINGENÄS  ·  VÄLKOMMEN IN  ·  RINGENÄS",w/2,h/2+2)});
   TEX.sweFlag=ctex(160,100,(c,w,h)=>{c.fillStyle="#1a6bb5";c.fillRect(0,0,w,h);c.fillStyle="#f6c91e";c.fillRect(50,0,20,h);c.fillRect(0,40,w,20)});
+  for(const k of["glad","fokus","jubel","ledsen"])MAT["face"+k]=new T.MeshStandardMaterial({color:"#dfa684",roughness:.6});
+  MAT.pga=new T.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false});
   MAT.tuft=new T.MeshLambertMaterial({map:TEX.tuft,alphaTest:.3,alphaToCoverage:true,side:T.DoubleSide});
   MAT.gnd=new T.MeshLambertMaterial({map:TEX.ground});MAT.lane=new T.MeshLambertMaterial({map:TEX.lane,alphaMap:TEX.laneA,transparent:true,depthWrite:false});
   MAT.dune=new T.MeshLambertMaterial({color:"#efdcae"});MAT.sandS=new T.MeshLambertMaterial({color:"#f0dca8"});MAT.sandF=new T.MeshLambertMaterial({color:"#f0dca8"});
@@ -611,6 +643,8 @@ function art(rd){
   tile("gras",[[MAT.gnd]],[40,24]);tile("fairway",[[MAT.lane]],[.55,24]);
   tile("sand",[[MAT.dune,[1.5,1.5]],[MAT.sandS,[1,5]],[MAT.sandF,[80,2.5]]],[1,1]);
   tile("hav",[[MAT.seaS,[20,2]],[MAT.seaF,[120,50]]],[1,1]);
+  for(const k of["glad","fokus","jubel","ledsen"])L.load("golf-ansikte-"+k+".jpg?v="+ART_V,t=>{t.colorSpace=T.SRGBColorSpace;t.anisotropy=aniso;t.wrapS=t.wrapT=T.ClampToEdgeWrapping;const m=MAT["face"+k];m.map=t;m.color.set("#ffffff");m.needsUpdate=true});
+  L.load("pga-logo.png",t=>{t.colorSpace=T.SRGBColorSpace;t.anisotropy=aniso;MAT.pga.map=t;MAT.pga.opacity=1;MAT.pga.needsUpdate=true});
   let n=0;for(const[k,f]of[["a","dag"],["b","kvall"]])L.load("golf-sky-"+f+".jpg?v="+ART_V,t=>{t.colorSpace=T.NoColorSpace;t.generateMipmaps=false;t.minFilter=T.LinearFilter;MAT.back.uniforms[k].value=t;if(++n===2&&R)R.back.visible=true});
 }
 function init3D(canvas){
