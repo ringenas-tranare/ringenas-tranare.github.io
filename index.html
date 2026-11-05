@@ -1004,6 +1004,21 @@ body button.go{border-radius:99px!important}
 body nav{bottom:max(16px,env(safe-area-inset-bottom,0px))!important;border-radius:99px!important}
 body nav button{border-radius:99px!important}
 .scene.bd{height:430px}
+/* Spela och Kontakt: samma kväll som startsidan – ön i toppen, korten glider upp över havet */
+body[data-view=play] #ph,body[data-view=contact] #ph{display:block;height:300px!important;background-image:linear-gradient(180deg,rgba(5,13,24,.3) 0%,rgba(5,13,24,0) 40%,rgba(5,13,24,0) 100%),url(hem-o-dator.jpg)!important;background-color:transparent!important;-webkit-mask-image:linear-gradient(180deg,#000 76%,transparent);mask-image:linear-gradient(180deg,#000 76%,transparent);background-size:100% 100%,max(100%,907px) auto!important;background-position:0 0,50% calc(225px - max(100vw,907px)*.3125)!important}
+body[data-view=play] main,body[data-view=contact] main{position:relative;z-index:1}
+body[data-view=play] .scene,body[data-view=play] .top,body[data-view=contact] .scene,body[data-view=contact] .top{display:none!important}
+.sh{position:relative;display:flex;flex-direction:column;align-items:center;text-align:center;padding:max(16px,env(safe-area-inset-top,0px)) 8px 0;min-height:216px;box-sizing:border-box}
+.shlogo{width:72px;height:38px;overflow:visible;filter:drop-shadow(0 0 18px rgba(224,187,74,.28)) drop-shadow(0 4px 10px rgba(0,0,0,.45))}
+.sh h1{margin:10px 0 0;font-weight:400;text-transform:uppercase;letter-spacing:.34em;margin-right:-.34em;font-size:clamp(22px,6.6vw,34px);line-height:1;background:none!important;color:#f6f1e6;-webkit-text-fill-color:#f6f1e6;filter:none!important;text-shadow:0 2px 18px rgba(0,0,0,.55)}
+.sh .lxline{margin:10px auto 8px}
+#playGuide:empty,#playResume:empty{display:none}
+.sh p{margin:0;font-size:14px;font-weight:400;letter-spacing:.02em;color:#f4ead6;filter:drop-shadow(0 1px 6px rgba(0,0,0,.6))}
+.sh .qbtn{top:max(14px,env(safe-area-inset-top,0px));right:2px}
+#v-contact .card>p{text-align:center;margin:14px 0 0}
+a.lxbtn.shcta{display:flex;align-items:center;justify-content:center;margin:20px auto 10px;max-width:260px;height:52px;border-radius:99px;font:800 16px/1 Montserrat,Inter,sans-serif;letter-spacing:.02em;color:#fff;text-decoration:none;background:linear-gradient(180deg,rgba(255,255,255,.32) 0%,rgba(255,255,255,.05) 46%,rgba(255,255,255,0) 60%),linear-gradient(180deg,#2c78c8 0%,#1a559c 55%,#0f3a72 100%);box-shadow:inset 0 0 0 1.5px rgba(255,226,150,.75),inset 0 1.5px 0 rgba(255,255,255,.6),inset 0 -4px 8px rgba(5,20,45,.35),0 5px 0 #0b2b57,0 8px 0 rgba(224,187,74,.28),0 16px 30px -8px rgba(0,0,0,.6);transition:transform .25s cubic-bezier(.34,1.56,.64,1),box-shadow .2s}
+a.lxbtn.shcta:active{transform:translateY(4px);box-shadow:inset 0 0 0 1.5px rgba(255,226,150,.75),inset 0 1.5px 0 rgba(255,255,255,.6),0 1px 0 #0b2b57,0 3px 0 rgba(224,187,74,.28),0 8px 16px -8px rgba(0,0,0,.6)}
+a.lxbtn.shcta:focus-visible{outline:2px solid #5ab0ff;outline-offset:4px}
 .phero .eyebrow{background:linear-gradient(180deg,#fff7e3,#d8c8a4);-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent}
 </style>
 </head>
@@ -1045,7 +1060,6 @@ body nav button{border-radius:99px!important}
 <section class="view" id="v-home">
 <div class="hero"><button class="inst hide" id="instBtn" type="button" aria-label="Spara appen på hemskärmen"><svg viewBox="0 0 24 24" class="i"><path d="M12 3v12M7 10l5 5 5-5"/><path d="M5 19h14"/></svg><span>Spara app</span></button><div class="xl" id="xl" aria-hidden="true"></div><svg class="glogo" viewBox="0 56 200 103" aria-hidden="true"><use href="#i-logo-gold"/></svg><h1 class="lux"><span class="lx1">Ringenäs</span><span class="lx2">Tränare</span></h1><span class="lxline" aria-hidden="true"></span><p class="lxtag">Bättre golf genom smartare träning.</p><a class="lxbtn" href="https://appointment.balancegolf.com/?embed=true&amp;clubId=9" target="_blank" rel="noopener">Boka lektion</a><div class="lxsea" aria-hidden="true"></div><svg class="lxwave" viewBox="0 0 400 24" preserveAspectRatio="none" aria-hidden="true"><path d="M0 8 C50 0 100 0 150 8 S250 16 300 8 S370 2 400 8" fill="none" stroke="#e0bb4a" stroke-width="1.6" vector-effect="non-scaling-stroke"/><path d="M0 16 C50 24 100 24 150 16 S250 8 300 16 S370 22 400 16" fill="none" stroke="#fff" stroke-opacity=".6" stroke-width="1.3" vector-effect="non-scaling-stroke"/></svg><svg class="wave" viewBox="0 0 400 34" preserveAspectRatio="none" aria-hidden="true"><path class="w3" d="M0 6 C60 22 120 -4 200 10 S340 24 400 4 V34 H0Z"/><path class="w2" d="M0 12 C50 28 90 0 150 14 S250 30 300 12 S380 4 400 12 V34 H0Z"/><path class="wc c1" d="M0 12 C50 28 90 0 150 14 S250 30 300 12 S380 4 400 12"/><path class="w1" d="M0 20 C40 4 70 4 110 18 S180 34 220 18 S300 2 340 16 S390 26 400 20 V34 H0Z"/><path class="wc c2" d="M0 20 C40 4 70 4 110 18 S180 34 220 18 S300 2 340 16 S390 26 400 20"/></svg></div>
 <div class="card"><h2>Boka &amp; följ oss</h2>
-<a class="ex hl" href="https://appointment.balancegolf.com/?embed=true&amp;clubId=9" target="_blank" rel="noopener"><span class="ic"><svg class="i"><use href="#i-club"/></svg></span><div><b>Boka lektion eller custom fitting</b><small>Personlig hjälp av våra PGA-tränare</small></div><i><svg class="i"><use href="#i-ext"/></svg></i></a>
 <a class="ex" href="https://appointment.balancegolf.com/?embed=true&amp;clubId=9" target="_blank" rel="noopener"><span class="ic"><svg class="i"><use href="#i-cal"/></svg></span><div><b>Svingkurs Vinterträning</b><small>Boka din plats och bli bättre redan i vinter</small></div><i><svg class="i"><use href="#i-ext"/></svg></i></a>
 <a class="ex" href="https://www.matchi.se/facilities/ringenasgolf" target="_blank" rel="noopener"><span class="ic"><svg class="i"><use href="#i-screen"/></svg></span><div><b>Träna i Trackman-simulatorn</b><small>Boka tid och få exakta data på din sving</small></div><i><svg class="i"><use href="#i-ext"/></svg></i></a>
 <a class="ex" href="https://vm.tiktok.com/ZMYxPBcaJ/" target="_blank" rel="noopener"><span class="ic"><svg class="i"><use href="#i-tiktok"/></svg></span><div><b>Se tipsen på TikTok</b><small>Snabba träningstips från Ringenäs Tränare</small></div><i><svg class="i"><use href="#i-ext"/></svg></i></a>
@@ -1055,15 +1069,18 @@ body nav button{border-radius:99px!important}
 </section>
 
 <section class="view hide" id="v-contact">
+<div class="sh"><svg class="shlogo" viewBox="0 56 200 103" aria-hidden="true"><use href="#i-logo-gold"/></svg><h1>Kontakt</h1><span class="lxline" aria-hidden="true"></span><p>Tre tränare. Ett lag.</p></div>
+<div class="card"><h2>Träna med våra PGA-tränare</h2>
+<div class="coaches"><div class="coach"><img class="av" src="coach-thomas.jpg" alt="Thomas" width="72" height="72"><b>Thomas</b><small>Hittar det som kostar dig slag.</small></div><div class="coach"><img class="av" src="coach-peter.jpg" alt="Peter" width="72" height="72"><b>Peter</b><small>Träningen anpassad efter dig.</small></div><div class="coach"><img class="av" src="coach-oskar.jpg" alt="Oskar" width="72" height="72"><b>Oskar</b><small>Människan före golfaren.</small></div></div>
+<p>Thomas, Peter och Oskar – prisbelönta PGA-tränare. Personliga lektioner och kurser för alla nivåer, året runt.</p>
+<a class="lxbtn shcta" href="https://appointment.balancegolf.com/?embed=true&amp;clubId=9" target="_blank" rel="noopener">Boka lektion</a></div>
 <div class="card"><h2>Hör av dig</h2>
 <a class="ex" href="tel:+4635161590"><span class="ic"><svg class="i"><use href="#i-phone"/></svg></span><div><b>+46 35 16 15 90</b><small>Ring receptionen</small></div><i><svg class="i"><use href="#i-next"/></svg></i></a>
 <a class="ex" href="mailto:oskar@ringenas.com"><span class="ic"><svg class="i"><use href="#i-mail"/></svg></span><div><b>oskar@ringenas.com</b><small>Mejla Oskar</small></div><i><svg class="i"><use href="#i-next"/></svg></i></a>
 <a class="ex" href="https://www.google.com/maps/search/?api=1&amp;query=Ringen%C3%A4s+Golf+Strandlida+469+Halmstad" target="_blank" rel="noopener"><span class="ic"><svg class="i"><use href="#i-pin"/></svg></span><div><b>Strandlida 469, 305 91 Halmstad</b><small>Ringenäs Golf AB</small></div><i><svg class="i"><use href="#i-ext"/></svg></i></a>
 <a class="ex" href="https://ringenas.com/kontakta-oss/" target="_blank" rel="noopener"><span class="ic"><svg class="i"><use href="#i-globe"/></svg></span><div><b>ringenas.com</b><small>Öppettider och mer information</small></div><i><svg class="i"><use href="#i-ext"/></svg></i></a>
 </div>
-<div class="card"><h2>Träna med våra PGA-tränare</h2><img class="pga" src="pga-logo.png" alt="PGA of Sweden" width="96" height="110"><p>Thomas, Peter och Oskar – prisbelönta PGA-tränare. Personliga lektioner och kurser för alla nivåer, året runt.</p>
-<div class="coaches"><div class="coach"><img class="av" src="coach-thomas.jpg" alt="Thomas" width="72" height="72"><b>Thomas</b><small>Hittar det som kostar dig slag.</small></div><div class="coach"><img class="av" src="coach-peter.jpg" alt="Peter" width="72" height="72"><b>Peter</b><small>Träningen anpassad efter dig.</small></div><div class="coach"><img class="av" src="coach-oskar.jpg" alt="Oskar" width="72" height="72"><b>Oskar</b><small>Människan före golfaren.</small></div></div>
-<a class="ex" href="https://appointment.balancegolf.com/?embed=true&amp;clubId=9" target="_blank" rel="noopener"><span class="ic"><svg class="i"><use href="#i-cal"/></svg></span><div><b>Boka din lektion</b><small>Välj en tid som passar dig</small></div><i><svg class="i"><use href="#i-ext"/></svg></i></a></div>
+<div class="pgafoot"><img src="pga-logo.png" alt="PGA of Sweden" width="64" height="74"><span>Certifierade PGA-tränare</span></div>
 <button class="ghost admlink" data-go="admin" type="button">Tränarinloggning</button>
 </section>
 
@@ -1080,7 +1097,7 @@ body nav button{border-radius:99px!important}
 </section>
 
 <section class="view hide" id="v-play">
-<div class="phero"><svg class="lg" aria-hidden="true"><use href="#i-logo"/></svg><div><div class="eyebrow">Ringenäs Tränare</div><h1>Spela</h1><p>Utmana dig själv – och varandra</p></div><button class="qbtn" id="helpBtn" type="button" aria-label="Så funkar det">?</button></div>
+<div class="sh"><svg class="shlogo" viewBox="0 56 200 103" aria-hidden="true"><use href="#i-logo-gold"/></svg><h1>Spela</h1><span class="lxline" aria-hidden="true"></span><p>Utmana dig själv – och varandra</p><button class="qbtn" id="helpBtn" type="button" aria-label="Så funkar det">?</button></div>
 <div id="playGuide"></div>
 <div id="playResume"></div>
 <div id="playCode"></div>
