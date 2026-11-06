@@ -1589,7 +1589,7 @@ async function renderAdmin(){
     lb.onclick=async()=>{lb.disabled=true;const name="Mellan lamporna "+dag();try{const r=await aRpc("admin_session_create",{p_pin:apin,p_kind:"comp",p_name:name,p_holes:18,p_mode:"points",p_unit:"hal",p_hide:3});
       if(!r||!r.code)throw 0;await renderAdmin();admMsg("Startad! Koden är "+r.code+".");showCode(r.code,name,r.id)}
       catch(e){admMsg("Det gick inte att starta övningen.",1)}finally{lb.disabled=false}};
-    lf.append(el("p","msg","18 drives med konsekvens. Bara ledaren syns under spelet. Drive 16–18 är hemliga och topp 3 avslöjas på slutet."),lb,m);box.append(lf);
+    lf.append(el("p","msg","18 drives med konsekvens. Bara ledaren syns under spelet. Drive 16–18 är hemliga. På slutet avslöjas ettan och tvåan, alla andra delar tredjeplatsen."),lb,m);box.append(lf);
     admFocus=0;
     listSess(lampor);return;
   }
@@ -2053,12 +2053,19 @@ function drvRules(){
    Drive 1–5: träff +1, miss 0. Drive 6–10: farlig sida växlar, miss där −1.
    Drive 11–15: farlig sida växlar, miss där −2. Drive 16–17: träff +2, farlig miss −2.
    Drive 18: spelaren väljer säker (träff +1, miss 0) eller djärv (träff +3, miss −3).
-   Bara ledaren syns tills tränaren avslöjar, då visas topp 3. */
+   Bara ledaren syns tills tränaren avslöjar. Då visas ettan och tvåan med poäng,
+   och alla andra delar tredjeplatsen utan poäng, i bokstavsordning. */
 const LMP_N=18,LMP_LAST=17;
 let lmpBlink=null,lmpNext=0;
 const lmpSt={};
 function lmpOn(c){return !!c&&c.kind==="comp"&&!c.format&&c.holes===18&&c.hide_last===3&&/^Mellan lamporna\b/.test(c.name||"")}
-function lmpMax(c){return c.revealed?3:1}
+/* Slutställningen: plats 1–2 i ordning, alla andra sist med rest:true. */
+function lmpList(r,c){
+  if(!lmpOn(c)||!c.revealed)return r;
+  const v=x=>(x.val!=null?x.val:x.total)+"|"+x.played,top=[],rest=[];let pl=0,last=null;
+  r.forEach((x,i)=>{const k=v(x);if(k!==last){pl=i+1;last=k}(pl<=2?top:rest).push(x)});
+  return top.concat(rest.sort((a,b)=>String(a.name).localeCompare(String(b.name),"sv")).map(x=>({...x,rest:true})));
+}
 const lmpBad=i=>i<5||i>=LMP_LAST?null:i%2===1?"V":"H";
 const lmpHit=i=>i<15?1:2;
 const lmpCost=i=>i<5?0:i<10?-1:-2;
@@ -2074,7 +2081,11 @@ function lmpNew(k,r){
 }
 function lmpTxt(r,i){
   if(!r.length)return"";
-  if(comp.revealed)return i>=0&&i<3?"Plats "+(i+1):"";
+  if(comp.revealed){
+    if(i<0)return"";
+    const L=lmpList(r,comp),me=L.find(x=>x.pid===myPid);
+    return me.rest?"Delad plats 3":"Plats "+(L.findIndex(x=>x.total===me.total&&x.played===me.played)+1);
+  }
   const a=r[0],vis=comp.holes-comp.hide_last;
   return(a.pid===myPid?"Du leder":"Ledare: "+a.name+" "+a.total+" p")+(a.played>=vis?" efter drive "+vis:"");
 }
@@ -2162,7 +2173,7 @@ function lmpRules(){
    ["5","Drive 11–15: träff +1 p. Den farliga sidan växlar. Miss där ger −2 p, miss åt andra hållet 0 p."],
    ["6","Drive 16–17: träff +2 p. Miss åt farliga sidan ger −2 p, miss åt andra hållet 0 p."],
    ["7","Drive 18: välj innan du slår. Säker: träff +1 p, miss 0 p. Djärv: träff +3 p, miss −3 p."],
-   ["8","Bara ledaren syns i topplistan. Drive 16–18 är hemliga 🤫 och tränaren avslöjar topp 3 vid prisutdelningen."]]
+   ["8","Bara ledaren syns i topplistan. Drive 16–18 är hemliga 🤫 På slutet avslöjar tränaren ettan och tvåan. Alla andra delar tredjeplatsen, oavsett poäng."]]
    .forEach(([n,t])=>{const r=el("div","step");r.append(el("span","num",n),el("p",null,t));c.append(r)});
 }
 
@@ -2180,7 +2191,7 @@ function compQueue(L){
 }
 function compDrawBoard(anim){
   const b=$("cBoard");if(!b||!comp)return;
-  const hd=$("cHide");if(hd){hd.textContent="";if(comp.hide_last>0&&!comp.revealed){const d=el("div","chide");if(lmpOn(comp))d.append(el("b",null,"Bara ledaren syns"),el("small",null,"Drive 16–18 är hemliga. Tränaren avslöjar topp 3 vid prisutdelningen."));else d.append(el("b",null,"Sista "+comp.hide_last+" "+unitW(comp,comp.hide_last)+" är hemliga"),el("small",null,"Topplistan visar bara de första "+(comp.holes-comp.hide_last)+". Slutställningen avslöjas vid prisutdelningen."));hd.append(d)}}
+  const hd=$("cHide");if(hd){hd.textContent="";if(comp.hide_last>0&&!comp.revealed){const d=el("div","chide");if(lmpOn(comp))d.append(el("b",null,"Bara ledaren syns"),el("small",null,"Drive 16–18 är hemliga. Tränaren avslöjar ettan och tvåan vid prisutdelningen. Alla andra delar tredjeplatsen."));else d.append(el("b",null,"Sista "+comp.hide_last+" "+unitW(comp,comp.hide_last)+" är hemliga"),el("small",null,"Topplistan visar bara de första "+(comp.holes-comp.hide_last)+". Slutställningen avslöjas vid prisutdelningen."));hd.append(d)}}
   const vis=comp.revealed?comp.holes:comp.holes-comp.hide_last;
   const ranked=compRank(compRows,comp);
   const before={};b.querySelectorAll(".row[data-pid]").forEach(r=>before[r.dataset.pid]=r.getBoundingClientRect().top);
@@ -2190,17 +2201,18 @@ function compDrawBoard(anim){
   if(!ranked.length){b.append(el("p","msg","Inga resultat än – första resultatet tar ledningen!"));return}
   {const hr=el("div","rowh");hr.append(el("span",null,"Plats"),el("span",null,"Spelare"),el("span",null,comp.mode==="strokes"?"Slag":"Poäng"));b.append(hr)}
   let place=0,last=null;
-  ranked.forEach((p,i)=>{
+  lmpList(ranked,comp).forEach((p,i)=>{
     const key=comp.mode==="strokes"?(p.played?p.total/p.played:0)+"|"+p.played:p.total+"|"+p.played;
     if(key!==last){place=i+1;last=key}
-    if(lmpOn(comp)&&place>lmpMax(comp))return;
+    if(p.rest)place=3;
+    if(lmpOn(comp)&&!comp.revealed&&place>1)return;
     const r=el("div","row"+(place===1?" first":"")+(p.pid===myPid?" me":"")+(lmpBlink===p.pid?" win":""));r.dataset.pid=p.pid;
     const rk=el("div","rk",String(place));
     const n=el("div","nm",p.name);
-    const sub=p.played>=vis?(comp.revealed||comp.hide_last===0?"Klar":"Klar med "+vis+" av "+comp.holes):"Efter "+p.played+"/"+vis;
+    const sub=p.rest?"Delad tredjeplats":p.played>=vis?(comp.revealed||comp.hide_last===0?"Klar":"Klar med "+vis+" av "+comp.holes):"Efter "+p.played+"/"+vis;
     const s=el("span","sub",sub+(comp.mode==="strokes"&&p.played&&p.played<vis?" · snitt "+(p.total/p.played).toFixed(1).replace(".",","):""));n.append(s);
-    const mv=compMove[p.pid];if(mv&&mv.until>now&&mv.d&&!(lmpOn(comp)&&!comp.revealed)){const a=el("span","mv "+(mv.d>0?"up":"down"),(mv.d>0?"▲":"▼")+Math.abs(mv.d));n.prepend(a)}
-    const t=el("div","pts",String(p.total));
+    const mv=compMove[p.pid];if(mv&&mv.until>now&&mv.d&&!p.rest&&!(lmpOn(comp)&&!comp.revealed)){const a=el("span","mv "+(mv.d>0?"up":"down"),(mv.d>0?"▲":"▼")+Math.abs(mv.d));n.prepend(a)}
+    const t=el("div","pts",p.rest?"":String(p.total));
     r.append(rk,n,t);b.append(r);
     if(before[p.pid]!=null){requestAnimationFrame(()=>{const dy=before[p.pid]-r.getBoundingClientRect().top;if(Math.abs(dy)>2&&r.animate)r.animate([{transform:"translateY("+dy+"px)"},{transform:"none"}],{duration:anim?1400:700,easing:"cubic-bezier(.2,.8,.2,1)"})})}
     else if(anim&&r.animate)r.animate([{opacity:0,transform:"translateY(14px)"},{opacity:1,transform:"none"}],{duration:500,delay:i*90,fill:"backwards"});
@@ -2314,15 +2326,16 @@ function tvDraw(anim){
   if(!r.length){list.innerHTML='<p class="tvempty">Väntar på första resultatet…<br><small>Scanna QR-koden och kör igång!</small></p>';return}
   const vis=s.kind==="comp"?(s.revealed?s.holes:s.holes-s.hide_last):(s.revealed?5:5-s.hide_last);
   let place=0,last=null;
-  r.forEach((p,i)=>{
+  lmpList(r,s).forEach((p,i)=>{
     const key=s.kind==="comp"&&s.mode==="strokes"?(p.played?p.val/p.played:0)+"|"+p.played:p.val+"|"+p.played;if(key!==last){place=i+1;last=key}
-    if(lmpOn(s)&&place>lmpMax(s))return;
+    if(p.rest)place=3;
+    if(lmpOn(s)&&!s.revealed&&place>1)return;
     const row=el("button","tvr"+(place<=3?" p"+place:"")+(apin?" ed":"")+(lmpBlink===p.pid?" win":""));row.dataset.pid=p.pid;row.type="button";
     const rk=el("span","tvrk",String(place));
     const nm=el("span","tvnm");const nn=el("b",null,p.name);nm.append(nn);
-    const mv=tvMove[p.pid];if(mv&&mv.until>now&&!(lmpOn(s)&&!s.revealed))nm.append(el("i","tvmv "+(mv.d>0?"up":"down"),(mv.d>0?"▲":"▼")+Math.abs(mv.d)));
-    nm.append(el("small",null,(p.played>=vis?"Klar":(s.kind==="comp"?"Efter "+p.played+"/"+vis:"Omgång "+p.played+"/"+vis))+(s.kind==="comp"&&s.mode==="strokes"&&p.played&&p.played<vis?" · snitt "+(p.val/p.played).toFixed(1).replace(".",","):"")));
-    const pt=el("span","tvpt",String(p.val));
+    const mv=tvMove[p.pid];if(mv&&mv.until>now&&!p.rest&&!(lmpOn(s)&&!s.revealed))nm.append(el("i","tvmv "+(mv.d>0?"up":"down"),(mv.d>0?"▲":"▼")+Math.abs(mv.d)));
+    nm.append(el("small",null,p.rest?"Delad tredjeplats":(p.played>=vis?"Klar":(s.kind==="comp"?"Efter "+p.played+"/"+vis:"Omgång "+p.played+"/"+vis))+(s.kind==="comp"&&s.mode==="strokes"&&p.played&&p.played<vis?" · snitt "+(p.val/p.played).toFixed(1).replace(".",","):"")));
+    const pt=el("span","tvpt",p.rest?"":String(p.val));
     row.append(rk,nm,pt);row.onclick=()=>{if(apin)tvEdit(p);else tvLogin(p)};list.append(row);
     if(before[p.pid]!=null&&row.animate){requestAnimationFrame(()=>{const dy=before[p.pid]-row.getBoundingClientRect().top;if(Math.abs(dy)>2)row.animate([{transform:"translateY("+dy+"px)"},{transform:"none"}],{duration:anim?1500:800,easing:"cubic-bezier(.2,.8,.2,1)"})})}
     else if(row.animate)row.animate([{opacity:0,transform:"translateX(-24px)"},{opacity:1,transform:"none"}],{duration:500,delay:Math.min(i,12)*70,fill:"backwards"});
