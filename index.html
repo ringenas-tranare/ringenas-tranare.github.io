@@ -714,6 +714,9 @@ body[data-view="tv"]{background:radial-gradient(120% 90% at 20% 0%,#1d3550 0%,#0
 #tvAdm .go{margin-top:10px}
 .tvtoast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%);z-index:300;background:#10233a;color:#fff;border:1px solid var(--gold);padding:10px 18px;border-radius:99px;font-weight:700;transition:opacity .4s}
 .tvtoast.out{opacity:0}
+.tvmap{position:fixed;inset:0;z-index:250;background:#07131f}
+.tvmap iframe{display:block;width:100%;height:100%;border:0}
+body .tvmapx{position:absolute;right:20px;bottom:20px;width:auto;margin:0;padding:12px 20px;background:rgba(10,26,46,.86);color:#fff;border:1px solid rgba(240,205,120,.45);border-radius:99px}
 .tvmod{position:fixed;inset:0;z-index:250;background:rgba(3,8,14,.7);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);display:grid;place-items:center;padding:16px}
 .tvmc{width:min(560px,100%);max-height:90vh;overflow:auto;position:relative}
 .tvx{position:absolute;top:10px;right:10px;margin:0!important;width:auto!important;padding:6px 12px!important}
@@ -2303,7 +2306,8 @@ function tvShow(){
   const ed=el("button","ghost",apin?"✎ Tryck på en spelare för att rätta":"🔒 Redigera");ed.id="tvEd";ed.onclick=()=>{if(!apin)tvLogin();else tvToast("Tryck på en spelare för att rätta poäng")};
   const ad=el("button","ghost tvadd","＋ Lägg till spelare");ad.onclick=()=>{if(!apin)tvLogin("add");else tvAdd()};
   const cl=el("button","ghost","✕");cl.title="Stäng storbild";cl.onclick=()=>{if(document.fullscreenElement)document.exitFullscreen();go(apin?"admin":"home")};
-  ctl.append(ad,fs,ed,cl);h.append(ctl);
+  const mp=el("button","ghost","🗺 Karta");mp.onclick=tvMap;
+  ctl.append(ad,mp,fs,ed,cl);h.append(ctl);
   const body=el("div","tvb");
   const list=el("div","tvlist");list.id="tvList";
   const side=el("aside","tvjoin");side.innerHTML='<div class="tvqr" id="tvQr"></div><p class="tvsc">Scanna och var med!</p><div class="tvcl">eller skriv koden</div><div class="tvcode" id="tvCode">––––</div><small>ringenas-tranare.github.io → Spela</small><div id="tvHide"></div><div id="tvAdm"></div>';
@@ -2341,6 +2345,13 @@ function tvDraw(anim){
     else if(row.animate)row.animate([{opacity:0,transform:"translateX(-24px)"},{opacity:1,transform:"none"}],{duration:500,delay:Math.min(i,12)*70,fill:"backwards"});
   });
   lmpBlink=null;
+}
+function tvMap(){
+  if(document.querySelector(".tvmap"))return;
+  const o=el("div","tvmap");const f=document.createElement("iframe");f.src="anlaggningskarta.html";f.title="Anläggningskarta Ringenäs Golfcenter";
+  const x=el("button","ghost tvmapx","✕ Stäng kartan");
+  const close=()=>{o.remove();removeEventListener("keydown",key)},key=e=>{if(e.key==="Escape")close()};
+  x.onclick=close;addEventListener("keydown",key);o.append(f,x);document.body.append(o);
 }
 function tvToast(t){const d=el("div","tvtoast",t);document.body.append(d);setTimeout(()=>d.classList.add("out"),2200);setTimeout(()=>d.remove(),2700)}
 function tvModal(title){const o=el("div","tvmod");const c=el("div","card tvmc");const x=el("button","ghost tvx","✕");x.onclick=()=>o.remove();c.append(x,el("h2",null,title));o.append(c);o.onclick=e=>{if(e.target===o)o.remove()};document.body.append(o);return{o,c}}
