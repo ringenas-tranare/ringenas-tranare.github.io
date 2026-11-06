@@ -1587,13 +1587,13 @@ async function renderAdmin(){
   }
   if(admPage==="lampor"){
     if(ttl)ttl.textContent="Mellan lamporna";
-    const lf=el("div","cform");
+    const lf=el("div","cform");const ln=el("input");ln.placeholder="t.ex. Vuxenkurs "+dag();ln.maxLength=22;
     const lb=el("button","go","Starta Mellan lamporna");const m=msg();
-    lb.onclick=async()=>{lb.disabled=true;const name="Mellan lamporna "+dag();try{const r=await aRpc("admin_session_create",{p_pin:apin,p_kind:"comp",p_name:name,p_holes:18,p_mode:"points",p_unit:"hal",p_hide:3});
+    lb.onclick=async()=>{lb.disabled=true;const own=ln.value.trim(),full=own?"Mellan lamporna · "+own:"Mellan lamporna "+dag(),name=own||full;try{const r=await aRpc("admin_session_create",{p_pin:apin,p_kind:"comp",p_name:full,p_holes:18,p_mode:"points",p_unit:"hal",p_hide:3});
       if(!r||!r.code)throw 0;await renderAdmin();admMsg("Startad! Koden är "+r.code+".");showCode(r.code,name,r.id)}
       catch(e){admMsg("Det gick inte att starta övningen.",1)}finally{lb.disabled=false}};
-    lf.append(el("p","msg","18 drives med konsekvens. Bara ledaren syns under spelet. Drive 16–18 är hemliga. På slutet avslöjas ettan och tvåan, alla andra delar tredjeplatsen."),lb,m);box.append(lf);
-    admFocus=0;
+    lf.append(el("p","msg","18 drives med konsekvens. Bara ledaren syns under spelet. Drive 16–18 är hemliga. På slutet avslöjas ettan och tvåan, alla andra delar tredjeplatsen."),el("label",null,"Namn på passet (valfritt)"),ln,lb,m);box.append(lf);
+    setTimeout(()=>{if(admFocus){admFocus=0;ln.focus()}},50);
     listSess(lampor);return;
   }
   if(admPage==="bet"&&!admBetSid){
@@ -1645,8 +1645,8 @@ async function renderAdmin(){
 function sessRow(c,compact,inside){
   const w=el("div","admrow sessrow"+(c.status==="closed"?" blk":""));
   const top=el("div","srtop");
-  const info=el("div","admh");const nmEl=el("b",null,c.name);nmEl.prepend(el("i","sdot "+(c.status==="open"?"on":"off")));info.append(nmEl,el("small",null,(fmtName(c)?fmtName(c)+" · ":"")+(c.kind==="betting"?"Bettingpass"+(c.hide_last?" · dolda: "+c.hide_last+(c.revealed?" (avslöjade)":""):""):c.holes+" "+unitW(c,c.holes)+" · "+(c.mode==="strokes"?"slag":"poäng")+(c.hide_last?" · dolda: "+c.hide_last+(c.revealed?" (avslöjade)":""):""))+" · "+(c.players||0)+" spelare · "+(c.status==="open"?"pågår":"avslutad")+" · "+new Date(c.created_at).toLocaleDateString("sv-SE")));
-  const code=el("button","codepill",c.code);code.title="Visa koden stort";code.onclick=()=>showCode(c.code,c.name,c.id);
+  const info=el("div","admh");const nmEl=el("b",null,lmpTitle(c));nmEl.prepend(el("i","sdot "+(c.status==="open"?"on":"off")));info.append(nmEl,el("small",null,(fmtName(c)?fmtName(c)+" · ":"")+(c.kind==="betting"?"Bettingpass"+(c.hide_last?" · dolda: "+c.hide_last+(c.revealed?" (avslöjade)":""):""):c.holes+" "+unitW(c,c.holes)+" · "+(c.mode==="strokes"?"slag":"poäng")+(c.hide_last?" · dolda: "+c.hide_last+(c.revealed?" (avslöjade)":""):""))+" · "+(c.players||0)+" spelare · "+(c.status==="open"?"pågår":"avslutad")+" · "+new Date(c.created_at).toLocaleDateString("sv-SE")));
+  const code=el("button","codepill",c.code);code.title="Visa koden stort";code.onclick=()=>showCode(c.code,lmpTitle(c),c.id);
   if(c.status==="open")top.append(info,code);else top.append(info);
   w.append(top);
   const a=el("div","adm3");
@@ -1663,7 +1663,7 @@ function sessRow(c,compact,inside){
       es.forEach(e=>{const rr=el("div","cplr");const sc=(e.scores||[]).map(v=>v==null?"–":v).join(" ");rr.append(el("span",null,(e.name||"(utan namn)")+(e.blocked?" · dold":"")),el("small",null,sc));const d=el("button","danger","Ta bort");twoTap(d,"Säker?",()=>op("delete_entry",e.pid,"Spelaren är borttagen."));rr.append(d);pl.append(rr)})}};
     a.append(bP);w.append(a,pl)}else w.append(a);
   const bL=el("button",null,"Kopiera storbildslänk");bL.onclick=async()=>{const u=tvLink(c.id);try{if(navigator.share&&matchMedia("(pointer:coarse)").matches){await navigator.share({title:c.name,url:u})}else{await navigator.clipboard.writeText(u);admMsg("Länken är kopierad – öppna den på TV:n eller iPaden.")}}catch(e){admMsg(u)}};a.append(bL);
-  const bK=el("button",null,"Kör igen");bK.title="Starta ett nytt pass med samma inställningar och ny kod";bK.onclick=async()=>{bK.disabled=true;try{const r=await aRpc("admin_session_create",{p_pin:apin,p_kind:c.kind,p_name:c.name,p_holes:c.holes,p_mode:c.mode,p_unit:c.unit,p_hide:c.hide_last,p_format:c.format||null});if(!r||!r.code)throw 0;await renderAdmin();admMsg("Nytt pass startat med kod "+r.code+".");showCode(r.code,c.name,r.id)}catch(e){admMsg("Det gick inte.",1)}finally{bK.disabled=false}};a.append(bK);
+  const bK=el("button",null,"Kör igen");bK.title="Starta ett nytt pass med samma inställningar och ny kod";bK.onclick=async()=>{bK.disabled=true;try{const r=await aRpc("admin_session_create",{p_pin:apin,p_kind:c.kind,p_name:c.name,p_holes:c.holes,p_mode:c.mode,p_unit:c.unit,p_hide:c.hide_last,p_format:c.format||null});if(!r||!r.code)throw 0;await renderAdmin();admMsg("Nytt pass startat med kod "+r.code+".");showCode(r.code,lmpTitle(c),r.id)}catch(e){admMsg("Det gick inte.",1)}finally{bK.disabled=false}};a.append(bK);
   const bD=el("button","danger","Radera");twoTap(bD,"Säker?",()=>op("delete",null,"Raderat."));a.append(bD);
   return w;
 }
@@ -1851,7 +1851,7 @@ function compDrawHead(){
   {const tb=document.querySelector("#v-comp .trail b");if(tb)tb.textContent=fmtName(comp)||"Träningstävling"}
   const h=$("cHead");if(!h)return;h.textContent="";
   if(!comp){h.append(el("h2",null,"Laddar tävling…"));return}
-  h.append(el("h2",null,comp.name));
+  h.append(el("h2",null,lmpTitle(comp)));
   const p=el("p","msg",(fmtName(comp)?fmtName(comp)+" · ":"")+comp.holes+" "+unitW(comp,comp.holes)+" · "+modeTxt(comp)+(comp.hide_last>0&&!comp.revealed?" · sista "+comp.hide_last+" "+unitW(comp,comp.hide_last)+" dolda":"")+(comp.status==="closed"?" · Avslutad":""));p.style.margin="0";h.append(p);
 }
 let compHole=null,compEditName=false;
@@ -2052,7 +2052,7 @@ function drvRules(){
 
 /* === Mellan lamporna ===
    18 drives mellan lamporna på rangen. Körs som en vanlig tävling (18 hål, poäng, sista 3 dolda)
-   som känns igen på namnet, så databasen behöver inte ändras. Poängen sparas per drive.
+   som känns igen på namnet ("Mellan lamporna" eller "Mellan lamporna · Eget namn"), så databasen behöver inte ändras. Poängen sparas per drive.
    Drive 1–5: träff +1, miss 0. Drive 6–10: farlig sida växlar, miss där −1.
    Drive 11–15: farlig sida växlar, miss där −2. Drive 16–17: träff +2, farlig miss −2.
    Drive 18: spelaren väljer säker (träff +1, miss 0) eller djärv (träff +3, miss −3).
@@ -2061,6 +2061,7 @@ function drvRules(){
 const LMP_N=18,LMP_LAST=17;
 let lmpBlink=null,lmpNext=0;
 const lmpSt={};
+function lmpTitle(c){return lmpOn(c)?c.name.replace(/^Mellan lamporna · /,""):c.name}
 function lmpOn(c){return !!c&&c.kind==="comp"&&!c.format&&c.holes===18&&c.hide_last===3&&/^Mellan lamporna\b/.test(c.name||"")}
 /* Slutställningen: plats 1–2 i ordning, alla andra sist med rest:true. */
 function lmpList(r,c){
@@ -2255,7 +2256,7 @@ async function playResume(){playGuide();
   const box=$("playResume");if(!box)return;box.textContent="";
   const items=[];
   if(betSid)items.push({k:"betting",t:betSess?betSess.name:"Ditt bettingpass",s:"Bettingträning"+(betSess&&betSess.status==="closed"?" · avslutat":""),go:()=>go("betting")});
-  if(compCode)items.push({k:"comp",t:comp&&comp.id===compCode?comp.name:"Din tävling",s:"Träningstävling"+(comp&&comp.status==="closed"?" · avslutad":""),go:()=>{compTab="card";go("comp")}});
+  if(compCode)items.push({k:"comp",t:comp&&comp.id===compCode?lmpTitle(comp):"Din tävling",s:"Träningstävling"+(comp&&comp.status==="closed"?" · avslutad":""),go:()=>{compTab="card";go("comp")}});
   if(!items.length)return;
   const c=el("div","card resume");c.append(el("h2",null,"Fortsätt där du var"));
   items.forEach(x=>{const b=el("button","ex hl");b.innerHTML='<span class="ic"><svg class="i"><use href="#'+(x.k==="betting"?"i-target":"i-trophy")+'"/></svg></span><div><b></b><small></small></div><i><svg class="i"><use href="#i-next"/></svg></i>';b.querySelector("b").textContent=x.t;b.querySelector("small").textContent=x.s;b.onclick=x.go;c.append(b)});
@@ -2318,7 +2319,7 @@ function tvDraw(anim){
   const s=tvSess,list=$("tvList");if(!list)return;
   if(!tvId||tvGone){list.innerHTML='<p class="tvempty">Passet finns inte längre.</p>';const n=$("tvName");if(n)n.textContent="Storbild";return}
   if(!s)return;
-  $("tvName").textContent=s.name;
+  $("tvName").textContent=lmpTitle(s);
   $("tvInfo").textContent=(s.kind==="betting"?"Bettingträning · 5 omgångar":(fmtName(s)?fmtName(s)+" · ":"")+s.holes+" "+unitW(s,s.holes)+" · "+(s.mode==="strokes"?"slag – lägst vinner":"poäng – högst vinner"))+(s.status==="closed"?" · avslutat":"");
   const code=$("tvCode");if(code&&code.textContent!==s.code){code.textContent=s.status==="open"?s.code:"Stängt";const q=$("tvQr");if(q){if(s.status==="open")tvQr(q,SITE+"#kod-"+s.code);else q.textContent=""}}
   const hd=$("tvHide");if(hd){hd.textContent="";if(s.hide_last>0&&!s.revealed){const n=s.hide_last;const t=lmpOn(s)?"Bara ledaren syns. Drive 16–18 är hemliga":n>1?"Sista "+n+" "+(s.kind==="betting"?"omgångarna":unitW(s,n))+" är hemliga":(s.kind==="betting"?"Sista omgången är hemlig":s.unit==="station"?"Sista stationen är hemlig":"Sista hålet är hemligt");hd.append(el("div","tvsec","🤫 "+t))}}
