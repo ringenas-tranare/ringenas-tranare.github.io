@@ -818,7 +818,7 @@ function draw2(){
   c.save();c.translate(0,GY);
   if(g.t>g.L.d-2.5){const fx=PX+(g.L.d-g.t)*g.v+(g.state==="finish"?-g.endT*g.v*.3:0)+18;c.fillStyle="#e6eef7";c.fillRect(fx,-70,2,70);c.fillStyle="#e0bb4a";c.beginPath();c.moveTo(fx+2,-70);c.lineTo(fx+26,-63);c.lineTo(fx+2,-56);c.fill()}
   for(const o of g.obs){c.save();c.translate(o.x,0);OBS[o.k].draw(c,o);
-    if(o.lbl&&o.x>PX+14){const dk=o.lbl==="ducka",y=dk?-70:-46;c.fillStyle=dk?"#2f7fd0":"#e0bb4a";rr(c,-17,y-6,34,11,5.5);c.fillStyle=dk?"#fff":"#1a1405";c.font="800 6.5px Montserrat,system-ui,sans-serif";c.textAlign="center";c.fillText(dk?"DUCKA":"HOPPA",0,y+2.2)}
+    if(o.lbl&&o.x>PX+14){const dk=o.lbl==="ducka",y=dk?-70:-46;c.fillStyle=dk?"#d8c8a4":"#e0bb4a";rr(c,-17,y-6,34,11,5.5);c.fillStyle=dk?"#fff":"#1a1405";c.font="800 6.5px Montserrat,system-ui,sans-serif";c.textAlign="center";c.fillText(dk?"DUCKA":"HOPPA",0,y+2.2)}
     c.restore()}
   shadow(c,PX,Math.max(3,8-g.py/16));c.shadowColor="rgba(255,255,255,.6)";c.shadowBlur=3*sc*dpr;golfer(c,g,g.lv);c.shadowBlur=0;
   for(const q of g.parts){c.globalAlpha=Math.min(1,q.life*2);c.fillStyle=q.c;c.fillRect(q.x,q.y,2.4,2.4)}c.globalAlpha=1;
