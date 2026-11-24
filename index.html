@@ -1221,6 +1221,7 @@ body .adma button:not(.gold):not(.danger):not(.tvbtn):not(.codepill),body .stp .
 <div class="card hide" id="playList"><h2>Utmana dig själv</h2>
 <button class="ex" data-go="betting"><span class="ic"><svg class="i"><use href="#i-target"/></svg></span><div><b>Bettingträning</b><small>5 omgångar · satsa smart och klättra i topplistan</small></div><i><svg class="i"><use href="#i-next"/></svg></i></button>
 <button class="ex" data-go="comp"><span class="ic"><svg class="i"><use href="#i-trophy"/></svg></span><div><b>Träningstävling</b><small>Live-topplista för dagens tävling · upp till 18 hål eller stationer</small></div><i><svg class="i"><use href="#i-next"/></svg></i></button>
+<button class="ex" data-go="comp"><span class="ic"><svg class="i"><use href="#i-trophy"/></svg></span><div><b>Pulsstegen</b><small>3 varv · 5 stationer med hög puls · skriv in koden</small></div><i><svg class="i"><use href="#i-next"/></svg></i></button>
 <button class="ex" disabled><span class="ic"><svg class="i"><use href="#i-flag"/></svg></span><div><b>Putt-utmaning</b><small>Kommer snart – håll utkik!</small></div></button>
 <button class="ex" disabled><span class="ic"><svg class="i"><use href="#i-club"/></svg></span><div><b>Chip-utmaning</b><small>Kommer snart – håll utkik!</small></div></button>
 </div></section>
@@ -1605,7 +1606,7 @@ function admNav(passName){
   if(!apin)crumbs.push(["Tränarinloggning",null]);
   else{
     crumbs.push(["Tränarzon",admPage==="home"?null:()=>{admPage="home";admBetSid=null;renderAdmin()}]);
-    const lab={comp:"Träningstävling",bet:"Bettingträning",drive:"Driver med låsning",lampor:"Mellan lamporna",settings:"Inställningar"}[admPage];
+    const lab={comp:"Träningstävling",bet:"Bettingträning",drive:"Driver med låsning",lampor:"Mellan lamporna",puls:"Pulsstegen",settings:"Inställningar"}[admPage];
     if(lab)crumbs.push([lab,admBetSid?()=>{admBetSid=null;renderAdmin()}:null]);
     if(admBetSid)crumbs.push([passName||"Pass",null]);
   }
@@ -1640,13 +1641,13 @@ async function renderAdmin(){
   if(!list.length&&!(await aRpc("admin_login",{p_pin:apin}))){apin=null;try{sessionStorage.removeItem("bt_apin");localStorage.removeItem("bt_apin_keep")}catch(e){}return renderAdmin()}
   
   const msg=()=>{const m=el("div","msg");m.id="admMsg";return m};
-  const comps=list.filter(x=>x.kind==="comp"&&!x.format&&!lmpOn(x)),bets=list.filter(x=>x.kind==="betting"),drives=list.filter(x=>x.format==="drive"),lampor=list.filter(x=>lmpOn(x));
+  const comps=list.filter(x=>x.kind==="comp"&&!x.format&&!lmpOn(x)),bets=list.filter(x=>x.kind==="betting"),drives=list.filter(x=>x.format==="drive"),pulser=list.filter(x=>x.format==="puls"),lampor=list.filter(x=>lmpOn(x));
   const dag=()=>["söndag","måndag","tisdag","onsdag","torsdag","fredag","lördag"][new Date().getDay()];
   const listSess=arr=>{const op=arr.filter(x=>x.status==="open"),cl=arr.filter(x=>x.status!=="open");if(op.length){box.append(el("h3","admh3","Pågår"));op.forEach(x=>box.append(sessRow(x)))}if(cl.length){box.append(el("h3","admh3","Avslutade i dag"));cl.forEach(x=>box.append(sessRow(x)))}};
   if(admPage==="home"){
     if(ttl)ttl.textContent="Tränarzon";
     const open=list.filter(x=>x.status==="open");
-    const exK=x=>x.kind==="betting"?"bet":x.format==="drive"?"drive":lmpOn(x)?"lampor":"comp";
+    const exK=x=>x.kind==="betting"?"bet":x.format==="drive"?"drive":x.format==="puls"?"puls":lmpOn(x)?"lampor":"comp";
     box.append(el("h3","admh3 first","Starta ny övning"));
     const g=el("div","admtiles");
     const tile=(ic,t,sub,k)=>{const n=open.filter(x=>exK(x)===k).length;const b=el("button","ex");b.innerHTML='<span class="ic"><svg class="i"><use href="#'+ic+'"/></svg></span><div><b></b><small></small></div><i><svg class="i"><use href="#i-next"/></svg></i>';b.querySelector("b").textContent=t;b.querySelector("small").textContent=(n?n+" pågår · ":"")+sub;b.onclick=()=>{admPage=k;admFocus=1;renderAdmin();scrollTo({top:0,behavior:"smooth"})};g.append(b)};
@@ -1654,6 +1655,7 @@ async function renderAdmin(){
     tile("i-target","Bettingträning","5 omgångar · satsa smart och klättra","bet");
     tile("i-club","Driver med låsning","18 drives · pott och låsputt var tredje hål","drive");
     tile("i-flag","Mellan lamporna","18 drives · bara ledaren syns","lampor");
+    tile("i-trophy","Pulsstegen","3 varv · 5 stationer med hög puls · självgående","puls");
     box.append(g);
     if(open.length){box.append(el("h3","admh3","Pågår nu"));open.forEach(x=>box.append(sessRow(x,true)))}
     const st=el("button","ghost admset","Inställningar · byt kod · logga ut");st.onclick=()=>{admPage="settings";renderAdmin()};box.append(st);
@@ -1697,6 +1699,17 @@ async function renderAdmin(){
     df.append(el("p","msg","18 drives med farlig sida. Plus och minus i varje block om tre hål blir en pott som låses med en putt: 1 m sparar 75 %, 2 m allt, 4 m dubblar. Hål 16–18 ger dubbla poäng."),el("label",null,"Namn på passet (valfritt)"),dn,el("label",null,"Spänning"),dh,db,m);box.append(df);
     setTimeout(()=>{if(admFocus){admFocus=0;dn.focus()}},50);
     listSess(drives);return;
+  }
+  if(admPage==="puls"){
+    if(ttl)ttl.textContent="Pulsstegen";
+    const pf=el("div","cform");const pn=el("input");pn.placeholder="t.ex. Tourgrupp "+dag();pn.maxLength=40;
+    const pb=el("button","go","Starta Pulsstegen");const m=msg();
+    pb.onclick=async()=>{pb.disabled=true;const name=pn.value.trim()||"Pulsstegen "+dag();try{const r=await aRpc("admin_session_create",{p_pin:apin,p_kind:"comp",p_name:name,p_holes:15,p_mode:"points",p_unit:"station",p_hide:5,p_format:"puls"});
+      if(!r||!r.code)throw 0;await renderAdmin();admMsg("Startad! Koden är "+r.code+".");showCode(r.code,name,r.id)}
+      catch(e){admMsg("Det gick inte att starta övningen.",1)}finally{pb.disabled=false}};
+    pf.append(el("p","msg","Självgående: 3 varv × 5 stationer (driver, simulatorn 7-järn, Launch Pro wedge, chipp på mattor, wedge i korgen) med hög puls. Max 5 p per station. Varv 3 är hemligt och avslöjas automatiskt när alla är klara. Starta samma dag – passen rensas varje natt."),el("label",null,"Namn på passet (valfritt)"),pn,pb,m);box.append(pf);
+    setTimeout(()=>{if(admFocus){admFocus=0;pn.focus()}},50);
+    listSess(pulser);return;
   }
   if(admPage==="lampor"){
     if(ttl)ttl.textContent="Mellan lamporna";
@@ -1910,7 +1923,7 @@ function sessRow(c,compact,inside){
 let compCode=store("bt_comp")||null,compTab="card",comp=null,compRows=[],compRt=null,compPrev={},compMove={},compSaveT=0,compBusy=false,compRevealSeen=null;
 const cLoc=c=>{try{return JSON.parse(store("bt_cs_"+c)||"null")||{name:store("bt_cname")||"",scores:[]}}catch(e){return{name:"",scores:[]}}};
 const cSaveLoc=(c,o)=>store("bt_cs_"+c,JSON.stringify(o));
-function fmtName(c){return !c?"":c.format==="drive"?"Driver med låsning":lmpOn(c)?"Mellan lamporna":""}
+function fmtName(c){return !c?"":c.format==="drive"?"Driver med låsning":c.format==="puls"?"Pulsstegen":lmpOn(c)?"Mellan lamporna":""}
 const unitW=(c,n,cap)=>{const w=lmpOn(c)?(n===1?"drive":"drives"):c&&c.unit==="station"?(n===1?"station":"stationer"):"hål";return cap?w[0].toUpperCase()+w.slice(1):w};
 const unit1=(c,cap)=>{const w=lmpOn(c)?"drive":c&&c.unit==="station"?"station":"hål";return cap?w[0].toUpperCase()+w.slice(1):w};
 const modeTxt=c=>c.mode==="strokes"?"Slag – lägst vinner":"Poäng – högst vinner";
@@ -1970,6 +1983,7 @@ function compDrawHead(){
 let compHole=null,compEditName=false;
 function compDrawCard(){
   if(comp&&comp.format==="drive")return drvDrawCard();
+  if(plsOn(comp))return plsDrawCard();
   if(lmpOn(comp))return lmpDrawCard();
   const c=$("cCard");if(!c)return;c.textContent="";
   if(!comp){c.append(el("p","msg","Laddar…"));return}
@@ -2024,6 +2038,7 @@ function compDrawCard(){
 }
 function compRules(){
   if(comp&&comp.format==="drive")return drvRules();
+  if(plsOn(comp))return plsRules();
   if(lmpOn(comp))return lmpRules();
   const c=$("cRules");if(!c||!comp)return;c.textContent="";const N=comp.holes,u=unitW(comp,N);
   c.append(el("h2",null,"Så funkar tävlingen"));
@@ -2161,6 +2176,118 @@ function drvRules(){
    .forEach(([n,t])=>{const r=el("div","step");r.append(el("span","num",n),el("p",null,t));c.append(r)});
   c.append(el("h2",null,"Exempel"));
   c.append(el("p",null,"Hål 1 fairway (+1), hål 2 fairway (+1), hål 3 miss åt farliga sidan (−1): potten är 1 p. Du väljer 4 m och sätter putten – potten dubblas och du låser 2 p. Missar du putten blir det 0 p för blocket."));
+}
+
+/* === Pulsstegen (tävling med format "puls") ===
+   Självgående: 3 varv × 5 stationer = 15 stationer, poäng, varv 3 (station 11–15) dolt.
+   Spelarna går två och två; kompisen räknar ner pulsen och godkänner poängen.
+   Löpning mellan varven, pulsmoment före varje station.
+   Driver: 4 drives med konsekvens (vänster/fairway/höger). Övriga: 5 slag, 1 p per träff.
+   Varv 3 avslöjas automatiskt (comp_autoreveal) när alla spelare fyllt i alla 15 stationer. */
+const PLS_N=15;
+const PLS_ST=[
+  {k:"drv",t:"Driver",ic:"🏌️",var:"Utomhus · mellan lamporna vid 125-greenen",n:4},
+  {k:"sim",t:"Simulatorn · 7-järn",ic:"🖥️",var:"Studion",n:5,hit:"Inom 5 m",miss:"Utanför"},
+  {k:"lp",t:"Launch Pro · wedge",ic:"📡",var:"Under tak",n:5,hit:"Inom 3 m",miss:"Utanför"},
+  {k:"chip",t:"Chipp på mattor",ic:"🎯",var:"Under tak",n:5,hit:"På mattan",miss:"Miss"},
+  {k:"korg",t:"Wedge i korgen",ic:"🧺",var:"Under tak",n:5,hit:"I korgen",miss:"Miss"}];
+const PLS_DRV=[ // [vänster, fairway, höger] per drive och varv
+  [[0,1,0],[-1,1,0],[0,1,-1],[-1,2,-1]],
+  [[-1,1,0],[0,1,-1],[-2,1,0],[0,2,-2]],
+  [[-2,1,0],[0,1,-2],[-1,1,-1],[-2,2,-2]]];
+const PLS_LP=[50,70,60],PLS_SIM=[0,-10,-20],PLS_MAT=[3,6,9,12,15];
+const PLS_PULS=["15 upphopp","10 burpees","10 burpees"];
+const plsOn=c=>!!c&&c.format==="puls";
+const plsV=i=>Math.floor(i/5),plsS=i=>PLS_ST[i%5];
+const plsTarget=(i,L)=>{const v=plsV(i),s=plsS(i);
+  if(s.k==="sim"){const len=+((L.pls||{}).len)||0;return PLS_SIM[v]===0?"Din vanliga 7-järnslängd"+(len?" = "+len+" m":""):"Din längd "+PLS_SIM[v]+" m"+(len?" = "+(len+PLS_SIM[v])+" m":"")}
+  if(s.k==="lp")return "Carry "+PLS_LP[v]+" m";
+  if(s.k==="chip")return "Ett slag mot varje matta: 3, 6, 9, 12 och 15 m";
+  if(s.k==="korg")return "5 försök";
+  return "4 drives – varje drive har egen farlig sida"};
+const plsSlot=(i,j)=>plsS(i).k==="chip"?PLS_MAT[j]+" m":plsS(i).k==="drv"?"Drive "+(j+1):"Slag "+(j+1);
+function plsCalc(L){
+  const D=(L.pls&&L.pls.d)||{},out=[],info=[];
+  for(let i=0;i<PLS_N;i++){const s=plsS(i),a=D[i]||[];let v=null,ext=false,done=0;
+    for(let j=0;j<s.n;j++)if(a[j]!=null)done++;
+    if(done){v=0;for(let j=0;j<s.n;j++){const x=a[j];if(x==null)continue;if(s.k==="drv")v+=PLS_DRV[plsV(i)][j][x];else v+=x?1:0}}
+    else if(L.scores[i]!=null){v=L.scores[i];ext=true}
+    out.push(v);info.push({done,ext,full:done===s.n})}
+  return{scores:out,info}}
+function plsSync(L){const c=plsCalc(L);L.scores=c.scores;return c}
+async function plsAutoReveal(){
+  if(!plsOn(comp)||comp.revealed||!sb)return;
+  try{const r=await sb.rpc("comp_autoreveal",{p_code:comp.id});if(r&&r.data)compFetch()}catch(e){}}
+function plsDrawCard(){
+  const c=$("cCard");if(!c)return;c.textContent="";
+  if(!comp){c.append(el("p","msg","Laddar…"));return}
+  const L=cLoc(comp.id);while(L.scores.length<PLS_N)L.scores.push(null);L.scores.length=PLS_N;
+  L.pls=L.pls||{d:{}};L.pls.d=L.pls.d||{};
+  const closed=comp.status==="closed",vis=comp.revealed?PLS_N:PLS_N-comp.hide_last;
+  if(!L.name){const d=store("bt_cname")||store("bt_name")||"";if(d){L.name=d;cSaveLoc(comp.id,L)}}
+  let C=plsSync(L);
+  if(compHole==null||compHole>=PLS_N){const f=C.info.findIndex(x=>!x.full&&!x.ext);compHole=f<0?PLS_N-1:f}
+  const nb=el("div","cname");
+  const drawName=()=>{nb.textContent="";
+    if((L.name||"").trim()&&!compEditName){const t=el("div","cnt");t.append(el("small",null,"Spelar som"),el("b",null,L.name));const e=el("button","ghost","Ändra");e.onclick=()=>{compEditName=true;drawName();const i=nb.querySelector("input");if(i)i.focus()};e.disabled=closed;nb.append(t,e)}
+    else{const lb=el("label",null,"Ditt namn – syns i topplistan");lb.htmlFor="cName";const nm=el("input");nm.id="cName";nm.maxLength=24;nm.placeholder="Förnamn";nm.value=L.name||"";nm.disabled=closed;nm.autocomplete="given-name";
+      const ok=el("button","go","Klar");ok.onclick=()=>{if(!nm.value.trim()){nm.focus();return}compEditName=false;drawName()};
+      nm.oninput=()=>{L.name=nm.value;cSaveLoc(comp.id,L);store("bt_cname",nm.value.trim());compQueue(L)};nm.onkeydown=e=>{if(e.key==="Enter")ok.click()};
+      const row=el("div","cnrow");row.append(nm,ok);nb.append(lb,row)}};
+  drawName();c.append(nb);
+  // Egen 7-järnslängd (för simulatorn)
+  const lw=el("div","cname");const ll=el("label",null,"Din vanliga 7-järnslängd (carry, meter)");const li=el("input");li.type="text";li.inputMode="numeric";li.placeholder="t.ex. 150";li.value=L.pls.len||"";li.disabled=closed;
+  li.onchange=()=>{const x=parseInt(li.value,10);L.pls.len=x>0&&x<300?x:"";cSaveLoc(comp.id,L);drawFocus()};lw.append(ll,li);c.append(lw);
+  const fp=el("div","hfocus drv");c.append(fp);
+  const gc=el("div","gcard");c.append(gc);
+  const tot=el("div","ctot");c.append(tot);
+  const save=()=>{C=plsSync(L);cSaveLoc(comp.id,L);compQueue(L)};
+  const drawGrid=()=>{gc.textContent="";
+    [0,1,2].forEach(v=>{const t=el("table");const h=el("tr","h");h.append(el("th",null,"Varv "+(v+1)));const r=el("tr");r.append(el("th",null,"Poäng"));let sum=0,n=0;
+      for(let i=v*5;i<v*5+5;i++){const cur=i===compHole?"cur ":"";const th=el("td",cur+(i>=vis?"hid":""),PLS_ST[i%5].ic);th.onclick=()=>{compHole=i;drawFocus();drawGrid()};h.append(th);
+        const x=L.scores[i];if(x!=null){sum+=x;n++}const td=el("td",cur+(x!=null?"f":""),x==null?"":String(x));td.onclick=th.onclick;r.append(td)}
+      h.append(el("td","s","Sum"));r.append(el("td","s",n?String(sum):"–"));t.append(h,r);gc.append(t)});
+    const pl=L.scores.filter(x=>x!=null).length,tt=L.scores.reduce((a,x)=>a+(x||0),0);
+    tot.textContent="";tot.append(el("span",null,"Totalt"),el("b",null,pl?String(tt):"–"),el("small",null,pl+" av "+PLS_N+" stationer"));const rk=el("em","crank");rk.id="cRank";tot.append(rk);compRankTxt()};
+  function drawFocus(keep){
+    const i=compHole,v=plsV(i),s=plsS(i),inf=C.info[i],a=L.pls.d[i]||[];fp.textContent="";
+    const top=el("div","hft");const t=el("div");
+    t.append(el("small",null,"Varv "+(v+1)+" av 3 · station "+(i%5+1)+" av 5"),el("b",null,s.ic+" "+s.t+(L.scores[i]!=null?" · "+L.scores[i]+" p":"")));top.append(t);
+    if(i>=vis)top.append(el("span","hbadge","🤫 Hemligt"));fp.append(top);
+    if(v>0&&i%5===0)fp.append(el("p","drule","🏃 Nytt varv: börja med löpning – sprint till konen och tillbaka."));
+    fp.append(el("p","drule","❤️ Puls först: "+PLS_PULS[v]+" – sedan slår du inom 20 sekunder."+((s.k==="drv"||s.k==="chip"||s.k==="korg")?" Halvvägs: 10 upphopp till.":"")));
+    fp.append(el("p","drule","📍 "+s.var+" · "+plsTarget(i,L)));
+    const pick=(j,x)=>{if(navigator.vibrate)navigator.vibrate(8);const arr=(L.pls.d[i]=L.pls.d[i]||[]);arr[j]=arr[j]===x?null:x;if(arr.every(y=>y==null))delete L.pls.d[i];save();drawFocus(true);drawGrid()};
+    for(let j=0;j<s.n;j++){
+      const row=el("div","dsides");row.style.gridTemplateColumns=s.k==="drv"?"5.5em repeat(3,1fr)":"5.5em 1fr 1fr";row.style.alignItems="center";
+      row.append(el("b",null,plsSlot(i,j)));
+      if(s.k==="drv"){const P=PLS_DRV[v][j];[["◀ Vänster",0],["Fairway",1],["Höger ▶",2]].forEach(([tx,k])=>{const p=P[k];const b=el("button","dsb"+(a[j]===k?" on":"")+(p<0?" neg":p>0?" pos":""));b.type="button";b.append(el("b",null,tx),el("small",null,(p>0?"+":"")+p+" p"));b.disabled=closed;b.onclick=()=>pick(j,k);row.append(b)})}
+      else [[s.hit,1],[s.miss,0]].forEach(([tx,k])=>{const b=el("button","dsb"+(a[j]===k?" on":"")+(k?" pos":""));b.type="button";b.append(el("b",null,(k?"✓ ":"✗ ")+tx),el("small",null,k?"+1 p":"0 p"));b.disabled=closed;b.onclick=()=>pick(j,k);row.append(b)});
+      fp.append(row)}
+    if(inf.ext)fp.append(el("p","drule","Den här stationen är ifylld av tränaren eller på en annan telefon."));
+    const nav=el("div","hnav");const pv=el("button","ghost","‹ Föregående");pv.disabled=i===0;pv.onclick=()=>{compHole=Math.max(0,i-1);drawFocus();drawGrid()};
+    const last=i===PLS_N-1;const nx=el("button","go",last?"Klar – se topplistan ›":"Nästa station ›");
+    nx.onclick=()=>{if(last){compTab="board";compShow();scrollTo({top:0,behavior:"smooth"});return}compHole=i+1;drawFocus();drawGrid();fp.scrollIntoView({block:"nearest",behavior:"smooth"})};
+    nav.append(pv,nx);fp.append(nav);
+    if(keep)fp.classList.add("pulse"),setTimeout(()=>fp.classList.remove("pulse"),250);
+  }
+  drawFocus();drawGrid();
+  const m=el("div","msg");m.id="cMsg";m.textContent=closed?"Tävlingen är avslutad.":"Börjar ni på en annan station? Tryck på ikonen i scorekortet. Allt sparas automatiskt.";c.append(m);
+}
+function plsRules(){
+  const c=$("cRules");if(!c||!comp)return;c.textContent="";
+  c.append(el("h2",null,"Pulsstegen – så fungerar det"));
+  [["1","Ni kör själva, två och två. Kompisen räknar ner pulsen, tittar på slaget och godkänner poängen."],
+   ["2","3 varv med 5 stationer. Paren börjar på olika stationer och flyttar vidare. Löpning mellan varven: sprint till konen och tillbaka."],
+   ["3","Puls före varje station: varv 1 15 upphopp, varv 2 och 3 10 burpees. Slå inom 20 sekunder. På driver, chipp och korg: 10 upphopp till halvvägs."],
+   ["4","🏌️ Driver (utomhus, mellan lamporna): 4 drives. Varje drive har egna poäng för vänster/fairway/höger – sista driven i varje varv ger 2 p på fairway."],
+   ["5","🖥️ Simulatorn: 5 slag med 7-järn. Varv 1 din vanliga längd, varv 2 −10 m, varv 3 −20 m. 1 p per slag inom 5 m."],
+   ["6","📡 Launch Pro: 5 wedgar. Varv 1 50 m, varv 2 70 m, varv 3 60 m carry. 1 p per slag inom 3 m."],
+   ["7","🎯 Chipp på mattor: ett slag mot varje matta (3, 6, 9, 12, 15 m). 1 p per träff."],
+   ["8","🧺 Wedge i korgen: 5 försök. 1 p per boll i korgen."],
+   ["9","Max 5 p per station, 25 p per varv, 75 p totalt. Topplistan uppdateras live."],
+   ["10","Varv 3 är hemligt 🤫 och avslöjas automatiskt när alla har fyllt i alla 15 stationer."]]
+   .forEach(([n,t])=>{const r=el("div","step");r.append(el("span","num",n),el("p",null,t));c.append(r)});
 }
 
 /* === Mellan lamporna ===
@@ -2302,13 +2429,13 @@ function compQueue(L){
     if(!name){if(m){m.textContent="Skriv ditt namn så hamnar du i topplistan.";m.classList.add("err")}return}
     const arr=L.scores.slice();while(arr.length&&arr[arr.length-1]==null)arr.pop();
     try{const r=await sb.rpc("comp_save",{p_code:comp.id,p_pid:myPid,p_secret:myId,p_name:name,p_scores:arr});
-      if(r.error||!r.data)throw r.error||new Error("x");compDirty=false;if(m){m.textContent="Sparat ✓";m.classList.remove("err")}}
+      if(r.error||!r.data)throw r.error||new Error("x");compDirty=false;if(m){m.textContent="Sparat ✓";m.classList.remove("err")}if(plsOn(comp)&&arr.length>=comp.holes&&arr.every(x=>x!=null))plsAutoReveal()}
     catch(e){if(m){m.textContent="Kunde inte spara – kontrollera nätet. Vi försöker igen när du ändrar något.";m.classList.add("err")}}
   },500);
 }
 function compDrawBoard(anim){
   const b=$("cBoard");if(!b||!comp)return;
-  const hd=$("cHide");if(hd){hd.textContent="";if(comp.hide_last>0&&!comp.revealed){const d=el("div","chide");if(lmpOn(comp))d.append(el("b",null,"Bara ledaren syns"),el("small",null,"Drive 16–18 är hemliga. Tränaren avslöjar ettan vid prisutdelningen. Alla andra delar andraplatsen."));else d.append(el("b",null,"Sista "+comp.hide_last+" "+unitW(comp,comp.hide_last)+" är hemliga"),el("small",null,"Topplistan visar bara de första "+(comp.holes-comp.hide_last)+". Slutställningen avslöjas vid prisutdelningen."));hd.append(d)}}
+  const hd=$("cHide");if(hd){hd.textContent="";if(comp.hide_last>0&&!comp.revealed){const d=el("div","chide");if(plsOn(comp))d.append(el("b",null,"Varv 3 är hemligt 🤫"),el("small",null,"Topplistan visar varv 1–2. Slutställningen avslöjas automatiskt när alla är klara."));else if(lmpOn(comp))d.append(el("b",null,"Bara ledaren syns"),el("small",null,"Drive 16–18 är hemliga. Tränaren avslöjar ettan vid prisutdelningen. Alla andra delar andraplatsen."));else d.append(el("b",null,"Sista "+comp.hide_last+" "+unitW(comp,comp.hide_last)+" är hemliga"),el("small",null,"Topplistan visar bara de första "+(comp.holes-comp.hide_last)+". Slutställningen avslöjas vid prisutdelningen."));hd.append(d)}}
   const vis=comp.revealed?comp.holes:comp.holes-comp.hide_last;
   const ranked=compRank(compRows,comp);
   const before={};b.querySelectorAll(".row[data-pid]").forEach(r=>before[r.dataset.pid]=r.getBoundingClientRect().top);
