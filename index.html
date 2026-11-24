@@ -1707,7 +1707,7 @@ async function renderAdmin(){
     pb.onclick=async()=>{pb.disabled=true;const name=pn.value.trim()||"Pulsstegen "+dag();try{const r=await aRpc("admin_session_create",{p_pin:apin,p_kind:"comp",p_name:name,p_holes:15,p_mode:"points",p_unit:"station",p_hide:5,p_format:"puls"});
       if(!r||!r.code)throw 0;await renderAdmin();admMsg("Startad! Koden är "+r.code+".");showCode(r.code,name,r.id)}
       catch(e){admMsg("Det gick inte att starta övningen.",1)}finally{pb.disabled=false}};
-    pf.append(el("p","msg","Självgående: 3 varv × 5 stationer (driver, simulatorn 7-järn, Launch Pro wedge, chipp på mattor, wedge i korgen) med hög puls. Max 5 p per station. Varv 3 är hemligt och avslöjas automatiskt när alla är klara. Starta samma dag – passen rensas varje natt."),el("label",null,"Namn på passet (valfritt)"),pn,pb,m);box.append(pf);
+    pf.append(el("p","msg","Självgående: 3 varv × 5 stationer (driver, simulatorn 7-järn, Launch Pro wedge, chipp på mattor, wedge i korgen) med hög puls. Max 21 p per varv. Varv 3 är hemligt och avslöjas automatiskt när alla är klara. Starta samma dag – passen rensas varje natt."),el("label",null,"Namn på passet (valfritt)"),pn,pb,m);box.append(pf);
     setTimeout(()=>{if(admFocus){admFocus=0;pn.focus()}},50);
     listSess(pulser);return;
   }
@@ -2187,8 +2187,8 @@ function drvRules(){
 const PLS_N=15;
 const PLS_ST=[
   {k:"drv",t:"Driver",ic:"🏌️",var:"Utomhus · mellan lamporna vid 125-greenen",n:4},
-  {k:"sim",t:"Simulatorn · 7-järn",ic:"🖥️",var:"Studion",n:5,hit:"Inom 5 m",miss:"Utanför"},
-  {k:"lp",t:"Launch Pro · wedge",ic:"📡",var:"Under tak",n:5,hit:"Inom 3 m",miss:"Utanför"},
+  {k:"sim",t:"Simulatorn · 7-järn",ic:"🖥️",var:"Studion",n:3,hit:"Inom 5 m",miss:"Utanför"},
+  {k:"lp",t:"Launch Pro · wedge",ic:"📡",var:"Under tak",n:3,hit:"Inom 3 m",miss:"Utanför"},
   {k:"chip",t:"Chipp på mattor",ic:"🎯",var:"Under tak",n:5,hit:"På mattan",miss:"Miss"},
   {k:"korg",t:"Wedge i korgen",ic:"🧺",var:"Under tak",n:5,hit:"I korgen",miss:"Miss"}];
 const PLS_DRV=[ // [vänster, fairway, höger] per drive och varv
@@ -2281,11 +2281,11 @@ function plsRules(){
    ["2","3 varv med 5 stationer. Paren börjar på olika stationer och flyttar vidare. Löpning mellan varven: sprint till konen och tillbaka."],
    ["3","Puls före varje station: 10 upphopp – alltså 15 stationer × 10 upphopp. Slå inom 20 sekunder efter upphoppen."],
    ["4","🏌️ Driver (utomhus, mellan lamporna): 4 drives. Varje drive har egna poäng för vänster/fairway/höger – sista driven i varje varv ger 2 p på fairway."],
-   ["5","🖥️ Simulatorn: 5 slag med 7-järn. Varv 1 din vanliga längd, varv 2 −10 m, varv 3 −20 m. 1 p per slag inom 5 m."],
-   ["6","📡 Launch Pro: 5 wedgar. Varv 1 50 m, varv 2 70 m, varv 3 60 m carry. 1 p per slag inom 3 m."],
+   ["5","🖥️ Simulatorn: 3 slag med 7-järn. Varv 1 din vanliga längd, varv 2 −10 m, varv 3 −20 m. 1 p per slag inom 5 m."],
+   ["6","📡 Launch Pro: 3 wedgar. Varv 1 50 m, varv 2 70 m, varv 3 60 m carry. 1 p per slag inom 3 m."],
    ["7","🎯 Chipp på mattor: ett slag mot varje matta (3, 6, 9, 12, 15 m). 1 p per träff."],
    ["8","🧺 Wedge i korgen: 5 försök. 1 p per boll i korgen."],
-   ["9","Max 5 p per station, 25 p per varv, 75 p totalt. Topplistan uppdateras live."],
+   ["9","Max 5 p på driver, chipp och korg och 3 p på simulatorn och Launch Pro – 21 p per varv, 63 p totalt. Topplistan uppdateras live."],
    ["10","Varv 3 är hemligt 🤫 och avslöjas automatiskt när alla har fyllt i alla 15 stationer."]]
    .forEach(([n,t])=>{const r=el("div","step");r.append(el("span","num",n),el("p",null,t));c.append(r)});
 }
