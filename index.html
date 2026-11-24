@@ -2196,7 +2196,7 @@ const PLS_DRV=[ // [vänster, fairway, höger] per drive och varv
   [[-1,1,0],[0,1,-1],[-2,1,0],[0,2,-2]],
   [[-2,1,0],[0,1,-2],[-1,1,-1],[-2,2,-2]]];
 const PLS_LP=[50,70,60],PLS_SIM=[0,-10,-20],PLS_MAT=[3,6,9,12,15];
-const PLS_PULS=["15 upphopp","10 burpees","10 burpees"];
+const PLS_PULS=["10 upphopp","10 upphopp","10 upphopp"];
 const plsOn=c=>!!c&&c.format==="puls";
 const plsV=i=>Math.floor(i/5),plsS=i=>PLS_ST[i%5];
 const plsTarget=(i,L)=>{const v=plsV(i),s=plsS(i);
@@ -2255,7 +2255,7 @@ function plsDrawCard(){
     t.append(el("small",null,"Varv "+(v+1)+" av 3 · station "+(i%5+1)+" av 5"),el("b",null,s.ic+" "+s.t+(L.scores[i]!=null?" · "+L.scores[i]+" p":"")));top.append(t);
     if(i>=vis)top.append(el("span","hbadge","🤫 Hemligt"));fp.append(top);
     if(v>0&&i%5===0)fp.append(el("p","drule","🏃 Nytt varv: börja med löpning – sprint till konen och tillbaka."));
-    fp.append(el("p","drule","❤️ Puls först: "+PLS_PULS[v]+" – sedan slår du inom 20 sekunder."+((s.k==="drv"||s.k==="chip"||s.k==="korg")?" Halvvägs: 10 upphopp till.":"")));
+    fp.append(el("p","drule","❤️ Puls först: "+PLS_PULS[v]+" – sedan slår du inom 20 sekunder."));
     fp.append(el("p","drule","📍 "+s.var+" · "+plsTarget(i,L)));
     const pick=(j,x)=>{if(navigator.vibrate)navigator.vibrate(8);const arr=(L.pls.d[i]=L.pls.d[i]||[]);arr[j]=arr[j]===x?null:x;if(arr.every(y=>y==null))delete L.pls.d[i];save();drawFocus(true);drawGrid()};
     for(let j=0;j<s.n;j++){
@@ -2279,7 +2279,7 @@ function plsRules(){
   c.append(el("h2",null,"Pulsstegen – så fungerar det"));
   [["1","Ni kör själva, två och två. Kompisen räknar ner pulsen, tittar på slaget och godkänner poängen."],
    ["2","3 varv med 5 stationer. Paren börjar på olika stationer och flyttar vidare. Löpning mellan varven: sprint till konen och tillbaka."],
-   ["3","Puls före varje station: varv 1 15 upphopp, varv 2 och 3 10 burpees. Slå inom 20 sekunder. På driver, chipp och korg: 10 upphopp till halvvägs."],
+   ["3","Puls före varje station: 10 upphopp – alltså 15 stationer × 10 upphopp. Slå inom 20 sekunder efter upphoppen."],
    ["4","🏌️ Driver (utomhus, mellan lamporna): 4 drives. Varje drive har egna poäng för vänster/fairway/höger – sista driven i varje varv ger 2 p på fairway."],
    ["5","🖥️ Simulatorn: 5 slag med 7-järn. Varv 1 din vanliga längd, varv 2 −10 m, varv 3 −20 m. 1 p per slag inom 5 m."],
    ["6","📡 Launch Pro: 5 wedgar. Varv 1 50 m, varv 2 70 m, varv 3 60 m carry. 1 p per slag inom 3 m."],
