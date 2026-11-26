@@ -1587,6 +1587,7 @@ function codeBox(title,lead){
   const w=el("div","cbrow");const i=el("input","codein");i.inputMode="numeric";i.maxLength=4;i.placeholder="••••";i.setAttribute("aria-label","Fyrsiffrig kod");i.pattern="[0-9]*";
   const b=el("button","go","Gå med");const m=el("div","msg");
   const sub=async()=>{if(b.disabled)return;const v=i.value.replace(/\D/g,"");if(v.length!==4){m.textContent="Koden har fyra siffror.";m.classList.add("err");return}
+    {const fc=await fileCode(v);if(fc){i.value="";m.textContent="";m.classList.remove("err");fileSheet(fc);return}}
     if(!sb){m.textContent="Ingen anslutning till databasen just nu.";m.classList.add("err");return}
     b.disabled=true;m.textContent="Söker…";m.classList.remove("err");
     try{const r=await sb.rpc("session_join",{p_code:v});if(r.error)throw r.error;
@@ -1596,6 +1597,18 @@ function codeBox(title,lead){
   i.oninput=()=>{i.value=i.value.replace(/\D/g,"").slice(0,4);if(i.value.length===4)sub()};
   i.onkeydown=e=>{if(e.key==="Enter")sub()};b.onclick=sub;
   w.append(i,b);c.append(w,m);return c;
+}
+/* === Filer bakom kod: koden skrivs i samma kodruta på Spela. Nyckeln är SHA-256 av koden. === */
+const FILE_CODES={
+  "cbfad02f9ed2a8d1e08d8f74f5303e9eb93637d47f82ab6f1c15871cf8dd0481":{title:"Träningsplanering 2027",text:"Excel-mall för tour- och tävlingsgruppen: mål (NÖHRA), tävlingsplanering, veckoplan, passbank och testlogg. Spara filen på datorn och öppna den i Excel.",file:"filer/traningsplanering-2027.xlsx",name:"Träningsplanering 2027 – Ringenäs Tränare.xlsx"}
+};
+async function fileCode(v){try{if(!crypto.subtle)return null;const h=await crypto.subtle.digest("SHA-256",new TextEncoder().encode(v));const hex=[...new Uint8Array(h)].map(x=>x.toString(16).padStart(2,"0")).join("");return FILE_CODES[hex]||null}catch(e){return null}}
+function fileSheet(f){
+  const sh=el("div","sheet");sh.setAttribute("role","dialog");sh.setAttribute("aria-modal","true");
+  const c=el("div","sheetc");const a=el("button","go","Ladda ner");a.type="button";
+  const x=el("button","ghost","Stäng");x.type="button";x.style.marginTop="10px";
+  const close=()=>sh.remove();x.onclick=close;sh.onclick=e=>{if(e.target===sh)close()};a.onclick=()=>{const d=el("a");d.href=f.file;d.setAttribute("download",f.name);document.body.append(d);d.click();d.remove();setTimeout(close,400)};
+  c.append(el("h2",null,f.title),el("p",null,f.text),a,x);sh.append(c);document.body.append(sh);
 }
 function joinSession(s){
   if(s.kind==="betting"){betUse(s.id,s);if(view!=="betting")go("betting");else render()}
