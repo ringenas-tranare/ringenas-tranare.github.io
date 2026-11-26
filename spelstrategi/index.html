@@ -1,0 +1,604 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Spelstrategi – Tourgrupperna</title>
+<link rel="icon" href="../icon-192.png">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&display=swap" rel="stylesheet">
+<style>
+/* Ringenäs identitet 2027 – samma skal som Lektion 1 – Claude */
+:root{color-scheme:dark;--n950:#0a141b;--bg:#101d26;--n700:#172a36;--header:#0d1820;--card:#16262f;--line:rgba(216,200,164,.2);--gold:#e0bb4a;--sand:#d8c8a4;--muted2:#a99d82;--text:#fff;--paper:#f3eee2;--font:"Montserrat","Inter",system-ui,-apple-system,"Segoe UI",sans-serif}
+*{box-sizing:border-box;min-width:0}
+html,body{height:100%;margin:0}
+body{background:var(--bg);color:var(--text);font:400 16px/1.6 var(--font);overflow:hidden}
+a{color:var(--gold)}
+.bar{height:60px;display:flex;align-items:center;gap:20px;padding:0 max(3vw,16px);background:var(--header);border-bottom:1px solid var(--line)}
+.wm{font:300 13px/1 var(--font);letter-spacing:.34em;white-space:nowrap}
+.wm b{font-weight:600;color:var(--gold)}
+.agenda{display:flex;gap:2px;overflow-x:auto;flex:1;scrollbar-width:none;-webkit-mask-image:linear-gradient(90deg,transparent,#000 28px,#000 calc(100% - 28px),transparent);mask-image:linear-gradient(90deg,transparent,#000 28px,#000 calc(100% - 28px),transparent);padding:0 20px}
+.agenda button{flex:none;background:none;border:0;color:var(--sand);font:400 12px var(--font);letter-spacing:.04em;padding:0 10px;min-height:44px;cursor:pointer;opacity:.55;white-space:nowrap}
+.agenda button:hover{opacity:.9}
+.agb{flex:none;width:36px;min-height:44px;border:0;border-radius:99px;background:none;color:var(--sand);font:300 24px/1 var(--font);cursor:pointer}.agb:hover{color:var(--gold)}.agb:disabled{opacity:.2;cursor:default}
+.agenda button.on{opacity:1;color:var(--text);box-shadow:inset 0 -1.5px 0 var(--gold)}
+.cur{font:400 13px var(--font);letter-spacing:.06em;color:var(--sand);white-space:nowrap}
+@media(min-width:601px){.cur{display:none}}
+button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.deck{height:calc(100% - 120px);display:flex;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none}
+.slide{flex:0 0 100%;scroll-snap-align:start;overflow-y:auto;position:relative;padding:clamp(32px,6vh,72px) max(6vw,16px);background:radial-gradient(ellipse at 50% 18%,var(--n700),var(--bg) 60%,var(--n950))}
+.slide.sand{background:var(--sand);color:var(--bg)}
+.in{max-width:min(1500px,100%);margin:0 auto;position:relative;z-index:1}
+.hz{position:relative;width:100%;height:clamp(70px,12vh,110px);margin-top:clamp(24px,5vh,60px);pointer-events:none}
+.hz .o{position:absolute;left:50%;bottom:18px;width:clamp(150px,16vw,240px);transform:translateX(-50%)}
+.hz .v{position:absolute;left:50%;bottom:0;width:clamp(300px,32vw,480px);transform:translateX(-50%)}
+.foot{height:60px;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 max(3vw,16px);background:var(--header);border-top:1px solid var(--line)}
+.foot .ctrl{display:flex;align-items:center;gap:14px}
+.count{font:400 12px var(--font);letter-spacing:.06em;color:var(--sand);white-space:nowrap}
+.btn{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:0 22px;border-radius:99px;font:600 15px/1.2 var(--font);letter-spacing:.04em;text-decoration:none;cursor:pointer;border:0;white-space:nowrap}
+.gold{background:var(--gold);color:var(--bg);box-shadow:inset 0 1px 0 rgba(255,255,255,.55),inset 0 -2px 4px rgba(120,85,10,.35),0 6px 18px rgba(0,0,0,.35)}
+.ghost{background:rgba(16,29,38,.62);color:var(--text);box-shadow:inset 0 1.5px 0 rgba(255,240,205,.5),inset 0 -1.5px 0 rgba(255,226,150,.32)}
+.ghost:disabled{opacity:.35;cursor:default}
+.eyebrow{font:600 12px/1.3 var(--font);letter-spacing:.3em;color:var(--gold);text-transform:uppercase}
+.sand .eyebrow{color:var(--bg)}
+h1,h2{font-weight:300;letter-spacing:.02em;margin:0;text-wrap:balance}
+h1{font-size:clamp(44px,6.4vw,92px);line-height:1.08}
+h2{font-size:clamp(34px,3.8vw,72px);line-height:1.12}
+.t2{color:var(--gold)}
+.w{position:relative;display:inline-block}
+.w svg{position:absolute;left:0;right:0;bottom:-.18em;width:100%;height:.2em;overflow:visible}
+.title{display:flex;flex-direction:column;align-items:center;text-align:center;justify-content:center;min-height:calc(100% - 40px);gap:28px}
+.ball{width:clamp(70px,7vw,104px)}
+.lead{font:300 clamp(17px,1.3vw,26px)/1.55 var(--font);color:var(--sand);max-width:52ch;margin:0}
+.split{display:grid;grid-template-columns:minmax(0,4fr) minmax(0,6fr);gap:clamp(28px,5vw,88px);align-items:start;padding-top:clamp(0px,3vh,40px)}
+.split .lead{margin-top:22px}
+ol.num{list-style:none;margin:0;padding:0;counter-reset:n}
+ol.num li{counter-increment:n;display:grid;grid-template-columns:2.2em minmax(0,1fr);gap:18px;align-items:baseline;padding:16px 0;border-top:1px solid var(--line)}
+ol.num li:last-child{border-bottom:1px solid var(--line)}
+ol.num li::before{content:counter(n);font:300 clamp(28px,2.4vw,46px)/1 var(--font);color:var(--gold)}
+ol.num b{display:block;font:400 clamp(18px,1.35vw,28px)/1.25 var(--font)}
+ol.num span{display:block;color:var(--sand);font-size:clamp(15px,.95vw,19px);margin-top:4px}
+ol.rv li{cursor:pointer}
+ol.rv li span{visibility:hidden}
+ol.rv li.open span{visibility:visible}
+ol.rv li:not(.open) b::after{content:"  ·  tryck";font:600 11px var(--font);letter-spacing:.2em;color:var(--muted2)}
+.big{display:flex;flex-direction:column;align-items:center;text-align:center;justify-content:center;min-height:calc(100% - 20px);gap:18px}
+.big .quote{font:300 clamp(34px,4.4vw,64px)/1.15 var(--font);max-width:20ch;margin:0}
+.big p{margin:0;font:400 clamp(16px,1.1vw,22px)/1.5 var(--font);max-width:46ch}
+.note{font:400 12px/1.4 var(--font);letter-spacing:.06em;color:var(--muted2);margin-top:18px}
+.sand .note{color:#5d5440}
+label,.ql{display:block;font:600 12px var(--font);letter-spacing:.16em;text-transform:uppercase;color:var(--sand);margin:14px 0 8px}
+input[type=text],input[type=number],textarea{width:100%;font:400 16px var(--font);color:var(--text);background:var(--card);border:1px solid var(--line);border-radius:10px;padding:11px 13px}
+textarea{min-height:64px;resize:vertical}
+input:focus,textarea:focus{outline:1.5px solid var(--gold);border-color:transparent}
+input[type=range]{width:100%;accent-color:var(--gold);min-height:44px}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{min-height:44px;padding:0 16px;border-radius:99px;border:0;background:var(--card);box-shadow:inset 0 0 0 1px var(--line);color:var(--text);font:400 15px var(--font);cursor:pointer}
+.chip[aria-pressed=true]{box-shadow:inset 0 0 0 1.5px var(--gold);color:var(--gold)}
+.chip[aria-pressed=true]::before{content:"✓ "}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:clamp(18px,2vw,28px)}
+.stats{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:18px}
+.stat{border-top:1px solid var(--line);padding-top:10px}
+.stat .v{font:300 clamp(30px,3vw,54px)/1.1 var(--font);color:var(--gold)}
+.stat .l{font:400 13px/1.4 var(--font);color:var(--sand)}
+.doc{background:var(--paper);color:var(--bg);border-radius:14px;padding:26px;position:sticky;top:0}
+.doc .head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding-bottom:12px;border-bottom:1px solid #d9dfe6;margin-bottom:14px}
+.doc .head span{font:600 11px var(--font);letter-spacing:.2em;color:#7a5c0e}
+.doc pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font:400 14px/1.65 var(--font);max-height:52vh;overflow:auto}
+.doc button{background:var(--bg);color:#fff;min-height:40px;font-size:13px}
+.pic{border-radius:14px;overflow:hidden;border:1px solid var(--line);background:var(--n950)}
+.pic img{display:block;width:100%;height:100%;object-fit:cover}
+.tall{height:min(62vh,640px)}
+.tall img{object-fit:contain}
+.duo{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.tree{min-height:280px}
+.tree .q{font:300 clamp(22px,2vw,34px)/1.3 var(--font);margin:6px 0 22px}
+.tree .ans{font:300 clamp(28px,2.6vw,44px)/1.2 var(--font);color:var(--gold);margin:6px 0 12px}
+.tree .why{color:var(--sand);margin:0 0 22px}
+.trail{display:flex;flex-wrap:wrap;gap:6px;margin-top:22px}
+.trail span{font:400 12px var(--font);color:var(--muted2);border:1px solid var(--line);border-radius:99px;padding:4px 10px}
+.row{display:flex;gap:10px;flex-wrap:wrap}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.end{display:flex;flex-direction:column;align-items:center;text-align:center;justify-content:center;min-height:calc(100% - 20px);gap:24px}
+.end .wmbig{font:300 clamp(30px,4.4vw,56px)/1 var(--font);letter-spacing:.34em;padding-left:.34em}
+.end .wmsub{font:600 clamp(13px,1.3vw,18px)/1 var(--font);letter-spacing:.62em;padding-left:.62em;color:var(--gold);margin-top:14px}
+.end .hi{font:300 22px/1.5 var(--font);color:var(--sand);margin:0}
+.pga{font:600 11px var(--font);letter-spacing:.3em;color:var(--sand)}
+.notes{position:fixed;left:max(3vw,16px);right:max(3vw,16px);bottom:72px;z-index:5;background:var(--header);border:1px solid var(--line);border-radius:14px;padding:14px 18px;font:400 15px/1.5 var(--font);color:var(--sand);max-width:900px;margin:0 auto}
+.notes b{font:600 11px var(--font);letter-spacing:.2em;color:var(--gold);display:block;margin-bottom:4px}
+.notes[hidden]{display:none}
+.slide.photo{padding:0;display:flex;flex-direction:column}
+.ph{position:relative;flex:0 0 58%;min-height:220px;overflow:hidden}
+.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.ph::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(16,29,38,0) 50%,var(--bg) 100%)}
+.phtxt{padding:clamp(16px,3vh,32px) max(6vw,16px);text-align:center;display:flex;flex-direction:column;align-items:center;gap:16px}
+@media(min-width:901px) and (min-aspect-ratio:3/2){.slide.photo{flex-direction:row}.ph{flex:0 0 56%;min-height:0}.ph::after{background:linear-gradient(90deg,rgba(16,29,38,0) 55%,var(--bg) 100%)}.phtxt{flex:1;justify-content:center;align-items:flex-start;text-align:left}}
+.tag{display:inline-flex;padding:6px 16px;border-radius:99px;background:var(--sand);color:var(--bg);font:600 12px/1.3 var(--font);letter-spacing:.12em}
+@media(max-width:820px){.split{grid-template-columns:minmax(0,1fr)}.doc{position:static}.stats{grid-template-columns:1fr 1fr}}
+@media(max-width:600px){.bar .wm,.foot .wm,.count,#nbtn,.agenda,.agb{display:none}.bar{justify-content:center}.slide{padding-bottom:150px}.duo{grid-template-columns:1fr}}
+
+.dlogo{width:clamp(220px,26vw,380px)}
+.split>.dec{grid-column:1/-1;margin-bottom:0}
+.dec{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px;margin-bottom:clamp(14px,3vh,28px);max-width:860px}
+.dc{border-top:1.5px solid var(--line);padding-top:8px;opacity:.35}
+.dc.done{opacity:.85}.dc.on{opacity:1;border-top-color:var(--gold)}
+.dc b{display:block;font:300 clamp(18px,1.5vw,26px)/1 var(--font);color:var(--gold)}
+.dc i{display:block;font:400 clamp(13px,.9vw,16px)/1.3 var(--font);font-style:normal;color:var(--text);margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.dc small{display:block;font:600 10px/1.3 var(--font);letter-spacing:.1em;text-transform:uppercase;color:var(--sand)}
+.sand .dc{border-top-color:rgba(16,29,38,.3)}.sand .dc.on{border-top-color:var(--bg)}.sand .dc b,.sand .dc i,.sand .dc small{color:var(--bg)}
+.sand ol.dk{--line:rgba(16,29,38,.25)}.sand ol.dk li::before{color:var(--bg)}.sand ol.dk span{color:#4b4433}
+.hole svg{width:100%;max-height:50vh;display:block;border-radius:10px;cursor:crosshair;touch-action:manipulation}
+.hole .stats{grid-template-columns:repeat(auto-fit,minmax(0,1fr))}
+.ctl{margin-top:22px}
+.dq{border:1px solid rgba(16,29,38,.3);border-radius:14px;padding:20px 22px}
+.dqq{font:300 clamp(22px,2vw,32px)/1.25 var(--font);margin:8px 0 16px}
+.dqb{background:var(--bg);color:#fff}.dqb[aria-pressed=true]{background:var(--bg);box-shadow:inset 0 0 0 2px #e0bb4a;color:#e0bb4a}
+.dqa{margin:14px 0 0;font:400 15px/1.5 var(--font)}
+.dfin{list-style:none;margin:0;padding:0}
+.dfin li{display:grid;grid-template-columns:2em minmax(0,1fr) auto;gap:14px;align-items:baseline;padding:12px 0;border-top:1px solid var(--line)}
+.dfin li:last-child{border-bottom:1px solid var(--line)}
+.dfin b{font:300 clamp(22px,1.8vw,30px)/1 var(--font);color:var(--gold)}
+.dfin span{color:var(--sand)}.dfin em{font-style:normal;font:400 clamp(16px,1.1vw,20px) var(--font);color:var(--text);text-align:right}
+.go{font:300 clamp(26px,2.4vw,40px)/1.2 var(--font);color:var(--gold);margin:20px 0 6px}
+.q1{font-weight:400;color:var(--text)}
+.ca{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
+.ca div{border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.ca b{display:block;font:600 12px var(--font);letter-spacing:.16em;color:var(--gold);text-transform:uppercase}
+.ca span{display:block;color:var(--sand);font-size:14px;margin-top:4px}
+.bdg{cursor:pointer}
+.hsel{margin-bottom:12px}
+.scale{margin-top:26px;border-top:1px solid var(--line)}
+.scale div{display:grid;grid-template-columns:2.4em minmax(0,1fr);gap:14px;align-items:baseline;padding:10px 0;border-bottom:1px solid var(--line)}
+.scale b{font:300 clamp(22px,1.8vw,32px)/1 var(--font);color:var(--gold)}
+.scale span{color:var(--sand);font-size:clamp(15px,.95vw,18px)}
+.dots{display:flex;flex-wrap:wrap;gap:6px;margin-top:18px}.dots i{width:14px;height:14px;border-radius:50%}.dots .y{background:var(--gold)}.dots .n{box-shadow:inset 0 0 0 1.5px var(--muted2)}
+.end ol.num{margin:6px 0}
+
+.stk{position:relative;display:inline-block;z-index:2;transform:rotate(var(--r,-5deg));padding:6px;background:#fff;border-radius:50%;box-shadow:0 6px 14px rgba(0,0,0,.35);margin-top:26px}
+.stk.bub{border-radius:50% 50% 50% 14px}
+.stk+.stk{margin-left:18px}
+.stk-in{width:clamp(140px,10vw,190px);aspect-ratio:1;border-radius:inherit;background:var(--bg);box-shadow:inset 0 0 0 4px var(--bg),inset 0 0 0 5.5px var(--gold);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;padding:0 16%;text-align:center}
+.stk svg{width:32%;height:auto;margin-bottom:2px}
+.stk .sb{font:600 clamp(10px,.72vw,13px)/1.3 var(--font);letter-spacing:.12em;background:linear-gradient(135deg,#f6e2a2,#e0bb4a 45%,#c99a2e 70%,#f0d27e);-webkit-background-clip:text;background-clip:text;color:transparent}
+.stk .ss{font:400 clamp(10px,.7vw,13px)/1.3 var(--font);color:var(--sand)}
+.stk.top{position:absolute;right:0;top:-8px;margin:0}
+@media(max-width:1100px){.stk.top{position:relative;right:auto;top:auto;margin-top:20px}}
+
+.tbtn{margin-top:16px;min-height:40px;font-size:13px}
+.sand .tbtn{background:var(--bg);color:#fff}
+.tdlg{width:min(860px,94vw);max-height:86vh;border:1px solid var(--line);border-radius:16px;background:var(--header);color:var(--text);padding:22px 24px;font-family:var(--font)}
+.tdlg::backdrop{background:rgba(5,10,14,.7)}
+.thead{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:12px}
+.thead h3{margin:0;font:300 clamp(24px,2vw,32px)/1.2 var(--font)}
+.twrap{overflow:auto;max-height:58vh;margin-top:14px;border-top:1px solid var(--line)}
+.twrap table{width:100%;border-collapse:collapse;font:400 15px/1.4 var(--font);font-variant-numeric:tabular-nums}
+.twrap th{position:sticky;top:0;background:var(--header);font:600 11px var(--font);letter-spacing:.14em;text-transform:uppercase;color:var(--sand);text-align:right;padding:10px 12px;border-bottom:1px solid var(--line)}
+.twrap td{text-align:right;padding:8px 12px;border-bottom:1px solid rgba(216,200,164,.1);color:var(--sand)}
+.twrap th:first-child,.twrap td:first-child{text-align:left;color:var(--text)}
+.twrap tr.hl td{color:var(--gold);background:rgba(224,187,74,.08)}
+.qdlg{width:min(560px,94vw)}
+.qbox{background:#fff;border-radius:14px;padding:18px;width:min(420px,70vh,100%);margin:6px auto 0}
+.qbox svg{display:block;width:100%;height:auto}
+
+@media(max-width:600px){
+.dec{gap:4px;margin-bottom:18px}
+.dc small{display:none}
+.dc b{font-size:18px}
+.dc i{font-size:11px}
+.dfin li{grid-template-columns:1.6em minmax(0,1fr);gap:4px 10px}
+.dfin em{grid-column:2;text-align:left;font-size:15px}
+.tdlg{padding:16px}
+.twrap table{font-size:13px}.twrap th,.twrap td{padding:7px 6px}
+.ca{grid-template-columns:1fr}
+.stk{transform:rotate(var(--r,-5deg)) scale(.85)}
+}
+</style>
+</head>
+<body>
+<header class="bar">
+  <div class="wm">RINGENÄS <b>TRÄNARE</b></div>
+  <button class="agb" id="agL" type="button" aria-label="Bläddra rubrikerna åt vänster">‹</button><nav class="agenda" id="agenda" aria-label="Passets delar"></nav><button class="agb" id="agR" type="button" aria-label="Bläddra rubrikerna åt höger">›</button><span class="cur" id="cur"></span>
+</header>
+
+<main class="deck" id="deck">
+
+<section class="slide" data-t="Start" data-m="0:00" data-n="Säg bara: I dag lär vi oss tänka som proffsen före varje slag. Sex bokstäver. Sedan går vi ut och spelar.">
+  <div class="in title">
+    <img class="dlogo" src="img/decade.png" alt="Decade">
+    <h1>Spelstrategi.<br><span class="t2">Aggressiv mot <span class="w">målet.</span></span></h1>
+    <p class="lead" style="text-align:center">Vanliga misstag och hur man kan undvika dom.</p>
+    <div class="eyebrow">Tourgrupperna · Ringenäs Tränare</div>
+  </div>
+</section>
+
+<section class="slide" data-t="Varför" data-tb="why" data-m="0:02" data-n="Låt gruppen gissa vilken miss som kostar mest innan du trycker. Poängen: färre bogeys slår fler birdies.">
+  <div class="in split">
+    <div><h2>5 missar<br><span class="t2">att <span class="w">undvika.</span></span></h2><p class="lead">Satsa på par, birdie är bonus.</p></div>
+    <ol class="num rv" id="missar">
+      <li><div><b>Undvika dubbelbogeys</b><span>Efter ett dåligt slag: ta medicinen och spela ut bollen.</span></div></li>
+      <li><div><b>Bogey inom 120 meter</b><span>Härifrån ska du alltid ha chans på par.</span></div></li>
+      <li><div><b>Missad enkel up &amp; down</b><span>Välj det enklaste slaget, inte det snyggaste.</span></div></li>
+      <li><div><b>Pliktslag</b><span>Plikt ska aldrig vara med i ditt spridningsmönster.</span></div></li>
+      <li><div><b>Treputt</b><span>Farten är viktigast. Från 10 meter: lämna nära.</span></div></li>
+    </ol>
+  </div>
+</section>
+
+<section class="slide sand" data-t="DECADE" data-m="0:05" data-n="Säg bokstäverna högt med gruppen. Resten av passet är en bokstav i taget, på samma green: Gul 1.">
+  <div class="in split">
+    <div><div class="eyebrow">Spelstrategi grundar sig i DECADE</div><h2 style="margin-top:14px">Sex steg.<br><span class="w">Varje gång.</span></h2><p class="lead" style="color:var(--bg)">För varje bokstav läggs ett moment till. Till slut har du ett fullständigt beslut. Vi kör allt på samma green: Gul 1.</p></div>
+    <ol class="num dk">
+      <li><div><b>D · Distance</b><span>Hur långt spelar slaget? Vind och lutning.</span></div></li>
+      <li><div><b>E · Expectation</b><span>Hur ser ditt spridningsmönster ut?</span></div></li>
+      <li><div><b>C · Correct target</b><span>Var ska bollen stanna? Alltid innanför baseline.</span></div></li>
+      <li><div><b>A · Analyze</b><span>Var är ditt personliga sikte?</span></div></li>
+      <li><div><b>D · Discipline</b><span>90 % av slagen bör lyckas för att försöka.</span></div></li>
+      <li><div><b>E · Execute</b><span>Slå. Aggressiv mot ditt mål.</span></div></li>
+    </ol>
+  </div>
+</section>
+
+<section class="slide" data-t="D · Distance" data-tb="wind" data-l="0" data-m="0:08" data-n="Låt en spelare säga vinden i dag. Motvind kostar dubbelt så mycket som medvind ger.">
+  <div class="in split">
+    <div><div class="eyebrow">Distance · distans</div><h2 style="margin-top:14px">Distans.<br><span class="t2">Spela <span class="w">vinden.</span></span></h2><p class="lead">Frågan: <b class="q1">hur långt spelar slaget?</b> Motvind tar mer än medvind ger.</p></div>
+    <div class="card">
+      <label for="wd">Avstånd: <span id="wdv">125</span> m</label>
+      <input type="range" id="wd" min="50" max="250" step="5" value="125">
+      <label for="ws">Vind: <span id="wsv">6</span> m/s</label>
+      <input type="range" id="ws" min="0" max="14" step="1" value="6">
+      <div class="chips" id="wdir" data-one style="margin-top:8px"></div>
+      <div class="stats" style="grid-template-columns:1fr 1fr">
+        <div class="stat"><div class="v" id="wplay">0 m</div><div class="l">Spelas som</div></div>
+        <div class="stat"><div class="v" id="wdiff">0 m</div><div class="l">Skillnad</div></div>
+      </div>
+      <p class="note">Motvind +2,2 % per m/s · medvind −1,1 % per m/s</p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-t="E · Expectation" data-l="1" data-tb="spread" data-m="0:12" data-n="Ingen träffar där den siktar. PEI (percent error index) är snittavståndet från målet i procent av slaget: 5 % på 150 m är 7,5 m. Visa tumregeln 1 finger = 4 %, sedan era slagtest och scratch på banan.">
+  <div class="in split">
+    <div><div class="eyebrow">Expectation · förväntan</div><h2 style="margin-top:14px">Förväntan.<br><span class="t2">Ditt <span class="w">spridningsmönster.</span></span></h2><p class="lead">Frågan: <b class="q1">hur ser ditt spridningsmönster ut?</b> Har du en PEI på 5 % från 150 meter hamnar du i snitt 7,5 meter från målet.</p></div>
+    <div class="card">
+      <p class="note" style="margin:0 0 6px">Från D: slaget spelas som <span id="edv">125</span> m.</p>
+      <div class="chips" id="epc" data-one></div>
+      <div class="stats" style="grid-template-columns:1fr 1fr">
+        <div class="stat"><div class="v" id="em0">5,7 %</div><div class="l">PEI · percent error index</div></div>
+        <div class="stat"><div class="v" id="em1">7 m</div><div class="l">Snittavstånd från målet</div></div>
+      </div>
+      <svg id="eviz" viewBox="0 0 600 190" style="width:100%;margin-top:16px" role="img" aria-label="Spridningen jämförd med en green på 30 meter"></svg>
+      <p class="note" id="emsg"></p>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-t="C · Correct target" data-tb="base" data-l="2" data-m="0:16" data-n="Gul 1: lutningen bakom matar in bollen (−2), out och träd till vänster (+3), bunkrarna (+2), öppet mot fairway (0). Gå runt green och låt gruppen sätta värdena själva innan du visar förslaget. Sedan sätter varje spelare sitt mål. Byt sedan flagga till långt höger och långt vänster: målet ska inte jaga flaggan, kolla "kvar till flaggan". Gå tillbaka till D och ändra vinden: ringen växer.">
+  <div class="in split">
+    <div><div class="eyebrow">Correct target · rätt mål</div><h2 style="margin-top:14px">Rätt mål.<br><span class="t2">Innanför <span class="w">baseline.</span></span></h2><p class="lead">Frågan: <b class="q1">var ska bollen stanna?</b> Decade goal = där bollen ska stanna på green, alltid innanför baseline.</p><p class="note">Gradera kanten från −2 till +3. Tryck på siffrorna för att ändra. Byt flagga: ditt mål följer inte med flaggan. Avståndet kommer från D.</p>
+      <div class="scale">
+        <div><b>−2</b><span>Lutning in mot green. Var mer aggressiv på den sidan, bollen kan studsa in.</span></div>
+        <div><b>−1</b><span>Lutningen hjälper lite.</span></div>
+        <div><b>0</b><span>Neutralt. Stor chans att sätta chippen eller putten. Spela baseline utifrån avståndet.</span></div>
+        <div><b>1</b><span>Stor chans att göra up &amp; down.</span></div>
+        <div><b>2</b><span>Det börjar bli riktigt svårt. Bunker eller ruff.</span></div>
+        <div><b>3</b><span>Riktigt lurigt att göra up &amp; down. Här förlorar du slag.</span></div>
+      </div>
+    </div>
+    <div class="card"><div class="hole" id="holeC"></div></div>
+  </div>
+</section>
+
+<section class="slide" data-t="A · Analyze" data-tb="mods" data-l="3" data-m="0:22" data-n="Målet de satte på C följer med hit. Två steg: 1) vind och läge gör ringen bredare (det ljusröda är det som vind och läge lade till). Ligger målet kvar? 2) Dra kurvan: siktet flyttas, målet står still. Siktet får ligga utanför green.">
+  <div class="in split">
+    <div><div class="eyebrow">Analyze · analysera</div><h2 style="margin-top:14px">Analysera.<br><span class="t2">Ditt <span class="w">sikte.</span></span></h2><p class="lead">Frågan: <b class="q1">var siktar jag?</b> Decade target = där ditt personliga sikte är, kan vara var som helst. Vind och ovanliga lägen ger avvikelser från baseline (ljusrött).</p>
+      <div class="ca"><div><b>C · Goal</b><span>Där bollen ska stanna på green.</span></div><div><b>A · Target</b><span>Där du siktar. Kan vara var som helst.</span></div></div>
+      <div class="ctl">
+        <span class="ql">Vind</span><div class="chips" id="aw" data-one></div>
+        <span class="ql">Läge · välj flera</span><div class="chips" id="al"></div>
+        <label for="ak">Din kurva: <span id="akv">rak</span></label>
+        <input type="range" id="ak" min="-10" max="10" step="1" value="0">
+      </div>
+    </div>
+    <div class="card"><div class="hole" id="holeA"></div></div>
+  </div>
+</section>
+
+<section class="slide sand" data-t="D · Discipline" data-tb="cost" data-l="4" data-m="0:28" data-n="Varje spelare svarar ärligt. Nej betyder: tillbaka till C och flytta målet mot mitten. Fråga sedan: när var du senast frestad att sikta på flaggan?">
+  <div class="in split">
+    <div><div class="eyebrow">Discipline · disciplin</div><h2 style="margin-top:14px">Flaggan lockar.<br><span class="w">Målet gäller.</span></h2><p class="lead" style="color:var(--bg)">90 % av slagen bör lyckas för att försöka.</p></div>
+    <div>
+      <div class="dq"><div class="eyebrow">90 %-regeln</div><p class="dqq">Lyckas 9 av 10 slag till ditt mål?</p>
+        <div class="row"><button class="btn dqb" data-v="Ja" type="button">Ja</button><button class="btn dqb" data-v="Nej" type="button">Nej</button></div>
+        <p class="dqa" id="dqa" aria-live="polite">Svara ärligt.</p></div>
+      <ol class="num dk" style="margin-top:22px">
+        <li><div><b>Håll fast vid målet</b><span>Även när flaggan står nära.</span></div></li>
+        <li><div><b>Ta medicinen</b><span>Ett dåligt slag ska inte bli två.</span></div></li>
+      </ol>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-t="E · Execute" data-l="5" data-m="0:31" data-n="Hela beslutet på en rad per bokstav. Det är det här de ska ha i huvudet innan de ställer sig över bollen. Tryck Nytt slag och låt en annan spelare bygga sitt beslut.">
+  <div class="in split">
+    <div><div class="eyebrow">Execute · utför</div><h2 style="margin-top:14px">Beslutet<br><span class="t2">är <span class="w">fattat.</span></span></h2><p class="lead">Resultatet är målet, inte säkerheten. Var aggressiv mot ditt mål.</p></div>
+    <div class="card">
+      <ol class="dfin" id="dfin"></ol>
+      <p class="go" id="dgo"></p>
+      <button class="btn ghost" id="dnew" type="button" style="margin-top:8px">Nytt slag</button>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-t="Tee shots" data-tb="tee" data-m="0:34" data-n="Dra reglaget och byt hinder. Med plikt på båda sidor krävs 65 m. Med plikt på ena sidan räcker 40 m: sikta närmare den säkra sidan.">
+  <div class="in split">
+    <div><div class="eyebrow">Tee shots · utslag</div><h2 style="margin-top:14px">Regler för<br><span class="t2"><span class="w">utslag.</span></span></h2>
+      <ol class="num" style="margin-top:24px">
+        <li><div><b>Längd först</b><span>Längd är det viktigaste för utslag. Tänk driver först och justera nedåt.</span></div></li>
+        <li><div><b>65 meter brett</b><span>Är det 65 meter brett där du stannar bollen med drivern? Slå driver!</span></div></li>
+        <li><div><b>40 meter · lesser of two evils</b><span>Minst 40 meter mellan hindren och det ena är inte plikt? Slå driver och ha ditt mål närmare sidan där du inte får plikt.</span></div></li>
+        <li><div><b>Annars kortare</b><span>Kan du slå trä 3, trä 5 eller hybrid kort om hindren? Slå den klubban.</span></div></li>
+        <li><div><b>Kalle Anka-bana</b><span>Går inget av det? Vad är det för Kalle Anka-bana du spelar? Slå det du känner för!</span></div></li>
+      </ol>
+    </div>
+    <div class="card">
+      <svg id="tviz" viewBox="0 0 400 300" style="width:100%;display:block;border-radius:10px;max-height:34vh" role="img" aria-label="Fairway där drivern landar, med hinder på sidorna och driverns spridning"></svg><p id="tverd" style="font:300 clamp(24px,2vw,34px)/1.25 var(--font);color:var(--gold);margin:14px 0 2px"></p><p class="note" id="twhy" style="margin-top:0"></p>
+      <label for="tw">Bredd mellan hindren: <span id="twv">55</span> m</label>
+      <input type="range" id="tw" min="20" max="90" step="5" value="55">
+      <span class="ql">Vänster</span><div class="chips" id="tl" data-one></div>
+      <span class="ql">Höger</span><div class="chips" id="trr" data-one></div>
+      
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-t="Spelplan" data-m="0:38" data-n="Varje spelare fyller i sin egen spelplan och kopierar den. Den ska med till nästa tävling.">
+  <div class="in split">
+    <div>
+      <h2 style="margin-bottom:10px">Din<br><span class="t2"><span class="w">spelplan.</span></span></h2>
+      <label for="p-namn">Namn</label><input type="text" id="p-namn">
+      <span class="ql">Min bollflykt</span><div class="chips" data-g="flykt" data-one></div>
+      <span class="ql">Min farligaste miss</span><div class="chips" data-g="miss" data-one></div>
+    </div>
+    <div class="doc" aria-live="polite">
+      <div class="head"><span>MIN SPELPLAN</span><button class="btn" id="cp" type="button">Kopiera</button></div>
+      <pre id="plan"></pre>
+    </div>
+  </div>
+</section>
+
+<section class="slide" data-t="Slut" data-m="0:42" data-n="Nu ut och spela Gul 1 i huvudet på rangen: tre bollar var, alla säger DECADE högt före slaget.">
+  <div class="in end">
+    <img class="dlogo" src="img/decade.png" alt="Decade">
+    <ol class="num" style="text-align:left;max-width:640px;width:100%">
+      <li><div><b>Spela en runda med DECADE</b><span>Gå igenom stegen före varje inspel.</span></div></li>
+      <li><div><b>Ett fullständigt beslut på varje par 3</b><span>Alla sex steg innan du tar fram klubban.</span></div></li>
+      <li><div><b>Gör slagtestet igen</b><span>Så att du vet ditt eget spridningsmönster.</span></div></li>
+    </ol>
+    <div><div class="wmbig">RINGENÄS</div><div class="wmsub">TRÄNARE</div></div>
+    <p class="hi">Tillsammans blir vi bättre!</p>
+    <div class="pga">CERTIFIERADE PGA-TRÄNARE</div>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wm">RINGENÄS <b>TRÄNARE</b></div>
+  <div class="ctrl"><span class="count" id="count"></span><button class="btn" id="qbtn" type="button" style="background:none;color:var(--muted2);font-weight:400;padding:0 10px">QR-kod</button><button class="btn" id="nbtn" type="button" aria-pressed="false" style="background:none;color:var(--muted2);font-weight:400;padding:0 10px">Anteckningar</button><button class="btn ghost" id="prev" type="button">Tillbaka</button><button class="btn ghost" id="next" type="button">Nästa</button></div>
+</footer>
+<dialog class="tdlg" id="tdlg" aria-labelledby="tdh"><div class="thead"><h3 id="tdh">Tabeller</h3><button class="btn ghost" id="tdx" type="button">Stäng</button></div><div class="chips" id="tdt" data-one></div><div class="twrap" id="tdb"></div><p class="note" id="tdn"></p></dialog>
+<dialog class="tdlg qdlg" id="qdlg" aria-labelledby="qh"><div class="thead"><h3 id="qh">Följ med i mobilen</h3><button class="btn ghost" id="qx" type="button">Stäng</button></div><div class="qbox"><svg viewBox="0 0 37 37" shape-rendering="crispEdges" role="img" aria-label="QR-kod till presentationen"><rect width="37" height="37" fill="#fff"/><path d="M2 2h1v1h-1zM3 2h1v1h-1zM4 2h1v1h-1zM5 2h1v1h-1zM6 2h1v1h-1zM7 2h1v1h-1zM8 2h1v1h-1zM13 2h1v1h-1zM14 2h1v1h-1zM15 2h1v1h-1zM16 2h1v1h-1zM18 2h1v1h-1zM19 2h1v1h-1zM20 2h1v1h-1zM21 2h1v1h-1zM22 2h1v1h-1zM23 2h1v1h-1zM25 2h1v1h-1zM28 2h1v1h-1zM29 2h1v1h-1zM30 2h1v1h-1zM31 2h1v1h-1zM32 2h1v1h-1zM33 2h1v1h-1zM34 2h1v1h-1zM2 3h1v1h-1zM8 3h1v1h-1zM11 3h1v1h-1zM12 3h1v1h-1zM14 3h1v1h-1zM15 3h1v1h-1zM16 3h1v1h-1zM17 3h1v1h-1zM19 3h1v1h-1zM23 3h1v1h-1zM24 3h1v1h-1zM28 3h1v1h-1zM34 3h1v1h-1zM2 4h1v1h-1zM4 4h1v1h-1zM5 4h1v1h-1zM6 4h1v1h-1zM8 4h1v1h-1zM10 4h1v1h-1zM15 4h1v1h-1zM17 4h1v1h-1zM19 4h1v1h-1zM20 4h1v1h-1zM21 4h1v1h-1zM22 4h1v1h-1zM23 4h1v1h-1zM24 4h1v1h-1zM28 4h1v1h-1zM30 4h1v1h-1zM31 4h1v1h-1zM32 4h1v1h-1zM34 4h1v1h-1zM2 5h1v1h-1zM4 5h1v1h-1zM5 5h1v1h-1zM6 5h1v1h-1zM8 5h1v1h-1zM10 5h1v1h-1zM11 5h1v1h-1zM14 5h1v1h-1zM16 5h1v1h-1zM18 5h1v1h-1zM21 5h1v1h-1zM22 5h1v1h-1zM24 5h1v1h-1zM26 5h1v1h-1zM28 5h1v1h-1zM30 5h1v1h-1zM31 5h1v1h-1zM32 5h1v1h-1zM34 5h1v1h-1zM2 6h1v1h-1zM4 6h1v1h-1zM5 6h1v1h-1zM6 6h1v1h-1zM8 6h1v1h-1zM10 6h1v1h-1zM12 6h1v1h-1zM13 6h1v1h-1zM14 6h1v1h-1zM17 6h1v1h-1zM20 6h1v1h-1zM25 6h1v1h-1zM28 6h1v1h-1zM30 6h1v1h-1zM31 6h1v1h-1zM32 6h1v1h-1zM34 6h1v1h-1zM2 7h1v1h-1zM8 7h1v1h-1zM10 7h1v1h-1zM11 7h1v1h-1zM12 7h1v1h-1zM13 7h1v1h-1zM14 7h1v1h-1zM16 7h1v1h-1zM17 7h1v1h-1zM18 7h1v1h-1zM20 7h1v1h-1zM22 7h1v1h-1zM24 7h1v1h-1zM26 7h1v1h-1zM28 7h1v1h-1zM34 7h1v1h-1zM2 8h1v1h-1zM3 8h1v1h-1zM4 8h1v1h-1zM5 8h1v1h-1zM6 8h1v1h-1zM7 8h1v1h-1zM8 8h1v1h-1zM10 8h1v1h-1zM12 8h1v1h-1zM14 8h1v1h-1zM16 8h1v1h-1zM18 8h1v1h-1zM20 8h1v1h-1zM22 8h1v1h-1zM24 8h1v1h-1zM26 8h1v1h-1zM28 8h1v1h-1zM29 8h1v1h-1zM30 8h1v1h-1zM31 8h1v1h-1zM32 8h1v1h-1zM33 8h1v1h-1zM34 8h1v1h-1zM10 9h1v1h-1zM11 9h1v1h-1zM13 9h1v1h-1zM14 9h1v1h-1zM16 9h1v1h-1zM17 9h1v1h-1zM23 9h1v1h-1zM2 10h1v1h-1zM4 10h1v1h-1zM5 10h1v1h-1zM6 10h1v1h-1zM7 10h1v1h-1zM8 10h1v1h-1zM11 10h1v1h-1zM15 10h1v1h-1zM16 10h1v1h-1zM17 10h1v1h-1zM19 10h1v1h-1zM24 10h1v1h-1zM26 10h1v1h-1zM28 10h1v1h-1zM29 10h1v1h-1zM30 10h1v1h-1zM31 10h1v1h-1zM32 10h1v1h-1zM2 11h1v1h-1zM4 11h1v1h-1zM6 11h1v1h-1zM9 11h1v1h-1zM10 11h1v1h-1zM11 11h1v1h-1zM13 11h1v1h-1zM18 11h1v1h-1zM21 11h1v1h-1zM22 11h1v1h-1zM23 11h1v1h-1zM25 11h1v1h-1zM28 11h1v1h-1zM29 11h1v1h-1zM31 11h1v1h-1zM32 11h1v1h-1zM34 11h1v1h-1zM2 12h1v1h-1zM4 12h1v1h-1zM8 12h1v1h-1zM10 12h1v1h-1zM17 12h1v1h-1zM20 12h1v1h-1zM22 12h1v1h-1zM24 12h1v1h-1zM27 12h1v1h-1zM28 12h1v1h-1zM30 12h1v1h-1zM32 12h1v1h-1zM33 12h1v1h-1zM4 13h1v1h-1zM6 13h1v1h-1zM9 13h1v1h-1zM14 13h1v1h-1zM16 13h1v1h-1zM17 13h1v1h-1zM18 13h1v1h-1zM23 13h1v1h-1zM24 13h1v1h-1zM25 13h1v1h-1zM30 13h1v1h-1zM31 13h1v1h-1zM32 13h1v1h-1zM33 13h1v1h-1zM2 14h1v1h-1zM3 14h1v1h-1zM6 14h1v1h-1zM8 14h1v1h-1zM10 14h1v1h-1zM11 14h1v1h-1zM13 14h1v1h-1zM17 14h1v1h-1zM20 14h1v1h-1zM24 14h1v1h-1zM27 14h1v1h-1zM29 14h1v1h-1zM30 14h1v1h-1zM31 14h1v1h-1zM34 14h1v1h-1zM3 15h1v1h-1zM4 15h1v1h-1zM5 15h1v1h-1zM7 15h1v1h-1zM9 15h1v1h-1zM11 15h1v1h-1zM12 15h1v1h-1zM15 15h1v1h-1zM16 15h1v1h-1zM17 15h1v1h-1zM18 15h1v1h-1zM22 15h1v1h-1zM23 15h1v1h-1zM25 15h1v1h-1zM27 15h1v1h-1zM28 15h1v1h-1zM31 15h1v1h-1zM33 15h1v1h-1zM34 15h1v1h-1zM4 16h1v1h-1zM6 16h1v1h-1zM8 16h1v1h-1zM10 16h1v1h-1zM11 16h1v1h-1zM12 16h1v1h-1zM13 16h1v1h-1zM16 16h1v1h-1zM19 16h1v1h-1zM20 16h1v1h-1zM21 16h1v1h-1zM23 16h1v1h-1zM27 16h1v1h-1zM28 16h1v1h-1zM31 16h1v1h-1zM33 16h1v1h-1zM7 17h1v1h-1zM9 17h1v1h-1zM11 17h1v1h-1zM13 17h1v1h-1zM18 17h1v1h-1zM20 17h1v1h-1zM21 17h1v1h-1zM22 17h1v1h-1zM23 17h1v1h-1zM24 17h1v1h-1zM26 17h1v1h-1zM27 17h1v1h-1zM28 17h1v1h-1zM32 17h1v1h-1zM4 18h1v1h-1zM6 18h1v1h-1zM8 18h1v1h-1zM13 18h1v1h-1zM18 18h1v1h-1zM19 18h1v1h-1zM21 18h1v1h-1zM24 18h1v1h-1zM26 18h1v1h-1zM27 18h1v1h-1zM29 18h1v1h-1zM30 18h1v1h-1zM34 18h1v1h-1zM4 19h1v1h-1zM7 19h1v1h-1zM9 19h1v1h-1zM11 19h1v1h-1zM12 19h1v1h-1zM15 19h1v1h-1zM18 19h1v1h-1zM19 19h1v1h-1zM20 19h1v1h-1zM21 19h1v1h-1zM22 19h1v1h-1zM24 19h1v1h-1zM25 19h1v1h-1zM27 19h1v1h-1zM28 19h1v1h-1zM29 19h1v1h-1zM31 19h1v1h-1zM32 19h1v1h-1zM34 19h1v1h-1zM5 20h1v1h-1zM6 20h1v1h-1zM7 20h1v1h-1zM8 20h1v1h-1zM9 20h1v1h-1zM10 20h1v1h-1zM11 20h1v1h-1zM17 20h1v1h-1zM18 20h1v1h-1zM19 20h1v1h-1zM23 20h1v1h-1zM26 20h1v1h-1zM29 20h1v1h-1zM30 20h1v1h-1zM32 20h1v1h-1zM33 20h1v1h-1zM4 21h1v1h-1zM5 21h1v1h-1zM6 21h1v1h-1zM7 21h1v1h-1zM9 21h1v1h-1zM10 21h1v1h-1zM14 21h1v1h-1zM16 21h1v1h-1zM17 21h1v1h-1zM19 21h1v1h-1zM20 21h1v1h-1zM21 21h1v1h-1zM23 21h1v1h-1zM24 21h1v1h-1zM25 21h1v1h-1zM27 21h1v1h-1zM28 21h1v1h-1zM29 21h1v1h-1zM30 21h1v1h-1zM31 21h1v1h-1zM32 21h1v1h-1zM34 21h1v1h-1zM2 22h1v1h-1zM7 22h1v1h-1zM8 22h1v1h-1zM9 22h1v1h-1zM13 22h1v1h-1zM15 22h1v1h-1zM18 22h1v1h-1zM22 22h1v1h-1zM25 22h1v1h-1zM26 22h1v1h-1zM27 22h1v1h-1zM29 22h1v1h-1zM30 22h1v1h-1zM31 22h1v1h-1zM33 22h1v1h-1zM34 22h1v1h-1zM2 23h1v1h-1zM7 23h1v1h-1zM10 23h1v1h-1zM11 23h1v1h-1zM12 23h1v1h-1zM13 23h1v1h-1zM14 23h1v1h-1zM15 23h1v1h-1zM17 23h1v1h-1zM20 23h1v1h-1zM23 23h1v1h-1zM25 23h1v1h-1zM27 23h1v1h-1zM28 23h1v1h-1zM31 23h1v1h-1zM34 23h1v1h-1zM2 24h1v1h-1zM6 24h1v1h-1zM8 24h1v1h-1zM9 24h1v1h-1zM11 24h1v1h-1zM12 24h1v1h-1zM13 24h1v1h-1zM14 24h1v1h-1zM16 24h1v1h-1zM17 24h1v1h-1zM18 24h1v1h-1zM22 24h1v1h-1zM26 24h1v1h-1zM29 24h1v1h-1zM31 24h1v1h-1zM33 24h1v1h-1zM2 25h1v1h-1zM4 25h1v1h-1zM5 25h1v1h-1zM11 25h1v1h-1zM12 25h1v1h-1zM13 25h1v1h-1zM17 25h1v1h-1zM23 25h1v1h-1zM24 25h1v1h-1zM25 25h1v1h-1zM26 25h1v1h-1zM28 25h1v1h-1zM29 25h1v1h-1zM31 25h1v1h-1zM32 25h1v1h-1zM2 26h1v1h-1zM4 26h1v1h-1zM6 26h1v1h-1zM8 26h1v1h-1zM10 26h1v1h-1zM14 26h1v1h-1zM15 26h1v1h-1zM17 26h1v1h-1zM19 26h1v1h-1zM20 26h1v1h-1zM22 26h1v1h-1zM26 26h1v1h-1zM27 26h1v1h-1zM28 26h1v1h-1zM29 26h1v1h-1zM30 26h1v1h-1zM31 26h1v1h-1zM10 27h1v1h-1zM11 27h1v1h-1zM12 27h1v1h-1zM13 27h1v1h-1zM14 27h1v1h-1zM15 27h1v1h-1zM16 27h1v1h-1zM18 27h1v1h-1zM20 27h1v1h-1zM21 27h1v1h-1zM22 27h1v1h-1zM26 27h1v1h-1zM30 27h1v1h-1zM32 27h1v1h-1zM34 27h1v1h-1zM2 28h1v1h-1zM3 28h1v1h-1zM4 28h1v1h-1zM5 28h1v1h-1zM6 28h1v1h-1zM7 28h1v1h-1zM8 28h1v1h-1zM11 28h1v1h-1zM12 28h1v1h-1zM15 28h1v1h-1zM16 28h1v1h-1zM17 28h1v1h-1zM18 28h1v1h-1zM20 28h1v1h-1zM24 28h1v1h-1zM25 28h1v1h-1zM26 28h1v1h-1zM28 28h1v1h-1zM30 28h1v1h-1zM32 28h1v1h-1zM2 29h1v1h-1zM8 29h1v1h-1zM10 29h1v1h-1zM11 29h1v1h-1zM12 29h1v1h-1zM13 29h1v1h-1zM18 29h1v1h-1zM22 29h1v1h-1zM23 29h1v1h-1zM24 29h1v1h-1zM25 29h1v1h-1zM26 29h1v1h-1zM30 29h1v1h-1zM31 29h1v1h-1zM32 29h1v1h-1zM34 29h1v1h-1zM2 30h1v1h-1zM4 30h1v1h-1zM5 30h1v1h-1zM6 30h1v1h-1zM8 30h1v1h-1zM10 30h1v1h-1zM11 30h1v1h-1zM14 30h1v1h-1zM16 30h1v1h-1zM17 30h1v1h-1zM20 30h1v1h-1zM23 30h1v1h-1zM26 30h1v1h-1zM27 30h1v1h-1zM28 30h1v1h-1zM29 30h1v1h-1zM30 30h1v1h-1zM31 30h1v1h-1zM2 31h1v1h-1zM4 31h1v1h-1zM5 31h1v1h-1zM6 31h1v1h-1zM8 31h1v1h-1zM10 31h1v1h-1zM12 31h1v1h-1zM16 31h1v1h-1zM17 31h1v1h-1zM18 31h1v1h-1zM19 31h1v1h-1zM22 31h1v1h-1zM25 31h1v1h-1zM26 31h1v1h-1zM27 31h1v1h-1zM30 31h1v1h-1zM32 31h1v1h-1zM33 31h1v1h-1zM34 31h1v1h-1zM2 32h1v1h-1zM4 32h1v1h-1zM5 32h1v1h-1zM6 32h1v1h-1zM8 32h1v1h-1zM10 32h1v1h-1zM11 32h1v1h-1zM13 32h1v1h-1zM19 32h1v1h-1zM21 32h1v1h-1zM23 32h1v1h-1zM24 32h1v1h-1zM28 32h1v1h-1zM29 32h1v1h-1zM31 32h1v1h-1zM2 33h1v1h-1zM8 33h1v1h-1zM13 33h1v1h-1zM14 33h1v1h-1zM16 33h1v1h-1zM18 33h1v1h-1zM20 33h1v1h-1zM21 33h1v1h-1zM22 33h1v1h-1zM23 33h1v1h-1zM24 33h1v1h-1zM25 33h1v1h-1zM27 33h1v1h-1zM30 33h1v1h-1zM31 33h1v1h-1zM32 33h1v1h-1zM2 34h1v1h-1zM3 34h1v1h-1zM4 34h1v1h-1zM5 34h1v1h-1zM6 34h1v1h-1zM7 34h1v1h-1zM8 34h1v1h-1zM10 34h1v1h-1zM14 34h1v1h-1zM16 34h1v1h-1zM19 34h1v1h-1zM21 34h1v1h-1zM22 34h1v1h-1zM24 34h1v1h-1zM25 34h1v1h-1zM26 34h1v1h-1zM29 34h1v1h-1zM31 34h1v1h-1zM33 34h1v1h-1z" fill="#101d26"/></svg></div><p class="lead" style="text-align:center;margin:14px auto 0">Skanna koden med kameran.<br><small style="font-size:13px">ringenas-tranare.github.io/spelstrategi</small></p></dialog>
+<aside class="notes" id="notes" hidden><b>ANTECKNINGAR · BARA FÖR TRÄNAREN</b><span id="ntext"></span></aside>
+
+<script>
+{
+const $=id=>document.getElementById(id);
+const deck=$('deck'),slides=[...deck.querySelectorAll('.slide')],ag=$('agenda');
+const wave='<svg viewBox="0 0 100 8" preserveAspectRatio="none" aria-hidden="true"><path d="M1 5 Q12 1 25 4.5 T50 4 T75 4.5 T99 3" fill="none" stroke="#e0bb4a" stroke-width="2" stroke-linecap="round" vector-effect="non-scaling-stroke"/></svg>';
+document.querySelectorAll('.w').forEach(w=>w.insertAdjacentHTML('beforeend',wave));
+/* röda tråden: DECADE-raden */
+const DL=['Spelas som','Spridning','Baseline · mål','Target · sikte','90 %','Execute'];
+slides.forEach(s=>{if(s.dataset.l===undefined)return;const l=+s.dataset.l;s.querySelector('.in').insertAdjacentHTML('afterbegin','<div class="dec" data-l="'+l+'">'+'DECADE'.split('').map((c,i)=>'<div class="dc '+(i===l?'on':i<l?'done':'')+'"><b>'+c+'</b><i data-k="'+i+'">–</i><small>'+DL[i]+'</small></div>').join('')+'</div>')});
+let renderDec=()=>{};
+
+/* klistermärken: två takter, skämtet på spelaren */
+const foil='<defs><linearGradient id="FID" gradientUnits="userSpaceOnUse" x1="0" y1="0" x2="48" y2="48"><stop offset="0" stop-color="#f6e2a2"/><stop offset=".45" stop-color="#e0bb4a"/><stop offset=".7" stop-color="#c99a2e"/><stop offset="1" stop-color="#f0d27e"/></linearGradient></defs>';
+const figs={
+cup:'<path d="M12 20h20v9a9 9 0 0 1-9 9h-2a9 9 0 0 1-9-9z"/><path d="M32 23h3a4 4 0 0 1 0 8h-3"/><path d="M18 7c-2 3 2 5 0 8M24 7c-2 3 2 5 0 8"/><path d="M8 42h28"/>',
+peg:'<circle cx="24" cy="13" r="7"/><path d="M17 22h14l-4.5 4.5V40L24 43l-2.5-3V26.5z"/>',
+flag:'<path d="M16 42V7"/><path d="M16 8h17l-4.5 5.5L33 19H16"/><path d="M10 42h14"/>',
+wave:'<path d="M5 25c6.5-7 12.5-7 19 0s12.5 7 19 0"/><path d="M5 34c6.5-7 12.5-7 19 0s12.5 7 19 0"/>',
+bird:'<path d="M6 22c5-1 9 1 12 5 2-7 8-12 15-12 4 0 7 2 9 5l-5 2c-1 9-8 15-17 15-6 0-10-3-12-7"/><path d="M18 27c3 4 8 5 13 3"/><circle cx="35" cy="20" r="1.3"/><path d="M20 41l-2 4M26 41l1 4"/>',
+aim:'<circle cx="24" cy="24" r="13"/><path d="M24 5v9M24 34v9M5 24h9M34 24h9"/><circle cx="24" cy="24" r="2.5"/>'};
+const STK={'Varför':[['','bird','SATSA PÅ PAR.','Birdie är bonus.','-5deg'],['bub','flag','BOGEY ÄR OK.','Dubbel är det inte.','6deg']],
+'C · Correct target':['bub','flag','FLAGGAN LOCKAR.','Mitten betalar.','4deg'],
+'A · Analyze':['','aim','SIKTET UTANFÖR GREEN.','Helt med flit.','-4deg'],
+'D · Discipline':['','peg','90 % SÄKER.','10 % hjälte.','5deg'],
+'Tee shots':['bub','peg','DRIVER FÖRST.','Frågor sen.','-5deg'],
+'Slut':['top','cup','ALLT ENLIGT PLAN.','Nästan.','6deg']};
+slides.forEach((sl,i)=>{const L=STK[sl.dataset.t];if(!L)return;(Array.isArray(L[0])?L:[L]).forEach((st,j)=>{const id='foil'+i+'_'+j;
+const h='<div class="stk '+st[0]+'" style="--r:'+st[4]+'" aria-hidden="true"><div class="stk-in"><svg viewBox="0 0 48 48" fill="none" stroke="url(#'+id+')" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">'+foil.replace('FID',id)+figs[st[1]]+'</svg><span class="sb">'+st[2]+'</span><span class="ss">'+st[3]+'</span></div></div>';
+const col=sl.querySelector('.split>div:not(.dec)');(st[0]==='top'||!col?sl.querySelector('.in'):col).insertAdjacentHTML(st[0]==='top'?'afterbegin':'beforeend',h)})});
+
+ag.innerHTML=slides.map((s,i)=>'<button type="button" data-i="'+i+'">'+s.dataset.t+'</button>').join('');
+const btns=[...ag.querySelectorAll('button')];let cur=0;
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const go=i=>{i=Math.max(0,Math.min(slides.length-1,i));slides[i].scrollIntoView({behavior:reduce?'auto':'smooth',inline:'start',block:'nearest'})};
+const mark=()=>{cur=deck.clientWidth?Math.min(slides.length-1,Math.round(deck.scrollLeft/deck.clientWidth)):0;btns.forEach((b,i)=>b.classList.toggle('on',i===cur));btns[cur]&&btns[cur].scrollIntoView({inline:'nearest',block:'nearest'});$('count').textContent=(cur+1)+' / '+slides.length+' · '+slides[cur].dataset.m;$('prev').disabled=cur===0;$('cur').textContent=slides[cur].dataset.t;$('next').textContent=cur===slides.length-1?'Klart':'Nästa';$('ntext').textContent=slides[cur].dataset.n||''};
+deck.addEventListener('scroll',()=>{clearTimeout(mark.t);mark.t=setTimeout(mark,80)});
+const agU=()=>{$('agL').disabled=ag.scrollLeft<4;$('agR').disabled=ag.scrollLeft+ag.clientWidth>=ag.scrollWidth-4};ag.addEventListener('scroll',agU);new ResizeObserver(agU).observe(ag);
+$('agL').onclick=()=>ag.scrollBy({left:-ag.clientWidth*.7,behavior:'smooth'});$('agR').onclick=()=>ag.scrollBy({left:ag.clientWidth*.7,behavior:'smooth'});
+ag.addEventListener('wheel',e=>{if(Math.abs(e.deltaY)>Math.abs(e.deltaX)){ag.scrollLeft+=e.deltaY;e.preventDefault()}},{passive:false});
+ag.addEventListener('click',e=>{const b=e.target.closest('button');if(b)go(+b.dataset.i)});
+$('prev').addEventListener('click',()=>go(cur-1));$('next').addEventListener('click',()=>go(cur+1));
+const notes=$('notes'),nb=$('nbtn');const tn=()=>{notes.hidden=!notes.hidden;nb.setAttribute('aria-pressed',String(!notes.hidden))};nb.addEventListener('click',tn);
+document.addEventListener('keydown',e=>{if(e.target.matches('input,textarea'))return;if(e.key==='n'||e.key==='N')return tn();if(e.key==='ArrowRight'||e.key==='PageDown'){e.preventDefault();go(cur+1)}if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();go(cur-1)}});
+new ResizeObserver(()=>{deck.scrollLeft=cur*deck.clientWidth}).observe(deck);mark();
+
+const chips=(el,list,sel,on)=>{el.innerHTML='';list.forEach(t=>{const b=document.createElement('button');b.type='button';b.className='chip';b.textContent=t;b.setAttribute('aria-pressed',String(sel.includes(t)));el.appendChild(b)});
+el.onclick=ev=>{const b=ev.target.closest('.chip');if(!b)return;const t=b.textContent;if('one' in el.dataset)sel.splice(0,sel.length,t);else{const i=sel.indexOf(t);i<0?sel.push(t):sel.splice(i,1)}[...el.children].forEach(c=>c.setAttribute('aria-pressed',String(sel.includes(c.textContent))));on&&on()}};
+$('missar').addEventListener('click',e=>{const li=e.target.closest('li');if(li)li.classList.toggle('open')});
+
+/* gemensam data */
+const BT={60:3,70:4,80:4,90:5,100:5,110:6,120:6,130:7,140:7,150:8,160:8,170:9,180:9,190:10,200:10,210:11,220:11,230:12,240:12,250:13};
+const baseOf=d=>BT[Math.min(250,Math.max(60,Math.round(d/10)*10))];
+const sgn=n=>(n>0?'+':'')+n;
+
+const dec=(v,n=1)=>v.toFixed(n).replace('.',',');
+/* D: vind – avståndet följer med genom hela beslutet */
+const SH0={d:125};
+const wdir=['Motvind'];
+const wind=()=>{const d=+$('wd').value,w=+$('ws').value;$('wdv').textContent=d;$('wsv').textContent=w;
+const p=Math.round(d*(wdir[0]==='Motvind'?1+0.022*w:1-0.011*w));$('wplay').textContent=p+' m';$('wdiff').textContent=sgn(p-d)+' m';SH0.d=p;if(typeof SH!=='undefined'){SH.d=p;redrawAll()}if(typeof bviz!=='undefined')bviz();renderDec()};
+chips($('wdir'),['Motvind','Medvind'],wdir,wind);['wd','ws'].forEach(k=>$(k).addEventListener('input',wind));
+
+/* E: baseline */
+const FS={60:[2.70,2.69],70:[2.73,2.72],80:[2.75,2.75],90:[2.78,2.80],100:[2.80,2.85],110:[2.83,2.90],120:[2.85,2.94],130:[2.88,2.98],140:[2.91,3.02],150:[2.95,3.06],160:[2.98,3.09],170:[3.03,3.15],180:[3.08,3.20],190:[3.14,3.30],200:[3.19,3.39],210:[3.26,3.51],220:[3.32,3.62],230:[3.39,3.63],240:[3.45,3.63],250:[3.52,3.72]};
+const expOf=m=>FS[Math.min(250,Math.max(60,Math.round(m*1.094/10)*10))];
+const fmt=v=>v.toFixed(2).replace('.',',');
+const EP={'1 finger · 4 %':.04,'Slagtest PGA-grupp · 5,7 %':.057,'Slagtest LPGA-grupp · 5,8 %':.058,'Scratch på banan · 8,5 %':.085};
+const ep=['Slagtest PGA-grupp · 5,7 %'];const epct=()=>EP[ep[0]];
+const bviz=()=>{const d=SH0.d,p=epct(),m=d*p;$('edv').textContent=d;$('em0').textContent=dec(p*100)+' %';$('em1').textContent=dec(m)+' m';
+const sc=6,cx=300,cy=88,gr=15*sc,r=m*sc;
+$('eviz').innerHTML='<ellipse cx="'+cx+'" cy="'+cy+'" rx="'+gr+'" ry="'+gr*.8+'" fill="#3f6b3a" opacity=".85"/><circle cx="'+cx+'" cy="'+cy+'" r="'+r+'" fill="rgba(224,187,74,.14)" stroke="#e0bb4a" stroke-width="2"/><circle cx="'+cx+'" cy="'+cy+'" r="4" fill="#fff"/><line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+r)+'" y2="'+cy+'" stroke="#e0bb4a" stroke-width="1.5"/><text x="'+(cx+r/2)+'" y="'+(cy-6)+'" fill="#fff" font-size="12" text-anchor="middle" font-family="Montserrat">'+dec(m)+' m</text><text x="'+cx+'" y="182" fill="#d8c8a4" font-size="13" text-anchor="middle" font-family="Montserrat">Snittavstånd från målet · green 30 m</text>';
+$('emsg').textContent='PEI är snittavståndet från målet i procent av slaget. '+dec(p*100)+' % på '+d+' m = '+dec(m)+' m från målet i snitt.';renderDec()};
+chips($('epc'),Object.keys(EP),ep,bviz);
+
+
+/* C och A: Gul 1. Ringen = varje kantpunkt får sin egen bredd (baseline + värde), ritad inåt längs greenens form */
+const SECT=[0,45,90,135,180,225,270,315];
+const HOLES={g1:{name:'Gul 1',vb:[300,140,880,730],S:16,CX:735,CY:545,tap:[740,850],
+   poly:[[440,450],[470,392],[560,366],[680,370],[790,396],[860,440],[940,482],[1008,540],[1030,610],[1000,682],[930,722],[840,722],[760,702],[680,692],[600,690],[520,652],[462,592],[440,520]],
+   m:{0:0,45:0,90:2,135:2,180:3,225:2,270:-2,315:2},
+   flags:{'Mitten':[760,560],'Långt höger':[968,604],'Långt vänster':[505,488]},
+   bg:'<image href="img/gul1.jpg" x="0" y="0" width="1316" height="1195"/>'}};
+const NAME={0:'höger',45:'ner höger',90:'ner',135:'ner vänster',180:'vänster',225:'upp vänster',270:'upp',315:'upp höger'};
+const SH={key:'g1',m:{...HOLES.g1.m},goal:null,d:SH0.d,flag:'Mitten'};const WG=[];const redrawAll=()=>{WG.forEach(w=>w.draw());renderDec()};
+const modAt=deg=>{deg=((deg%360)+360)%360;const i=Math.floor(deg/45),f=(deg-i*45)/45;const a=SH.m[SECT[i%8]],b=SH.m[SECT[(i+1)%8]];return a+(b-a)*f};
+const H0=HOLES.g1;
+/* tät kant: punkter med ~6 px mellanrum */
+const EDGE=(()=>{const P=H0.poly,out=[];for(let i=0;i<P.length;i++){const [x1,y1]=P[i],[x2,y2]=P[(i+1)%P.length],n=Math.max(1,Math.ceil(Math.hypot(x2-x1,y2-y1)/6));for(let k=0;k<n;k++)out.push([x1+(x2-x1)*k/n,y1+(y2-y1)*k/n])}return out})();
+const inPoly=(x,y)=>{const P=H0.poly;let c=false;for(let i=0,j=P.length-1;i<P.length;j=i++){const [xi,yi]=P[i],[xj,yj]=P[j];if((yi>y)!==(yj>y)&&x<(xj-xi)*(y-yi)/(yj-yi)+xi)c=!c}return c};
+const widths=(b,x)=>EDGE.map(([ex,ey])=>Math.max(0,b+modAt(Math.atan2(ey-H0.CY,ex-H0.CX)*180/Math.PI)+x)*H0.S);
+const allowed=(px,py,W)=>{if(!inPoly(px,py))return false;for(let i=0;i<EDGE.length;i++){if(Math.hypot(px-EDGE[i][0],py-EDGE[i][1])<W[i])return false}return true};
+const anyAllowed=W=>{for(let y=360;y<730;y+=10)for(let x=440;x<1035;x+=10)if(allowed(x,y,W))return true;return false};
+const ringSvg=(W,col,op)=>'<g clip-path="url(#gclip)" opacity="'+op+'">'+EDGE.map((p,i)=>{const q=EDGE[(i+1)%EDGE.length];return W[i]>0?'<line x1="'+p[0].toFixed(1)+'" y1="'+p[1].toFixed(1)+'" x2="'+q[0].toFixed(1)+'" y2="'+q[1].toFixed(1)+'" stroke="'+col+'" stroke-width="'+(2*W[i]).toFixed(1)+'" stroke-linecap="round"/>':''}).join('')+'</g>';
+const flagSvg=(f,k)=>'<circle cx="'+f[0]+'" cy="'+f[1]+'" r="'+4*k+'" fill="#fff"/><line x1="'+f[0]+'" y1="'+f[1]+'" x2="'+f[0]+'" y2="'+(f[1]-30*k)+'" stroke="#fff" stroke-width="'+1.8*k+'"/><path d="M'+f[0]+' '+(f[1]-30*k)+'l'+16*k+' '+6*k+'-'+16*k+' '+6*k+'z" fill="#c8473c"/>';
+const hole=(el,o)=>{
+  el.innerHTML='<div class="eyebrow hname" style="margin-bottom:10px"></div>'+(o.dist?'<div class="chips hflag" data-one style="margin-bottom:12px"></div>':'')+'<svg role="img" aria-label="Green på Gul 1 med graderade kanter. Siffrorna runt green är kantens värde, tryck för att ändra. Tryck på green för att sätta ditt mål."></svg>'+
+  '<div class="stats">'+(o.mods?'<div class="stat"><div class="v hx">+0 m</div><div class="l">Ringen ändras</div></div>':'<div class="stat"><div class="v hb">7 m</div><div class="l">Baseline</div></div>')+'<div class="stat"><div class="v hg">–</div><div class="l">Goal · mål</div></div><div class="stat"><div class="v hf">–</div><div class="l">'+(o.mods?'Target · sikte':'Kvar till flaggan')+'</div></div></div>';
+  const svg=el.querySelector('svg');const st={extra:0,curve:0};
+  const draw=()=>{const H=H0,b=baseOf(SH.d),S=H.S,k=H.vb[2]/400,x=o.mods?st.extra:0,F=H.flags[SH.flag];
+    svg.setAttribute('viewBox',H.vb.join(' '));
+    const W=widths(b,x),open=anyAllowed(W);
+    let h='<defs><clipPath id="gclip"><polygon points="'+H.poly.map(p=>p.join(',')).join(' ')+'"/></clipPath></defs>'+H.bg;
+    if(o.mods&&x>0){h+=ringSvg(W,'#c8473c',.38)+ringSvg(widths(b,0),'#b2392f',.62)}else h+=ringSvg(W,'#b2392f',.62);
+    h+=flagSvg(F,k);
+    SECT.forEach(d=>{const t=d*Math.PI/180;let r=0;EDGE.forEach(([ex,ey])=>{const a=Math.atan2(ey-H.CY,ex-H.CX);if(Math.abs(((a-t+3*Math.PI)%(2*Math.PI))-Math.PI)<.12)r=Math.max(r,Math.hypot(ex-H.CX,ey-H.CY))});r+=20*k;
+      const bx=H.CX+Math.cos(t)*r,by=H.CY+Math.sin(t)*r,v=SH.m[d];
+      h+='<g class="bdg" data-d="'+d+'" role="button" aria-label="Kanten '+NAME[d]+': '+v+'. Tryck för att ändra."><circle cx="'+bx+'" cy="'+by+'" r="'+14*k+'" fill="#101d26" stroke="'+(v<0?'#e0bb4a':'#d8c8a4')+'" stroke-width="'+1.5*k+'"/><text x="'+bx+'" y="'+(by+5*k)+'" fill="#fff" font-size="'+14*k+'" text-anchor="middle" font-family="Montserrat">'+(v>0?'+'+v:v<0?'−'+(-v):'0')+'</text></g>'});
+    const g=SH.goal;let ok=null;
+    if(g){ok=open&&allowed(g.x,g.y,W);
+      if(o.mods&&st.curve){const sx=g.x-st.curve*S,bot=H.vb[1]+H.vb[3];h+='<path d="M'+sx+' '+bot+'Q'+sx+' '+(g.y+40*k)+' '+g.x+' '+g.y+'" fill="none" stroke="#fff" stroke-width="'+1.5*k+'" stroke-dasharray="'+4*k+' '+4*k+'"/><circle cx="'+sx+'" cy="'+(g.y-6*k)+'" r="'+9*k+'" fill="none" stroke="#fff" stroke-width="'+2*k+'"/><line x1="'+(sx-13*k)+'" y1="'+(g.y-6*k)+'" x2="'+(sx+13*k)+'" y2="'+(g.y-6*k)+'" stroke="#fff" stroke-width="'+1.5*k+'"/><line x1="'+sx+'" y1="'+(g.y-19*k)+'" x2="'+sx+'" y2="'+(g.y+7*k)+'" stroke="#fff" stroke-width="'+1.5*k+'"/>'}
+      h+='<circle cx="'+g.x+'" cy="'+g.y+'" r="'+9*k+'" fill="'+(ok?'#e0bb4a':'#c8473c')+'" stroke="#101d26" stroke-width="'+2*k+'"/>'}
+    else h+='<text x="'+H.tap[0]+'" y="'+H.tap[1]+'" fill="#fff" font-size="'+12*k+'" text-anchor="middle" font-family="Montserrat" letter-spacing="1" paint-order="stroke" stroke="#101d26" stroke-width="'+3*k+'">'+(o.mods?'Sätt ditt mål på C först, eller tryck här':'Tryck på green för att sätta ditt mål')+'</text>';
+    svg.innerHTML=h;
+    el.querySelector('.hname').textContent=H.name+' · flagga '+SH.flag.toLowerCase()+' · spelas som '+SH.d+' m';
+    if(o.mods)el.querySelector('.hx').textContent=sgn(x)+' m';else el.querySelector('.hb').textContent=b+' m';
+    const hg=el.querySelector('.hg');hg.textContent=!open?'Mitten':g?(ok?'Rätt':'I ringen'):'–';hg.style.color=g&&!ok&&open?'#e0796f':'';
+    el.querySelector('.hf').textContent=o.mods?(!g?'–':st.curve?Math.abs(st.curve)+' m '+(st.curve>0?'vänster':'höger'):'På målet'):(g?dec(Math.hypot(g.x-F[0],g.y-F[1])/S)+' m':'–');
+  };
+  svg.addEventListener('click',e=>{const bd=e.target.closest('.bdg');if(bd){const d=+bd.dataset.d;SH.m[d]=SH.m[d]>=3?-2:SH.m[d]+1;return redrawAll()}
+    const p=svg.createSVGPoint();p.x=e.clientX;p.y=e.clientY;const q=p.matrixTransform(svg.getScreenCTM().inverse());SH.goal={x:q.x,y:q.y};redrawAll()});
+  if(o.dist){const fs=[SH.flag];chips(el.querySelector('.hflag'),Object.keys(H0.flags),fs,()=>{SH.flag=fs[0];redrawAll()})}
+  const w={st,draw};WG.push(w);return w;
+};
+hole($('holeC'),{dist:true});
+const HA=hole($('holeA'),{mods:true});
+redrawAll();
+const AW={'Under 2,2 m/s':-1,'2,2–4,5 m/s':0,'4,5–9 m/s':1,'9–13 m/s':2,'Över 13 m/s':3},AL={'Lutning':2,'Ruff':2};
+const aw=['2,2–4,5 m/s'],al=[];
+const ana=()=>{setTimeout(renderDec);const k=+$('ak').value;$('akv').textContent=k===0?'rak':Math.abs(k)+' m '+(k>0?'höger':'vänster');
+HA.st.extra=(AW[aw[0]]||0)+al.reduce((a,x)=>a+AL[x],0);HA.st.curve=k;HA.draw()};
+chips($('aw'),Object.keys(AW),aw,ana);chips($('al'),Object.keys(AL),al,ana);$('ak').addEventListener('input',ana);ana();
+
+
+/* tee shots */
+const tl=['Plikt'],tr=['Bunker'];
+const tee=()=>{const w=+$('tw').value;$('twv').textContent=w;const P=3,cx=200,L=cx-w*P/2,R=cx+w*P/2,pl=tl[0]==='Plikt',pr=tr[0]==='Plikt';
+const col={Plikt:'#2c4a5e',Bunker:'#c9b48a','Träd':'#16301f'};
+let verd,why,aim=0;const np=(pl?1:0)+(pr?1:0);
+if(np===2){if(w>=65){verd='Slå driver!';why='65 meter brett där du stannar bollen.'}else{verd='Inte driver.';why='Under 65 meter med plikt på båda sidor. Kan du slå trä 3 kort om hindren?'}}
+else if(np===1){if(w>=40){verd='Slå driver!';why='Minst 40 meter och bara plikt på ena sidan. Ha ditt mål närmare '+(pl?'höger':'vänster')+', där du inte får plikt.';aim=(pl?1:-1)*Math.min(12,Math.max(0,(65-w)/2))}else{verd='Inte driver.';why='Under 40 meter med plikt. Slå en klubba som stannar kort om hindret.'}}
+else{verd='Slå driver!';why=w>=40?'Ingen plikt. Längd är det viktigaste.':'Trångt men ingen plikt. Driver ändå.'}
+const ex=cx+aim*P,sw=65*P/2;
+let h='<rect width="400" height="300" fill="#1d3a2a"/>';
+h+='<rect x="0" y="0" width="'+Math.max(0,L)+'" height="300" fill="'+col[tl[0]]+'"/><rect x="'+Math.min(400,R)+'" y="0" width="'+Math.max(0,400-R)+'" height="300" fill="'+col[tr[0]]+'"/>';
+h+='<rect x="'+L+'" y="0" width="'+(R-L)+'" height="300" fill="#4f7d43"/>';
+h+='<text x="10" y="22" fill="#fff" font-size="11" font-family="Montserrat" letter-spacing="2">'+tl[0].toUpperCase()+'</text><text x="390" y="22" fill="#fff" font-size="11" text-anchor="end" font-family="Montserrat" letter-spacing="2">'+tr[0].toUpperCase()+'</text>';
+h+='<ellipse cx="'+ex+'" cy="140" rx="'+sw+'" ry="46" fill="rgba(224,187,74,.16)" stroke="#e0bb4a" stroke-width="2"/><circle cx="'+ex+'" cy="140" r="5" fill="#fff"/>';
+h+='<text x="'+ex+'" y="214" fill="#fff" font-size="12" text-anchor="middle" font-family="Montserrat">Driverns spridning 65 m</text><line x1="'+L+'" y1="262" x2="'+R+'" y2="262" stroke="#fff" stroke-width="1"/><text x="200" y="284" fill="#fff" font-size="12" text-anchor="middle" font-family="Montserrat">'+w+' m</text>';
+$('tviz').innerHTML=h;$('tverd').textContent=verd;$('twhy').textContent=why};
+chips($('tl'),['Plikt','Bunker','Träd'],tl,tee);chips($('trr'),['Plikt','Bunker','Träd'],tr,tee);$('tw').addEventListener('input',tee);tee();
+
+
+
+
+/* beslutet byggs: en bokstav i taget */
+const BS={disc:null};
+document.querySelectorAll('.dqb').forEach(b=>b.addEventListener('click',()=>{BS.disc=b.dataset.v;document.querySelectorAll('.dqb').forEach(x=>x.setAttribute('aria-pressed',String(x===b)));
+$('dqa').textContent=BS.disc==='Ja'?'Bra! Håll fast vid målet och slå.':'Då flyttar vi målet mot mitten. Tillbaka till C.';renderDec()}));
+const goalState=()=>{const g=SH.goal;if(!g)return null;const b=baseOf(SH.d);return {c:allowed(g.x,g.y,widths(b,0)),a:allowed(g.x,g.y,widths(b,HA.st.extra))}};
+renderDec=()=>{if(typeof HA==='undefined')return;const gs=goalState(),k=HA.st.curve,x=HA.st.extra;
+const V=[SH.d+' m',dec(SH.d*epct())+' m',baseOf(SH.d)+' m · '+(gs?(gs.c?'Rätt':'I ringen'):'–'),gs?(k?Math.abs(k)+' m '+(k>0?'v':'h'):'På målet')+(x?' · ring '+sgn(x):''):'–',BS.disc||'–',''];
+const ready=gs&&gs.a&&BS.disc==='Ja';V[5]=ready?'Slå!':'–';
+document.querySelectorAll('.dec i').forEach(el=>{el.textContent=V[+el.dataset.k]});
+const R=[['D','Spelas som',V[0]],['E','Spridning','PEI '+(epct()*100).toFixed(1).replace('.',',')+' % = '+V[1]+' från målet'],['C','Baseline · goal',baseOf(SH.d)+' m · '+(gs?(gs.c?'innanför ringen':'i ringen'):'inte satt')],['A','Target · sikte',gs?(k?Math.abs(k)+' m '+(k>0?'vänster':'höger')+' om målet':'Rakt på målet'):'–'],['D','90 %-regeln',BS.disc||'Inte svarat'],['E','Execute',ready?'Bestämt mot siktet':'–']];
+$('dfin').innerHTML=R.map(r=>'<li><b>'+r[0]+'</b><span>'+r[1]+'</span><em>'+r[2]+'</em></li>').join('');
+$('dgo').textContent=ready?'Allt klart. Slå bestämt mot siktet.':!gs?'Sätt ditt mål på C först.':!gs.a?'Målet ligger i ringen. Tillbaka till C eller A.':'Svara på 90 %-regeln under D.'};
+$('dnew').addEventListener('click',()=>{SH.goal=null;BS.disc=null;document.querySelectorAll('.dqb').forEach(x=>x.setAttribute('aria-pressed','false'));$('dqa').textContent='Svara ärligt.';$('ak').value=0;ana();redrawAll();go(5)});
+wind();
+
+
+/* tabeller att klicka fram */
+const rng=(a,b,st)=>{const r=[];for(let x=a;x<=b;x+=st)r.push(x);return r};
+const TB={
+why:{t:'Proffsen missar också',tabs:{'PGA Tour':{h:['Statistik','Snitt','Bäst'],r:[['Green i regulation','66–67 %','ca 73 %'],['Scrambling (par trots miss)','ca 59 %','ca 66 %'],['Bunkerräddning','ca 50 %','ca 64 %'],['Treputt','2–3,5 % av hålen','–'],['Fairwayträff','ca 60 %','–']]},
+ 'Puttar · proffs mot scratch':{h:['Avstånd','PGA Tour','Scratch'],r:[['0,9–1,5 m','97 %','77 %'],['1,8–2,7 m','58 %','38 %']]}},n:'PGA Tour-snitt, ungefärliga och ändras lite varje säsong.'},
+wind:{t:'Vind',tabs:{'Motvind +2,2 %/m/s':{h:['Avstånd','2 m/s','4','6','8','10','12'],d:true,r:rng(50,270,10).map(d=>[d+' m',...[2,4,6,8,10,12].map(w=>Math.round(d*(1+.022*w)))])},
+ 'Medvind −1,1 %/m/s':{h:['Avstånd','2 m/s','4','6','8','10','12'],d:true,r:rng(50,270,10).map(d=>[d+' m',...[2,4,6,8,10,12].map(w=>Math.round(d*(1-.011*w)))])}},n:'Samma uträkning som vindkorten. Raden för ditt avstånd är markerad.'},
+spread:{t:'Spridningsmönster',tabs:{'Fingrar och slagtest':{h:['Avstånd','1 finger 4 %','2 fingrar 8 %','PGA-grupp 5,7 %','LPGA-grupp 5,8 %'],d:true,r:rng(60,250,10).map(d=>[d+' m',dec(d*.04),dec(d*.08),dec(d*.057),dec(d*.058)])},
+ 'Tour mot scratch':{h:['Avstånd','PGA Tour','Scratch'],r:[['46–69 m','4,9 m','5,8 m'],['91–114 m','6,1 m','8,1 m'],['114–137 m','7,1 m','10,5 m'],['137–160 m','8,7 m','13,0 m'],['183–206 m','12,6 m','24,4 m'],['Från bunker','3,0 m','5,8 m']]}},n:'Alla kolumner: snittavstånd från målet i meter. Slagtest: PEI på rangen (9 spelare i PGA-gruppen, 5 i LPGA-gruppen). Tour mot scratch: avstånd till hål på banan, 2021–22.'},
+base:{t:'Baseline och snittscore',tabs:{'Er tabell + Decade':{h:['Avstånd','Baseline','PGA snitt','LPGA snitt'],d:true,r:Object.keys(BT).map(Number).map(d=>[d+' m',BT[d]+' m',dec(expOf(d)[0],2),dec(expOf(d)[1],2)])}},n:'Baseline enligt er tabell i meter. Snittscore från fairway enligt Decade, avstånden omräknade från yards till meter.'},
+mods:{t:'Analysera',tabs:{'Vind':{h:['Vind','Ringen'],r:[['Under 2,2 m/s','−1 m'],['2,2–4,5 m/s','0'],['4,5–9 m/s','+1 m'],['9–13 m/s','+2 m'],['Över 13 m/s','+3 m']]},
+ 'Läge':{h:['Läge','Ringen'],r:[['Sidolut','0 till +2 m'],['Nedförslut','0 till +2 m'],['Uppförslut','0 till +2 m'],['Ruff','+2 m']]},
+ 'Kanten':{h:['Värde','Betyder'],r:[['−2','Lutningen matar in bollen'],['−1','Lutningen hjälper lite'],['0','Neutralt, lätt chip eller putt'],['+1','Stor chans till up & down'],['+2','Svårt: bunker eller ruff'],['+3','Riktigt lurigt: lutning bort, vatten, out']]}},n:'Decades vindsteg omräknade från mph till m/s.'},
+cost:{t:'Vad missarna kostar',tabs:{'Decade':{h:['Läge','Avstånd','Slag kvar · tour','Mot fairway'],r:[['Ruff','alla','–','+0,25 slag'],['Bunker','73–165 m','3,3','ca +0,4 slag'],['Bunker','175 m+','3,5+','ca +0,4 slag'],['Träd','91–183 m','3,8+','ca +0,9 slag'],['Ur träd','–','–','90 %-regeln']]},
+ 'PGA Tour':{h:['Statistik','Snitt'],r:[['Scrambling','ca 59 %'],['Bunkerräddning','ca 50 %'],['Treputt','2–3,5 % av hålen']]}},n:'Slag kvar = slag i snitt för touren att gå i hål därifrån. Mot fairway = hur mycket mer det är än samma slag från fairway. Decades avstånd är omräknade från yards till meter.'},
+tee:{t:'Tee shots · PGA och LPGA',tabs:{'Trackman 2023':{h:['Klubba','Carry PGA','Carry LPGA','Klubbfart PGA','Klubbfart LPGA'],r:[['Driver','258 m','204 m','185 km/h','154 km/h'],['7-järn','161 m','131 m','148 km/h','126 km/h'],['PW','130 m','101 m','135 km/h','116 km/h']]},
+ 'Driver mer':{h:['Driver','PGA','LPGA'],r:[['Bollfart','275 km/h','230 km/h'],['Utgångsvinkel','10,4°','12,6°'],['Spinn','2545 rpm','2506 rpm'],['Attack angle','−0,9°','+2,8°'],['Höjd','32 m','24 m']]}},n:'Trackman tour-snitt 2023. LPGA ligger närmare en elitjunior.'}};
+const dlg=$('tdlg');let tbk=null;const tsel=[];
+const drawT=()=>{const T=TB[tbk],tab=T.tabs[tsel[0]];const hl=tab.d?Object.keys(tab.r).reduce((bi,i)=>{const v=parseFloat(tab.r[i][0]);return Math.abs(v-SH0.d)<Math.abs(parseFloat(tab.r[bi][0])-SH0.d)?i:bi},0):-1;
+$('tdb').innerHTML='<table><thead><tr>'+tab.h.map(h=>'<th>'+h+'</th>').join('')+'</tr></thead><tbody>'+tab.r.map((r,i)=>'<tr'+(+i===+hl?' class="hl"':'')+'>'+r.map(c=>'<td>'+c+'</td>').join('')+'</tr>').join('')+'</tbody></table>';
+const h=$('tdb').querySelector('.hl');if(h)h.scrollIntoView({block:'center'})};
+const openT=k=>{tbk=k;const T=TB[k];$('tdh').textContent=T.t;$('tdn').textContent=T.n;tsel.splice(0,tsel.length,Object.keys(T.tabs)[0]);chips($('tdt'),Object.keys(T.tabs),tsel,drawT);$('tdt').style.display=Object.keys(T.tabs).length>1?'':'none';dlg.showModal();drawT()};
+$('tdx').onclick=()=>dlg.close();dlg.addEventListener('click',e=>{if(e.target===dlg)dlg.close()});
+slides.forEach(sl=>{const k=sl.dataset.tb;if(!k)return;const col=sl.querySelector('.split>div:not(.dec)')||sl.querySelector('.in');const anc=col.querySelector('.lead')||col.querySelector('h2');(anc||col).insertAdjacentHTML(anc?'afterend':'beforeend','<div><button class="btn ghost tbtn" type="button" data-k="'+k+'">Tabell · '+TB[k].t+'</button></div>')});
+document.addEventListener('click',e=>{const b=e.target.closest('.tbtn');if(b)openT(b.dataset.k)});
+
+/* qr */
+$('qbtn').onclick=()=>$('qdlg').showModal();$('qx').onclick=()=>$('qdlg').close();$('qdlg').addEventListener('click',e=>{if(e.target===$('qdlg'))$('qdlg').close()});
+/* spelplan */
+const v={flykt:['Draw'],miss:['Vänster']};
+const plan=()=>{const n=$('p-namn').value.trim();
+const rows=[100,125,150,175,200].map(d=>d+' m: baseline '+baseOf(d)+' m').join('\n');
+const t='SPELPLAN'+(n?' – '+n:'')+'\n\nFöre varje slag: D E C A D E\n\nD  Distans: motvind +2,2 %/m/s, medvind −1,1 %/m/s\nE  Min PEI: '+(epct()*100).toFixed(1).replace('.',',')+' % = snittavstånd från målet i procent av slaget\nC  Min baseline (förbjuden ring)\n'+rows+'\n   Målet ligger alltid innanför ringen\nA  Min bollflykt: '+(v.flykt[0]||'-')+'. Farligaste miss: '+(v.miss[0]||'-')+'.\n   Siktet flyttas efter kurva och vind, målet ligger kvar.\nD  90 %-regeln. Ta medicinen.\nE  Bestämt mot siktet.\n';
+$('plan').textContent=t;return t};
+chips(document.querySelector('[data-g=flykt]'),['Draw','Fade','Rak'],v.flykt,plan);chips(document.querySelector('[data-g=miss]'),['Vänster','Höger','Kort','Lång'],v.miss,plan);
+$('p-namn').addEventListener('input',plan);
+$('cp').addEventListener('click',async e=>{const b=e.currentTarget;try{await navigator.clipboard.writeText(plan());b.textContent='Kopierad'}catch(err){b.textContent='Markera och kopiera'}setTimeout(()=>b.textContent='Kopiera',1800)});plan();
+}
+</script>
+</body>
+</html>
